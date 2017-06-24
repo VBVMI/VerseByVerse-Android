@@ -9,6 +9,7 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.parceler.Parcel;
+import org.versebyverseministry.vbvmi.api.Mergable;
 import org.versebyverseministry.vbvmi.database.AppDatabase;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 @Table(database = AppDatabase.class)
 @ManyToMany(referencedTable = Topic.class)
 @Parcel(analyze = {Study.class})
-public class Study extends BaseModel {
+public class Study extends BaseModel implements Mergable<Study> {
 
     @SerializedName("topics")
     @Expose
@@ -81,4 +82,27 @@ public class Study extends BaseModel {
     @Expose
     public String url;
 
+    @Override
+    public String identifier() {
+        return id;
+    }
+
+    @Override
+    public void mergeAPIAttributes(Study apiVersion) {
+        if (!this.id.equals(apiVersion.id))
+            throw new IllegalArgumentException("The apiVersion.id must match the current id");
+
+        // Only merge data that is exposed to GSON
+        this.bibleIndex = apiVersion.bibleIndex;
+        this.thumbnailSource = apiVersion.thumbnailSource;
+        this.title = apiVersion.title;
+        this.thumbnailAltText = apiVersion.thumbnailAltText;
+        this.podcastLink = apiVersion.podcastLink;
+        this.lessonCount = apiVersion.lessonCount;
+        this.averageRating = apiVersion.averageRating;
+        this.description = apiVersion.description;
+        this.type = apiVersion.type;
+        this.url = apiVersion.url;
+        this.topics = apiVersion.topics;
+    }
 }
