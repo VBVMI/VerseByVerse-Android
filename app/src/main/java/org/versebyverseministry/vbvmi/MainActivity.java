@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import org.versebyverseministry.vbvmi.api.APIManager;
+
 public class MainActivity extends AppCompatActivity implements StudiesView.OnFragmentInteractionListener, AnswersFragment.OnFragmentInteractionListener {
 
     private Fragment _selectedFragment = null;
@@ -58,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements StudiesView.OnFra
         _selectedFragment = StudiesView.newInstance("ah", "hah");
         transaction.add(R.id.content, _selectedFragment);
         transaction.commit();
+
+        APIManager.getInstance().downloadStudies();
+
     }
 
     @Override

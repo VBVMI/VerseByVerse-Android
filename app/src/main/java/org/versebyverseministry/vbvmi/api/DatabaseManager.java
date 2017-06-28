@@ -5,6 +5,7 @@ import android.support.v4.util.Pair;
 
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
@@ -37,17 +38,19 @@ public class DatabaseManager {
     }
 
     private DatabaseManager() {
+
+
+
     }
 
     public void saveStudies(List<Study> studies) {
 
         // In order to save these studies we must first fetch all the existing ones and create merge and delete lists
+        DatabaseDefinition database = FlowManager.getDatabase(AppDatabase.class);
 
         List<Study> persistedStudies = SQLite.select().from(Study.class).queryList();
 
         MergePair<Study> mergePair = mergeAPIData(persistedStudies, studies);
-
-        DatabaseDefinition database = FlowManager.getDatabase(AppDatabase.class);
 
         database.beginTransactionAsync(new ProcessModelTransaction.Builder<>(
                         new ProcessModelTransaction.ProcessModel<Study>() {
@@ -83,11 +86,7 @@ public class DatabaseManager {
                         public void processModel(Study study, DatabaseWrapper wrapper) {
                             study.delete();
                             // find all topic relationships to this study and delete them too
-                            List<Study_Topic> studyTopics = SQLite.select().from(Study_Topic.class).where(Study_Topic_Table.study_id.eq(study.id)).queryList();
-
-                            for(Study_Topic st : studyTopics) {
-                                st.delete();
-                            }
+                            SQLite.delete().from(Study_Topic.class).where(Study_Topic_Table.study_id.eq(study.id)).execute();
                         }
                     }
             ).addAll(mergePair.entriesToDelete).build();

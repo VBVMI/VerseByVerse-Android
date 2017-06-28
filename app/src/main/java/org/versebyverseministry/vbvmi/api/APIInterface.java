@@ -15,6 +15,4 @@ public interface APIInterface {
     @GET("/corev2/json")
     Call<Studies> doGetStudies();
 
-    @GET("/corev2/json")
-    void getAllStudies(Callback<Studies> callback);
 }
