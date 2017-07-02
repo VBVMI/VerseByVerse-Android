@@ -3,6 +3,7 @@ package org.versebyverseministry.vbvmi.api;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.model.pojo.Studies;
 
@@ -58,6 +59,30 @@ public class APIManager {
 
     }
 
+    public void downloadCategories() {
 
+        Call<List<Category>> call = apiInterface.doGetCategories();
+        call.enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> call, final Response<List<Category>> response) {
+                Log.d("VBVMI", "get all categories: " + response.code());
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Category> categories = response.body();
+                        DatabaseManager.getInstance().saveCategories(categories);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable t) {
+                call.cancel();
+            }
+        });
+
+    }
 
 }

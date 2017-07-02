@@ -1,6 +1,9 @@
 package org.versebyverseministry.vbvmi.api;
 
+import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.pojo.Studies;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,5 +17,8 @@ public interface APIInterface {
 
     @GET("/corev2/json")
     Call<Studies> doGetStudies();
+
+    @GET("/corev2/categories")
+    Call<List<Category>> doGetCategories();
 
 }

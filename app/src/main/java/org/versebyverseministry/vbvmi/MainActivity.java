@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements StudiesView.OnFra
 
         APIManager.getInstance().downloadStudies();
 
+        APIManager.getInstance().downloadCategories();
     }
 
     @Override

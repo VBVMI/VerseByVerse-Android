@@ -68,9 +68,9 @@ public class Study extends BaseModel implements Mergable<Study> {
     public String description;
 
     @Column
-    @SerializedName("type")
+    @SerializedName("category")
     @Expose
-    public String type;
+    public Integer category;
 
     @PrimaryKey
     @SerializedName("ID")
@@ -101,7 +101,7 @@ public class Study extends BaseModel implements Mergable<Study> {
         this.lessonCount = apiVersion.lessonCount;
         this.averageRating = apiVersion.averageRating;
         this.description = apiVersion.description;
-        this.type = apiVersion.type;
+        this.category = apiVersion.category;
         this.url = apiVersion.url;
         this.topics = apiVersion.topics;
     }

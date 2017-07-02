@@ -7,11 +7,13 @@ import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
 import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
 import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import org.versebyverseministry.vbvmi.database.AppDatabase;
+import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.model.Study_Topic;
 import org.versebyverseministry.vbvmi.model.Study_Topic_Table;
@@ -38,73 +40,61 @@ public class DatabaseManager {
     }
 
     private DatabaseManager() {
-
-
-
     }
 
     public void saveStudies(List<Study> studies) {
-
         // In order to save these studies we must first fetch all the existing ones and create merge and delete lists
-        DatabaseDefinition database = FlowManager.getDatabase(AppDatabase.class);
-
         List<Study> persistedStudies = SQLite.select().from(Study.class).queryList();
 
-        MergePair<Study> mergePair = mergeAPIData(persistedStudies, studies);
+        mergeAPIData(persistedStudies, studies, new MergeOperation<Study>() {
+            @Override
+            public void didPersist(Study instance) {
+                // find all the relevant topic relationships and update them
+                List<Study_Topic> studyTopics = SQLite.select().from(Study_Topic.class).where(Study_Topic_Table.study_id.eq(instance.id)).queryList();
 
-        database.beginTransactionAsync(new ProcessModelTransaction.Builder<>(
-                        new ProcessModelTransaction.ProcessModel<Study>() {
-                            @Override
-                            public void processModel(Study study, DatabaseWrapper wrapper) {
-                                study.save();
+                for(Study_Topic st : studyTopics) {
+                    st.delete();
+                }
 
-                                // find all the relevant topic relationships and update them
-                                List<Study_Topic> studyTopics = SQLite.select().from(Study_Topic.class).where(Study_Topic_Table.study_id.eq(study.id)).queryList();
+                for(Topic t: instance.topics) {
+                    t.save();
 
-                                for(Study_Topic st : studyTopics) {
-                                    st.delete();
-                                }
+                    Study_Topic studyTopic = new Study_Topic();
+                    studyTopic.setStudy(instance);
+                    studyTopic.setTopic(t);
+                    studyTopic.save();
+                }
+            }
 
-                                for(Topic t: study.topics) {
-                                    t.save();
-
-                                    Study_Topic studyTopic = new Study_Topic();
-                                    studyTopic.setStudy(study);
-                                    studyTopic.setTopic(t);
-                                    studyTopic.save();
-                                }
-                            }
-                        }
-                ).addAll(mergePair.entriesToSave).build()
-        ).build().execute();
-
-        if (mergePair.entriesToDelete.size() > 0) {
-            ProcessModelTransaction<Study> deleteProcessModelTransaction = new ProcessModelTransaction.Builder<>(
-                    new ProcessModelTransaction.ProcessModel<Study>() {
-
-                        @Override
-                        public void processModel(Study study, DatabaseWrapper wrapper) {
-                            study.delete();
-                            // find all topic relationships to this study and delete them too
-                            SQLite.delete().from(Study_Topic.class).where(Study_Topic_Table.study_id.eq(study.id)).execute();
-                        }
-                    }
-            ).addAll(mergePair.entriesToDelete).build();
-            database.beginTransactionAsync(deleteProcessModelTransaction).build().execute();
-        }
+            @Override
+            public void didDelete(Study instance) {
+                SQLite.delete().from(Study_Topic.class).where(Study_Topic_Table.study_id.eq(instance.id)).execute();
+            }
+        });
     }
+
+    public void saveCategories(List<Category> categories) {
+        List<Category> persistedCategories = SQLite.select().from(Category.class).queryList();
+        mergeAPIData(persistedCategories, categories);
+    }
+
+
 
     private static class MergePair<T> {
-        public final Collection<T> entriesToSave;
-        public final Collection<T> entriesToDelete;
+        public final Collection<T> entriesSaved;
+        public final Collection<T> entriesDeleted;
 
-        public MergePair(Collection<T> entriesToSave, Collection<T> entriesToDelete) {
-            this.entriesToDelete = entriesToDelete;
-            this.entriesToSave = entriesToSave;
+        public MergePair(Collection<T> entriesSaved, Collection<T> entriesDeleted) {
+            this.entriesDeleted = entriesDeleted;
+            this.entriesSaved = entriesSaved;
         }
     }
 
-    private static <T extends Mergable<T>> MergePair<T> mergeAPIData(List<T> persistedEntries, List<T> apiEntries) {
+    private static <T extends BaseModel & Mergable<T>> MergePair<T> mergeAPIData(List<T> persistedEntries, List<T> apiEntries) {
+        return mergeAPIData(persistedEntries, apiEntries, null);
+    }
+
+    private static <T extends BaseModel & Mergable<T>> MergePair<T> mergeAPIData(List<T> persistedEntries, List<T> apiEntries, final MergeOperation<T> operation) {
 
         Map<String, T> mergedMap = new HashMap<>();
 
@@ -137,6 +127,37 @@ public class DatabaseManager {
         }
 
         Collection<T> saveList = mergedMap.values();
+
+        DatabaseDefinition database = FlowManager.getDatabase(AppDatabase.class);
+
+        database.beginTransactionAsync(new ProcessModelTransaction.Builder<>(
+                        new ProcessModelTransaction.ProcessModel<T>() {
+                            @Override
+                            public void processModel(T instance, DatabaseWrapper wrapper) {
+                                instance.save();
+                                if (operation != null) {
+                                    operation.didPersist(instance);
+                                }
+                            }
+                        }
+                ).addAll(saveList).build()
+        ).build().execute();
+
+        if (entriesToDelete.size() > 0) {
+            ProcessModelTransaction<T> deleteProcessModelTransaction = new ProcessModelTransaction.Builder<>(
+                    new ProcessModelTransaction.ProcessModel<T>() {
+
+                        @Override
+                        public void processModel(T instance, DatabaseWrapper wrapper) {
+                            instance.delete();
+                            if (operation != null) {
+                                operation.didDelete(instance);
+                            }
+                        }
+                    }
+            ).addAll(entriesToDelete).build();
+            database.beginTransactionAsync(deleteProcessModelTransaction).build().execute();
+        }
 
         return new MergePair<T>(saveList, entriesToDelete);
     }
