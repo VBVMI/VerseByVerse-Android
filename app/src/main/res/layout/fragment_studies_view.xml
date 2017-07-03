@@ -1,14 +1,16 @@
 <android.support.design.widget.CoordinatorLayout
+    android:id="@+id/content_frame"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:tag="@string/mainContentTag">
 
   <android.support.design.widget.AppBarLayout
       android:id="@+id/appbar"
-      android:layout_height="wrap_content"
-      android:layout_width="match_parent">
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/studiesToolar"
@@ -17,7 +19,7 @@
     </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.TabLayout
-        android:id="@+id/tabs"
+        android:id="@+id/studiesTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabMode="scrollable">
@@ -25,10 +27,9 @@
     </android.support.design.widget.TabLayout>
   </android.support.design.widget.AppBarLayout>
 
-  <android.support.v4.widget.NestedScrollView
+  <android.support.v4.view.ViewPager
+      android:id="@+id/studiesContainer"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
-
-  </android.support.v4.widget.NestedScrollView>
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </android.support.design.widget.CoordinatorLayout>

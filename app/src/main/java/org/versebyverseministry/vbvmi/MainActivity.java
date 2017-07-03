@@ -7,7 +7,9 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import org.versebyverseministry.vbvmi.api.APIManager;
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements StudiesView.OnFra
             if(_selectedFragment != null) {
                 transaction.remove(_selectedFragment);
             }
-            transaction.add(R.id.content, selectedFragment);
+            transaction.add(R.id.main_content, selectedFragment, "MAIN_CONTENT_TAG");
             transaction.commit();
             _selectedFragment = selectedFragment;
             return true;
@@ -55,15 +57,18 @@ public class MainActivity extends AppCompatActivity implements StudiesView.OnFra
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        _selectedFragment = getSupportFragmentManager().findFragmentByTag("MAIN_CONTENT_TAG");
+        if (_selectedFragment == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            _selectedFragment = StudiesView.newInstance("ah", "hah");
+            transaction.add(R.id.main_content, _selectedFragment, "MAIN_CONTENT_TAG");
+            transaction.commit();
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        _selectedFragment = StudiesView.newInstance("ah", "hah");
-        transaction.add(R.id.content, _selectedFragment);
-        transaction.commit();
+            APIManager.getInstance().downloadStudies();
+            APIManager.getInstance().downloadCategories();
+        }
 
-        APIManager.getInstance().downloadStudies();
 
-        APIManager.getInstance().downloadCategories();
     }
 
     @Override
