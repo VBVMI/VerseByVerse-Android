@@ -82,7 +82,14 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                multistack.setSelectedStack(StackType.values()[item.getOrder()].name());
+                switch (item.getItemId()) {
+                    case R.id.navigation_studies:
+                        multistack.setSelectedStack(STUDIES.name());
+                        break;
+                    case R.id.navigation_answers:
+                        multistack.setSelectedStack(ANSWERS.name());
+                        break;
+                }
                 return true;
             }
         });
@@ -210,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         AnimatorSet set = new AnimatorSet();
         set.play(ObjectAnimator.ofFloat(from, View.TRANSLATION_X, fromTranslation));
         set.play(ObjectAnimator.ofFloat(to, View.TRANSLATION_X, toTranslation, 0));
+        set.setDuration((long) 200);
         return set;
     }
 }

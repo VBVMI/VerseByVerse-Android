@@ -3,18 +3,14 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
-      android:id="@+id/navigation_home"
+      android:id="@+id/navigation_studies"
       android:icon="@drawable/ic_bible_studies_black_24dp"
       android:title="@string/title_studies"/>
 
   <item
-      android:id="@+id/navigation_dashboard"
+      android:id="@+id/navigation_answers"
       android:icon="@drawable/ic_dashboard_black_24dp"
-      android:title="@string/title_dashboard"/>
-
-  <item
-      android:id="@+id/navigation_notifications"
-      android:icon="@drawable/ic_notifications_black_24dp"
-      android:title="@string/title_notifications"/>
+      android:title="@string/title_dashboard"
+      />
 
 </menu>

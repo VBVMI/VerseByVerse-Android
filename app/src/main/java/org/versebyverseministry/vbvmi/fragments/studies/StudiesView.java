@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.zhuinden.simplestack.Backstack;
+import com.zhuinden.simplestack.KeyContextWrapper;
 
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.model.Category;
@@ -92,13 +93,14 @@ public class StudiesView extends LinearLayout {
 
         ButterKnife.bind(this);
 
-        configureCategoryPager();
-        tabLayout.setupWithViewPager(viewPager);
+        //configureCategoryPager();
+        //tabLayout.setupWithViewPager(viewPager);
     }
 
     private void configureCategoryPager() {
         List<Category> categories = SQLite.select().from(Category.class).orderBy(Category_Table.order, true).queryList();
-        mSectionsPagerAdapter = new SectionsPagerAdapter(((AppCompatActivity)getContext()).getSupportFragmentManager(), categories);
+        AppCompatActivity activity = (AppCompatActivity) ((KeyContextWrapper)getContext()).getBaseContext();
+        mSectionsPagerAdapter = new SectionsPagerAdapter(activity.getSupportFragmentManager(), categories);
         viewPager.setAdapter(mSectionsPagerAdapter);
     }
 
