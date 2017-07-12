@@ -7,4 +7,5 @@
   <color name="colorDimWhite">#EEEEEE</color>
 
   <color name="colorUnselectedText">#616161</color>
+  <color name="colorGridBackground">#e0e0e0</color>
 </resources>

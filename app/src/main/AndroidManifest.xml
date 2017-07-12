@@ -17,7 +17,7 @@
         android:value="GlideModule"/>
 
     <activity
-        android:name=".MainActivity"
+        android:name=".application.MainActivity"
         android:label="@string/app_name"
         android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
@@ -30,6 +30,13 @@
         android:name=".StudiesActivity"
         android:label="@string/title_activity_studies"
         android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+    <activity
+        android:name=".ScrollingActivity"
+        android:label="@string/title_activity_scrolling"
+        android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+    <activity android:name=".StudyActivity">
     </activity>
   </application>
 
