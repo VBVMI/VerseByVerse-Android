@@ -1,5 +1,7 @@
 package org.versebyverseministry.vbvmi.fragments.studies;
 
+import android.support.v4.app.Fragment;
+
 import com.google.auto.value.AutoValue;
 
 import org.versebyverseministry.vbvmi.R;
@@ -13,11 +15,6 @@ import org.versebyverseministry.vbvmi.application.MainActivity;
 @AutoValue
 public abstract class StudiesKey extends Key {
 
-    @Override
-    public int layout() {
-        return R.layout.key_studies;
-    }
-
     public static StudiesKey create() {
         return new AutoValue_StudiesKey();
     }
@@ -25,5 +22,15 @@ public abstract class StudiesKey extends Key {
     @Override
     public String stackIdentifier() {
         return MainActivity.StackType.STUDIES.name();
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return "StudiesKey";
+    }
+
+    @Override
+    public Fragment createFragment() {
+        return StudiesFragment.newInstance();
     }
 }

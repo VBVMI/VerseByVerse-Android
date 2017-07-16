@@ -1,22 +1,23 @@
-package org.versebyverseministry.vbvmi.fragments.answers;
+package org.versebyverseministry.vbvmi.fragments.studies;
 
 import android.support.v4.app.Fragment;
 
 import com.google.auto.value.AutoValue;
 
-import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.application.Key;
 import org.versebyverseministry.vbvmi.application.MainActivity;
 
 /**
- * Created by thomascarey on 12/07/17.
+ * Created by thomascarey on 16/07/17.
  */
 
 @AutoValue
-public abstract class AnswersKey extends Key {
+public abstract class StudyKey extends Key {
 
-    public static AnswersKey create() {
-        return new AutoValue_AnswersKey();
+    abstract String studyId();
+
+    public static StudyKey create(String studyId) {
+        return new AutoValue_StudyKey(studyId);
     }
 
     @Override
@@ -26,11 +27,11 @@ public abstract class AnswersKey extends Key {
 
     @Override
     public String getFragmentTag() {
-        return "AnswersKey";
+        return "StudyKey";
     }
 
     @Override
     public Fragment createFragment() {
-        return AnswersFragment.newInstance("Answers", "FRAGMENT");
+        return StudyFragment.newInstance(studyId(),"Study");
     }
 }

@@ -9,8 +9,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -31,6 +34,8 @@ import org.versebyverseministry.vbvmi.fragments.studies.StudiesKey;
 import org.versebyverseministry.vbvmi.util.Multistack;
 import org.versebyverseministry.vbvmi.util.ViewUtils;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -38,6 +43,8 @@ import static org.versebyverseministry.vbvmi.application.MainActivity.StackType.
 import static org.versebyverseministry.vbvmi.application.MainActivity.StackType.ANSWERS;
 
 public class MainActivity extends AppCompatActivity implements StateChanger {
+
+    private static final String TAG = "MainActivity";
 
     public enum StackType {
         STUDIES,
@@ -78,15 +85,24 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         APIManager.getInstance().downloadStudies();
         APIManager.getInstance().downloadCategories();
 
-
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (previousFragment != null) {
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().disallowAddToBackStack();
+                    fragmentTransaction.remove(previousFragment);
+                    fragmentTransaction.commit();
+                }
                 switch (item.getItemId()) {
                     case R.id.navigation_studies:
+
+
                         multistack.setSelectedStack(STUDIES.name());
                         break;
                     case R.id.navigation_answers:
+
+
+
                         multistack.setSelectedStack(ANSWERS.name());
                         break;
                 }
@@ -125,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        multistack.persistViewToState(root.getChildAt(0));
+//        multistack.persistViewToState(root.getChildAt(0));
         multistack.onSaveInstanceState(outState);
     }
 
@@ -146,39 +162,41 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         return super.getSystemService(name);
     }
 
-    private void exchangeViewForKey(Key newKey, final int direction) {
-        multistack.persistViewToState(root.getChildAt(0));
-        multistack.setSelectedStack(newKey.stackIdentifier());
-        Context newContext = new KeyContextWrapper(this, newKey);
-        final View previousView = root.getChildAt(0);
-        final View newView = LayoutInflater.from(newContext).inflate(newKey.layout(), root, false);
-        multistack.restoreViewFromState(newView);
-        root.addView(newView);
-
-        if(direction == StateChange.REPLACE) {
-            finishStateChange(previousView);
-        } else {
-            isAnimating = true;
-
-            ViewUtils.waitForMeasure(newView, new ViewUtils.OnMeasuredCallback() {
-                @Override
-                public void onMeasured(View view, int width, int height) {
-                    runAnimation(previousView, newView, direction, new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            isAnimating = false;
-                            finishStateChange(previousView);
-                        }
-                    });
-                }
-            });
-        }
-    }
+//    private void exchangeViewForKey(Key newKey, final int direction) {
+//        multistack.persistViewToState(root.getChildAt(0));
+//        multistack.setSelectedStack(newKey.stackIdentifier());
+//        Context newContext = new KeyContextWrapper(this, newKey);
+//        final View previousView = root.getChildAt(0);
+//        final View newView = LayoutInflater.from(newContext).inflate(newKey.layout(), root, false);
+//        multistack.restoreViewFromState(newView);
+//        root.addView(newView);
+//
+//        if(direction == StateChange.REPLACE) {
+//            finishStateChange(previousView);
+//        } else {
+//            isAnimating = true;
+//
+//            ViewUtils.waitForMeasure(newView, new ViewUtils.OnMeasuredCallback() {
+//                @Override
+//                public void onMeasured(View view, int width, int height) {
+//                    runAnimation(previousView, newView, direction, new AnimatorListenerAdapter() {
+//                        @Override
+//                        public void onAnimationEnd(Animator animation) {
+//                            isAnimating = false;
+//                            finishStateChange(previousView);
+//                        }
+//                    });
+//                }
+//            });
+//        }
+//    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         return !isAnimating && super.dispatchTouchEvent(ev); // unfortunately, we must manually make sure you can't navigate while you're animating.
     }
+
+    Fragment previousFragment;
 
     @Override
     public void handleStateChange(@NonNull StateChange stateChange, @NonNull Callback completionCallback) {
@@ -187,37 +205,67 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
             completionCallback.stateChangeComplete();
             return;
         }
-        int direction = StateChange.REPLACE;
-        if(root.getChildAt(0) != null) {
-            Key previousKey = Backstack.getKey(root.getChildAt(0).getContext());
-            StackType previousStack = StackType.valueOf(previousKey.stackIdentifier());
-            StackType newStack = StackType.valueOf(((Key) stateChange.topNewState()).stackIdentifier());
-            direction = previousStack.ordinal() < newStack.ordinal() ? StateChange.FORWARD : previousStack.ordinal() > newStack.ordinal() ? StateChange.BACKWARD : StateChange.REPLACE;
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().disallowAddToBackStack();
+
+        if(stateChange.getDirection() == StateChange.FORWARD) {
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+        } else if(stateChange.getDirection() == StateChange.BACKWARD) {
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
         }
-        exchangeViewForKey((Key) stateChange.topNewState(), direction);
+
+        for(Object _oldKey : stateChange.getPreviousState()) {
+            Key oldKey = (Key) _oldKey;
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(oldKey.getFragmentTag());
+            if(fragment != null) {
+                if(!stateChange.getNewState().contains(oldKey)) {
+                    Log.i(TAG, "Old key is NOT in new state: removing [" + oldKey + "]");
+                    fragmentTransaction.remove(fragment);
+                } else if(!fragment.isDetached()) {
+                    Log.i(TAG, "Old key is in new state, but not showing: detaching [" + oldKey + "]");
+                    fragmentTransaction.detach(fragment);
+                }
+            }
+        }
+
+        for(Object _newKey : stateChange.getNewState()) {
+            Key newKey = (Key) _newKey;
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(newKey.getFragmentTag());
+            previousFragment = fragment;
+            if(newKey.equals(stateChange.topNewState())) {
+                if(fragment != null) {
+                    if(fragment.isDetached()) {
+                        Log.i(TAG, "New key is top state but detached: reattaching [" + newKey + "]");
+                        fragmentTransaction.attach(fragment);
+                    } else {
+                        Log.i(TAG, "New key is top state but already attached: probably config change for [" + newKey + "]");
+                    }
+                } else {
+                    Log.i(TAG, "New fragment does not exist yet, adding [" + newKey + "]");
+                    fragment = newKey.createFragment();
+                    previousFragment = fragment;
+                    fragmentTransaction.add(R.id.root, fragment, newKey.getFragmentTag());
+                }
+            } else {
+                if(fragment != null && !fragment.isDetached()) {
+                    Log.i(TAG, "New fragment is not active fragment. It should be detached: [" + newKey + "]");
+                    fragmentTransaction.detach(fragment);
+                } else {
+                    Log.i(TAG, "New fragment is already detached or doesn't exist, as expected: [" + newKey + "]");
+                }
+            }
+        }
+        fragmentTransaction.commitNow();
         completionCallback.stateChangeComplete();
-    }
 
-    private void finishStateChange(View previousView) {
-        root.removeView(previousView);
-    }
-
-    // animation
-    private void runAnimation(final View previousView, final View newView, int direction, AnimatorListenerAdapter animatorListenerAdapter) {
-        Animator animator = createSegue(previousView, newView, direction);
-        animator.addListener(animatorListenerAdapter);
-        animator.start();
-    }
-
-    private Animator createSegue(View from, View to, int direction) {
-        boolean backward = direction == StateChange.BACKWARD;
-        int fromTranslation = backward ? from.getWidth() : -from.getWidth();
-        int toTranslation = backward ? -to.getWidth() : to.getWidth();
-
-        AnimatorSet set = new AnimatorSet();
-        set.play(ObjectAnimator.ofFloat(from, View.TRANSLATION_X, fromTranslation));
-        set.play(ObjectAnimator.ofFloat(to, View.TRANSLATION_X, toTranslation, 0));
-        set.setDuration((long) 200);
-        return set;
+//        int direction = StateChange.REPLACE;
+//        if(root.getChildAt(0) != null) {
+//            Key previousKey = Backstack.getKey(root.getChildAt(0).getContext());
+//            StackType previousStack = StackType.valueOf(previousKey.stackIdentifier());
+//            StackType newStack = StackType.valueOf(((Key) stateChange.topNewState()).stackIdentifier());
+//            direction = previousStack.ordinal() < newStack.ordinal() ? StateChange.FORWARD : previousStack.ordinal() > newStack.ordinal() ? StateChange.BACKWARD : StateChange.REPLACE;
+//        }
+//        exchangeViewForKey((Key) stateChange.topNewState(), direction);
+//        completionCallback.stateChangeComplete();
     }
 }
