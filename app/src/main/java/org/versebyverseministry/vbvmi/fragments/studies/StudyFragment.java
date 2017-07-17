@@ -2,14 +2,30 @@ package org.versebyverseministry.vbvmi.fragments.studies;
 
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
+import com.raizlabs.android.dbflow.sql.language.SQLOperator;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
+import org.versebyverseministry.vbvmi.model.Lesson;
+import org.versebyverseministry.vbvmi.model.Lesson_Table;
+import org.versebyverseministry.vbvmi.model.Study;
+import org.versebyverseministry.vbvmi.model.Study_Table;
+import org.w3c.dom.Text;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,17 +36,21 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class StudyFragment extends AbstractFragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_STUDY_ID = "ARG_STUDY_ID";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Study study;
+
+    private List<Lesson> lessons;
 
     @BindView(R.id.textView)
     TextView textView;
+
+    @BindView(R.id.textView2)
+    TextView textView2;
+
+    private FlowContentObserver observer;
+
+    private FlowContentObserver.OnModelStateChangedListener modelStateChangedListener;
 
     public StudyFragment() {
         // Required empty public constructor
@@ -40,16 +60,14 @@ public class StudyFragment extends AbstractFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param studyId The id of the Study.
      * @return A new instance of fragment StudyFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static StudyFragment newInstance(String param1, String param2) {
+    public static StudyFragment newInstance(String studyId) {
         StudyFragment fragment = new StudyFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_STUDY_ID, studyId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,10 +75,6 @@ public class StudyFragment extends AbstractFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -70,9 +84,53 @@ public class StudyFragment extends AbstractFragment {
         View v = inflater.inflate(R.layout.fragment_study, container, false);
         unbinder = ButterKnife.bind(this, v);
 
-        textView.setText(mParam1 + " " + mParam2);
+        final Handler mainHandler = new Handler(getContext().getMainLooper());
+
+        modelStateChangedListener = new FlowContentObserver.OnModelStateChangedListener() {
+            @Override
+            public void onModelStateChanged(@Nullable Class<?> table, BaseModel.Action action, @NonNull SQLOperator[] primaryKeyValues) {
+                Log.d("LESSON", "state changed");
+
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        configureView();
+                    }
+                });
+            }
+        };
+
+        observer = new FlowContentObserver();
+        observer.addModelChangeListener(modelStateChangedListener);
+        observer.registerForContentChanges(getContext(), Lesson.class);
+
+        configureView();
 
         return v;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("LESSON", "onPause: Lessons");
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d("LESSON", "onDestroy: Lessons");
+        observer.removeModelChangeListener(modelStateChangedListener);
+        observer.unregisterForContentChanges(getContext());
+        super.onDestroy();
+    }
+
+    private void configureView() {
+        String studyId = getArguments().getString(ARG_STUDY_ID);
+        study = SQLite.select().from(Study.class).where(Study_Table.id.eq(studyId)).querySingle();
+        lessons = SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).queryList();
+
+        textView.setText(study.title);
+
+        textView2.setText("There are " + lessons.size() + " lessons downloaded");
     }
 
 }

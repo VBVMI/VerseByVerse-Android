@@ -32,6 +32,6 @@ public abstract class StudyKey extends Key {
 
     @Override
     public Fragment createFragment() {
-        return StudyFragment.newInstance(studyId(),"Study");
+        return StudyFragment.newInstance(studyId());
     }
 }

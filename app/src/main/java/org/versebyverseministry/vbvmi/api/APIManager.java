@@ -1,10 +1,13 @@
 package org.versebyverseministry.vbvmi.api;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.versebyverseministry.vbvmi.model.Category;
+import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Study;
+import org.versebyverseministry.vbvmi.model.pojo.Lessons;
 import org.versebyverseministry.vbvmi.model.pojo.Studies;
 
 import java.util.List;
@@ -79,6 +82,30 @@ public class APIManager {
 
             @Override
             public void onFailure(Call<List<Category>> call, Throwable t) {
+                call.cancel();
+            }
+        });
+
+    }
+
+    public void downloadLessons(@NonNull final String studyId) {
+
+        Call<Lessons> call = apiInterface.doGetLessons(studyId);
+        call.enqueue(new Callback<Lessons>() {
+            @Override
+            public void onResponse(Call<Lessons> call, final Response<Lessons> response) {
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Lessons lessons = response.body();
+                        List<Lesson> lessonList = lessons.getLessons();
+                        DatabaseManager.getInstance().saveLessons(lessonList, studyId);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Lessons> call, Throwable t) {
                 call.cancel();
             }
         });

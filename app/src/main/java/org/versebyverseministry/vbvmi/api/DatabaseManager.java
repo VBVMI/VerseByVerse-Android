@@ -5,6 +5,7 @@ import android.support.v4.util.Pair;
 
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -14,6 +15,10 @@ import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import org.versebyverseministry.vbvmi.database.AppDatabase;
 import org.versebyverseministry.vbvmi.model.Category;
+import org.versebyverseministry.vbvmi.model.Lesson;
+import org.versebyverseministry.vbvmi.model.Lesson_Table;
+import org.versebyverseministry.vbvmi.model.Lesson_Topic;
+import org.versebyverseministry.vbvmi.model.Lesson_Topic_Table;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.model.Study_Topic;
 import org.versebyverseministry.vbvmi.model.Study_Topic_Table;
@@ -69,6 +74,40 @@ public class DatabaseManager {
             @Override
             public void didDelete(Study instance) {
                 SQLite.delete().from(Study_Topic.class).where(Study_Topic_Table.study_id.eq(instance.id)).execute();
+            }
+        });
+    }
+
+    public void saveLessons(List<Lesson> lessons, String studyId) {
+        for(Lesson lesson : lessons) {
+            lesson.studyId = studyId;
+        }
+
+        List<Lesson> persistedLessons = SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).queryList();
+
+        mergeAPIData(persistedLessons, lessons, new MergeOperation<Lesson>() {
+            @Override
+            public void didPersist(Lesson instance) {
+                // find all the relevant topic relationships and update them
+                List<Lesson_Topic> lessonTopics = SQLite.select().from(Lesson_Topic.class).where(Lesson_Topic_Table.lesson_id.eq(instance.id)).queryList();
+
+                for(Lesson_Topic lesson_topic : lessonTopics) {
+                    lesson_topic.delete();
+                }
+
+                for(Topic t: instance.topics) {
+                    t.save();
+
+                    Lesson_Topic lessonTopic = new Lesson_Topic();
+                    lessonTopic.setLesson(instance);
+                    lessonTopic.setTopic(t);
+                    lessonTopic.save();
+                }
+            }
+
+            @Override
+            public void didDelete(Lesson instance) {
+                SQLite.delete().from(Lesson_Topic.class).where(Lesson_Topic_Table.lesson_id.eq(instance.id)).execute();
             }
         });
     }
@@ -130,6 +169,10 @@ public class DatabaseManager {
 
         DatabaseDefinition database = FlowManager.getDatabase(AppDatabase.class);
 
+        FlowContentObserver observer = new FlowContentObserver();
+
+        observer.beginTransaction();
+
         database.beginTransactionAsync(new ProcessModelTransaction.Builder<>(
                         new ProcessModelTransaction.ProcessModel<T>() {
                             @Override
@@ -158,6 +201,8 @@ public class DatabaseManager {
             ).addAll(entriesToDelete).build();
             database.beginTransactionAsync(deleteProcessModelTransaction).build().execute();
         }
+
+        observer.endTransactionAndNotify();
 
         return new MergePair<T>(saveList, entriesToDelete);
     }

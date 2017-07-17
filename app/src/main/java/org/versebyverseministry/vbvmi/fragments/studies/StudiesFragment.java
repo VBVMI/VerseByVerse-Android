@@ -31,6 +31,7 @@ import com.zhuinden.simplestack.Backstack;
 import com.zhuinden.simplestack.BackstackDelegate;
 
 import org.versebyverseministry.vbvmi.R;
+import org.versebyverseministry.vbvmi.api.APIManager;
 import org.versebyverseministry.vbvmi.application.Key;
 import org.versebyverseministry.vbvmi.application.MainActivity;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
@@ -228,6 +229,8 @@ public class StudiesFragment extends AbstractFragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Log.d("Item", "onItemClick: " + position + studies.get(position).title);
+                    Study study = studies.get(position);
+                    APIManager.getInstance().downloadLessons(study.id);
 
                     ((BackstackDelegate)ServiceLocator.getService(getContext(), MainActivity.StackType.STUDIES.name())).getBackstack().goTo(StudyKey.create(studies.get(position).id));
 
