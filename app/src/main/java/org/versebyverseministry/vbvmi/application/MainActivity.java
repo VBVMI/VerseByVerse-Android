@@ -109,12 +109,22 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         multistack.setStateChanger(this);
     }
 
+
+    public Multistack getMultistack() {
+        return multistack;
+    }
+
     private void removePreviousFragment() {
         if (previousFragment != null) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().disallowAddToBackStack();
             fragmentTransaction.remove(previousFragment);
             fragmentTransaction.commit();
         }
+    }
+
+    public static MainActivity get(Context context) {
+        // noinspection ResourceType
+        return (MainActivity) context.getSystemService(TAG);
     }
 
     @Override
@@ -161,6 +171,9 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
             if(stack != null) {
                 return stack;
             }
+        }
+        if(TAG.equals(name)) {
+            return this;
         }
         return super.getSystemService(name);
     }

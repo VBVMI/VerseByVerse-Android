@@ -47,6 +47,8 @@ public class DatabaseManager {
     private DatabaseManager() {
     }
 
+    public static FlowContentObserver observer = new FlowContentObserver();
+
     public void saveStudies(List<Study> studies) {
         // In order to save these studies we must first fetch all the existing ones and create merge and delete lists
         List<Study> persistedStudies = SQLite.select().from(Study.class).queryList();
@@ -169,38 +171,49 @@ public class DatabaseManager {
 
         DatabaseDefinition database = FlowManager.getDatabase(AppDatabase.class);
 
-        FlowContentObserver observer = new FlowContentObserver();
+        //FlowContentObserver observer = new FlowContentObserver();
 
         observer.beginTransaction();
 
-        database.beginTransactionAsync(new ProcessModelTransaction.Builder<>(
-                        new ProcessModelTransaction.ProcessModel<T>() {
-                            @Override
-                            public void processModel(T instance, DatabaseWrapper wrapper) {
-                                instance.save();
-                                if (operation != null) {
-                                    operation.didPersist(instance);
-                                }
-                            }
-                        }
-                ).addAll(saveList).build()
-        ).build().execute();
-
-        if (entriesToDelete.size() > 0) {
-            ProcessModelTransaction<T> deleteProcessModelTransaction = new ProcessModelTransaction.Builder<>(
-                    new ProcessModelTransaction.ProcessModel<T>() {
-
-                        @Override
-                        public void processModel(T instance, DatabaseWrapper wrapper) {
-                            instance.delete();
-                            if (operation != null) {
-                                operation.didDelete(instance);
-                            }
-                        }
-                    }
-            ).addAll(entriesToDelete).build();
-            database.beginTransactionAsync(deleteProcessModelTransaction).build().execute();
+        observer.setNotifyAllUris(false);
+        for(T saveItem : saveList) {
+            saveItem.save();
+            if (operation != null) {
+                operation.didPersist(saveItem);
+            }
         }
+
+        for(T deleteItem : entriesToDelete) {
+            deleteItem.delete();
+            if (operation != null) {
+                operation.didDelete(deleteItem);
+            }
+        }
+
+//        database.beginTransactionAsync(new ProcessModelTransaction.Builder<>(
+//                        new ProcessModelTransaction.ProcessModel<T>() {
+//                            @Override
+//                            public void processModel(T instance, DatabaseWrapper wrapper) {
+//                                instance.save();
+//
+//                            }
+//                        }
+//                ).addAll(saveList).build()
+//        ).build().execute();
+
+//        if (entriesToDelete.size() > 0) {
+//            ProcessModelTransaction<T> deleteProcessModelTransaction = new ProcessModelTransaction.Builder<>(
+//                    new ProcessModelTransaction.ProcessModel<T>() {
+//
+//                        @Override
+//                        public void processModel(T instance, DatabaseWrapper wrapper) {
+//                            instance.delete();
+//
+//                        }
+//                    }
+//            ).addAll(entriesToDelete).build();
+//            database.beginTransactionAsync(deleteProcessModelTransaction).build().execute();
+//        }
 
         observer.endTransactionAndNotify();
 

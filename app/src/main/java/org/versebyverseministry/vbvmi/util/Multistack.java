@@ -115,6 +115,10 @@ public class Multistack {
         }
     }
 
+    public String getSelectedStackIdentifier() {
+        return this.selectedStack;
+    }
+
     public static class NonConfigurationInstance {
         Map<String, BackstackDelegate.NonConfigurationInstance> nonConfigInstances = new HashMap<>();
 

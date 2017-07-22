@@ -8,4 +8,5 @@
 
   <color name="colorUnselectedText">#616161</color>
   <color name="colorGridBackground">#e0e0e0</color>
+  <color name="tableCellText">#434343</color>
 </resources>

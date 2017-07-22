@@ -17,6 +17,10 @@ public abstract class AbstractFragment extends Fragment {
     protected Unbinder unbinder;
     private Bitmap b = null;
 
+    public boolean shouldBitmapUI() {
+        return false;
+    }
+
     @Override public void onDestroyView() {
         if (b != null) {
             BitmapDrawable bd = new BitmapDrawable(b);
@@ -52,7 +56,9 @@ public abstract class AbstractFragment extends Fragment {
 
     @Override
     public void onPause() {
-        b = loadBitmapFromView(getView());
+        if(shouldBitmapUI()) {
+            b = loadBitmapFromView(getView());
+        }
         super.onPause();
     }
 

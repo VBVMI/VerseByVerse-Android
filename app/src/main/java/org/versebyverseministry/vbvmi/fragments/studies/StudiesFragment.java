@@ -80,6 +80,11 @@ public class StudiesFragment extends AbstractFragment {
         // Required empty public constructor
     }
 
+    @Override
+    public boolean shouldBitmapUI() {
+        return true;
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.

@@ -1,11 +1,18 @@
 package org.versebyverseministry.vbvmi.fragments.studies;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,18 +20,23 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
+import com.raizlabs.android.dbflow.runtime.OnTableChangedListener;
 import com.raizlabs.android.dbflow.sql.language.SQLOperator;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.versebyverseministry.vbvmi.R;
+import org.versebyverseministry.vbvmi.api.DatabaseManager;
+import org.versebyverseministry.vbvmi.application.MainActivity;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.model.Study_Table;
+import org.versebyverseministry.vbvmi.util.Multistack;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,19 +54,26 @@ public class StudyFragment extends AbstractFragment {
 
     private List<Lesson> lessons;
 
-    @BindView(R.id.textView)
-    TextView textView;
-
-    @BindView(R.id.textView2)
-    TextView textView2;
-
     private FlowContentObserver observer;
 
     private FlowContentObserver.OnModelStateChangedListener modelStateChangedListener;
 
+    private OnTableChangedListener tableChangedListener;
+
     public StudyFragment() {
         // Required empty public constructor
     }
+
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.container)
+    ViewPager mViewPager;
+
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
 
     /**
      * Use this factory method to create a new instance of
@@ -86,25 +105,45 @@ public class StudyFragment extends AbstractFragment {
 
         final Handler mainHandler = new Handler(getContext().getMainLooper());
 
-        modelStateChangedListener = new FlowContentObserver.OnModelStateChangedListener() {
+        tableChangedListener = new OnTableChangedListener() {
             @Override
-            public void onModelStateChanged(@Nullable Class<?> table, BaseModel.Action action, @NonNull SQLOperator[] primaryKeyValues) {
-                Log.d("LESSON", "state changed");
+            public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
+                Log.d("LESSON", "table changed " + action.name() + " on Table " + tableChanged);
+                if(tableChanged.toString().contains("Lesson")) {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            configureView();
+                        }
+                    });
+                }
 
-                mainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        configureView();
-                    }
-                });
             }
         };
 
-        observer = new FlowContentObserver();
-        observer.addModelChangeListener(modelStateChangedListener);
+
+
+
+        observer = DatabaseManager.observer;
+        observer.setNotifyAllUris(false);
+        observer.addOnTableChangedListener(tableChangedListener);
         observer.registerForContentChanges(getContext(), Lesson.class);
 
         configureView();
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager(), new SECTION[]{SECTION.LESSONS, SECTION.INFO});
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        MainActivity.get(getContext()).setSupportActionBar(toolbar);
+        MainActivity.get(getContext()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.get(getContext()).getMultistack().onBackPressed();
+            }
+        });
 
         return v;
     }
@@ -118,8 +157,9 @@ public class StudyFragment extends AbstractFragment {
     @Override
     public void onDestroy() {
         Log.d("LESSON", "onDestroy: Lessons");
-        observer.removeModelChangeListener(modelStateChangedListener);
+        observer.removeTableChangedListener(tableChangedListener);
         observer.unregisterForContentChanges(getContext());
+
         super.onDestroy();
     }
 
@@ -128,9 +168,64 @@ public class StudyFragment extends AbstractFragment {
         study = SQLite.select().from(Study.class).where(Study_Table.id.eq(studyId)).querySingle();
         lessons = SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).queryList();
 
-        textView.setText(study.title);
+        if (toolbar != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                toolbar.setTitle(Html.fromHtml(study.title, Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                toolbar.setTitle(Html.fromHtml(study.title).toString());
+            }
+        }
+    }
 
-        textView2.setText("There are " + lessons.size() + " lessons downloaded");
+    public enum SECTION {
+        LESSONS,
+        COMPLETED,
+        INFO
+    }
+
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SECTION[] sections;
+
+        public SectionsPagerAdapter(FragmentManager fm, SECTION[] sections) {
+            super(fm);
+            this.sections = sections;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            SECTION section = sections[position];
+            switch (section) {
+                case LESSONS:
+                    return LessonFragment.newInstance(study.id);
+                case COMPLETED:
+                    return null;
+                case INFO:
+                    return StudyInfoFragment.newInstance(study.id);
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return sections.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            SECTION section = sections[position];
+            switch (section) {
+                case LESSONS:
+                    return "Lessons";
+                case COMPLETED:
+                    return "Completed";
+                case INFO:
+                    return "Info";
+                default:
+                    return null;
+            }
+        }
     }
 
 }

@@ -59,6 +59,11 @@ public class Lesson extends BaseModel implements Mergable<Lesson> {
     public String videoSource;
 
     @Column
+    @SerializedName("index")
+    @Expose
+    public int index;
+
+    @Column
     @SerializedName("title")
     @Expose
     public String title;
@@ -107,5 +112,6 @@ public class Lesson extends BaseModel implements Mergable<Lesson> {
         this.studentAidSource = apiVersion.studentAidSource;
         this.topics = apiVersion.topics;
         this.studyId = apiVersion.studyId;
+        this.index = apiVersion.index;
     }
 }
