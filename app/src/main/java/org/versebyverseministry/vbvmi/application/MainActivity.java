@@ -88,23 +88,19 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (previousFragment != null) {
-                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().disallowAddToBackStack();
-                    fragmentTransaction.remove(previousFragment);
-                    fragmentTransaction.commit();
-                }
+                String newStack = null;
                 switch (item.getItemId()) {
                     case R.id.navigation_studies:
-
-
-                        multistack.setSelectedStack(STUDIES.name());
+                        newStack = STUDIES.name();
                         break;
                     case R.id.navigation_answers:
-
-
-
-                        multistack.setSelectedStack(ANSWERS.name());
+                        newStack = ANSWERS.name();
                         break;
+                }
+
+                if (multistack.getSelectedStackIdentifier() != newStack) {
+                    removePreviousFragment();
+                    multistack.setSelectedStack(newStack);
                 }
                 return true;
             }
@@ -113,6 +109,13 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         multistack.setStateChanger(this);
     }
 
+    private void removePreviousFragment() {
+        if (previousFragment != null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().disallowAddToBackStack();
+            fragmentTransaction.remove(previousFragment);
+            fragmentTransaction.commit();
+        }
+    }
 
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
