@@ -1,4 +1,4 @@
-package org.versebyverseministry.vbvmi.fragments.studies;
+package org.versebyverseministry.vbvmi.fragments.studies.study;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,26 +7,26 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.versebyverseministry.vbvmi.R;
-import org.versebyverseministry.vbvmi.fragments.studies.LessonFragment.OnListFragmentInteractionListener;
+import org.versebyverseministry.vbvmi.fragments.studies.study.LessonsFragment.OnLessonFragmentInteractionListener;
 import org.versebyverseministry.vbvmi.model.Lesson;
 
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Lesson} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnLessonFragmentInteractionListener}.
  */
 public class MyLessonRecyclerViewAdapter extends RecyclerView.Adapter<MyLessonRecyclerViewAdapter.ViewHolder> {
 
     private List<Lesson> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnLessonFragmentInteractionListener mListener;
 
     public void setLessons(List<Lesson> newLessons) {
         mValues = newLessons;
         this.notifyDataSetChanged();
     }
 
-    public MyLessonRecyclerViewAdapter(List<Lesson> items, OnListFragmentInteractionListener listener) {
+    public MyLessonRecyclerViewAdapter(List<Lesson> items, OnLessonFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }

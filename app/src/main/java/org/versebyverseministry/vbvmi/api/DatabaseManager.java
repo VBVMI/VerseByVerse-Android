@@ -45,6 +45,7 @@ public class DatabaseManager {
     }
 
     private DatabaseManager() {
+
     }
 
     public static FlowContentObserver observer = new FlowContentObserver();

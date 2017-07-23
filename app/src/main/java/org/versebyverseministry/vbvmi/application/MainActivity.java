@@ -29,8 +29,12 @@ import com.zhuinden.simplestack.StateChanger;
 
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.APIManager;
+import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.answers.AnswersKey;
 import org.versebyverseministry.vbvmi.fragments.studies.StudiesKey;
+import org.versebyverseministry.vbvmi.model.Category;
+import org.versebyverseministry.vbvmi.model.Lesson;
+import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.util.Multistack;
 import org.versebyverseministry.vbvmi.util.ViewUtils;
 
@@ -107,6 +111,12 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         });
 
         multistack.setStateChanger(this);
+
+
+        DatabaseManager.observer.registerForContentChanges(this, Lesson.class);
+        DatabaseManager.observer.registerForContentChanges(this, Category.class);
+        DatabaseManager.observer.registerForContentChanges(this, Study.class);
+
     }
 
 
@@ -160,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
     @Override
     protected void onDestroy() {
+        DatabaseManager.observer.unregisterForContentChanges(this);
         multistack.onDestroy();
         super.onDestroy();
     }

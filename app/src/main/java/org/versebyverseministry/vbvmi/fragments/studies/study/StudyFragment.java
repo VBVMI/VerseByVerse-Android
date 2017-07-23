@@ -1,4 +1,4 @@
-package org.versebyverseministry.vbvmi.fragments.studies;
+package org.versebyverseministry.vbvmi.fragments.studies.study;
 
 
 import android.os.Build;
@@ -17,11 +17,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
 import com.raizlabs.android.dbflow.runtime.OnTableChangedListener;
-import com.raizlabs.android.dbflow.sql.language.SQLOperator;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
@@ -33,10 +31,7 @@ import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.model.Study_Table;
-import org.versebyverseministry.vbvmi.util.Multistack;
-import org.w3c.dom.Text;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -117,17 +112,12 @@ public class StudyFragment extends AbstractFragment {
                         }
                     });
                 }
-
             }
         };
-
-
-
 
         observer = DatabaseManager.observer;
         observer.setNotifyAllUris(false);
         observer.addOnTableChangedListener(tableChangedListener);
-        observer.registerForContentChanges(getContext(), Lesson.class);
 
         configureView();
 
@@ -158,7 +148,6 @@ public class StudyFragment extends AbstractFragment {
     public void onDestroy() {
         Log.d("LESSON", "onDestroy: Lessons");
         observer.removeTableChangedListener(tableChangedListener);
-        observer.unregisterForContentChanges(getContext());
 
         super.onDestroy();
     }
@@ -197,7 +186,7 @@ public class StudyFragment extends AbstractFragment {
             SECTION section = sections[position];
             switch (section) {
                 case LESSONS:
-                    return LessonFragment.newInstance(study.id);
+                    return LessonsFragment.newInstance(study.id);
                 case COMPLETED:
                     return null;
                 case INFO:

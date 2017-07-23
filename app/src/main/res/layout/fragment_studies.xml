@@ -1,20 +1,15 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="org.versebyverseministry.vbvmi.fragments.studies.StudiesFragment$PlaceholderFragment">
-
-
-  <GridView
-      android:id="@+id/studiesGridView"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_alignParentTop="true"
-      android:layout_alignParentLeft="true"
-      android:layout_alignParentStart="true"
-      android:stretchMode="columnWidth"
-      android:numColumns="3"
-      android:verticalSpacing="0dp"
-      android:horizontalSpacing="0dp"
-      android:background="@color/colorGridBackground"/>
-</RelativeLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.RecyclerView
+android:id="@+id/studiesGridView"
+android:name="org.versebyverseministry.vbvmi.fragments.studies.StudiesFragment"
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:layout_marginLeft="16dp"
+android:layout_marginRight="16dp"
+android:background="@color/colorGridBackground"
+app:layoutManager="GridLayoutManager"
+tools:context="org.versebyverseministry.vbvmi.fragments.studies.StudiesFragment"
+tools:listitem="@layout/grid_bible_study_item"/>

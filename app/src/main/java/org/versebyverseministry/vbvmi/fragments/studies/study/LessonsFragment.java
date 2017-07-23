@@ -1,12 +1,10 @@
-package org.versebyverseministry.vbvmi.fragments.studies;
+package org.versebyverseministry.vbvmi.fragments.studies.study;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,22 +21,21 @@ import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
-import org.versebyverseministry.vbvmi.model.Study;
-import org.versebyverseministry.vbvmi.model.Study_Table;
 
 import java.util.List;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnLessonFragmentInteractionListener}
  * interface.
  */
-public class LessonFragment extends AbstractFragment {
+public class LessonsFragment extends AbstractFragment {
 
+    private static final String TAG = "LESSONS_FRAGMENT";
     private static final String ARG_STUDY_ID = "ARG_STUDY_ID";
 
-    private OnListFragmentInteractionListener mListener;
+    private OnLessonFragmentInteractionListener mListener;
 
     private String studyId;
 
@@ -47,11 +44,11 @@ public class LessonFragment extends AbstractFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public LessonFragment() {
+    public LessonsFragment() {
     }
 
-    public static LessonFragment newInstance(String studyId) {
-        LessonFragment fragment = new LessonFragment();
+    public static LessonsFragment newInstance(String studyId) {
+        LessonsFragment fragment = new LessonsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_STUDY_ID, studyId);
         fragment.setArguments(args);
@@ -91,6 +88,7 @@ public class LessonFragment extends AbstractFragment {
         tableChangedListener = new OnTableChangedListener() {
             @Override
             public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
+                Log.d(TAG, "Table Changed: " + tableChanged.toString());
                 if(tableChanged.toString().contains("Lesson")) {
                     mainHandler.post(new Runnable() {
                         @Override
@@ -103,6 +101,7 @@ public class LessonFragment extends AbstractFragment {
         };
 
         DatabaseManager.observer.addOnTableChangedListener(tableChangedListener);
+
 
         return view;
     }
@@ -143,7 +142,7 @@ public class LessonFragment extends AbstractFragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
+    public interface OnLessonFragmentInteractionListener {
         void onListFragmentInteraction(Lesson lesson);
     }
 }

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
   <TextView
       android:id="@+id/textView"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:layout_alignBottom="@+id/bible_study_image_view"
       android:gravity="center_vertical"
       android:text="TextView"
       android:textAlignment="center"/>
@@ -17,15 +18,16 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:scaleType="centerCrop"
->
+      >
 
   </org.versebyverseministry.vbvmi.views.SquareImageView>
 
   <org.versebyverseministry.vbvmi.views.SquareImageView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:scaleType="centerCrop"
       android:background="?attr/selectableItemBackground"
+      android:scaleType="centerCrop"
+      android:id="@+id/topImageView"
       />
 
 </RelativeLayout>

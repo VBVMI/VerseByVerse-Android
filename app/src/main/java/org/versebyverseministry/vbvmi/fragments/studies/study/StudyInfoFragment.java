@@ -1,23 +1,15 @@
-package org.versebyverseministry.vbvmi.fragments.studies;
+package org.versebyverseministry.vbvmi.fragments.studies.study;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -109,7 +101,6 @@ public class StudyInfoFragment extends AbstractFragment {
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadData(sb.toString(), "text/html", "UTF-8");
-
 
         return view;
     }

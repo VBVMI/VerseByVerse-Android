@@ -1,17 +1,18 @@
 package org.versebyverseministry.vbvmi.fragments.studies;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -26,18 +27,21 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
+import com.raizlabs.android.dbflow.runtime.OnTableChangedListener;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.zhuinden.simplestack.Backstack;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.zhuinden.simplestack.BackstackDelegate;
 
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.APIManager;
-import org.versebyverseministry.vbvmi.application.Key;
+import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.application.MainActivity;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
+import org.versebyverseministry.vbvmi.fragments.studies.study.StudyKey;
 import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Category$$Parcelable;
 import org.versebyverseministry.vbvmi.model.Category_Table;
+import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.model.Study_Table;
 import org.versebyverseministry.vbvmi.util.ServiceLocator;
@@ -72,9 +76,11 @@ public class StudiesFragment extends AbstractFragment {
     @BindView(R.id.studiesContainer)
     ViewPager mViewPager;
 
-    private FlowContentObserver observer;
+    @BindView(R.id.studiesToolar)
+    Toolbar toolbar;
 
-    private View cachedView;
+    @BindView(R.id.studiesTabs)
+    TabLayout tabLayout;
 
     public StudiesFragment() {
         // Required empty public constructor
@@ -116,55 +122,21 @@ public class StudiesFragment extends AbstractFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_studies_view, container, false);
-
         unbinder = ButterKnife.bind(this, view);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.studiesToolar);
         toolbar.setTitle("Studies");
-//        // Create the adapter that will return a fragment for each of the three
-//        // primary sections of the activity.
-//
 
-
-
-//        final StudiesView me = this;
-//        final Handler mainHandler = new Handler(getContext().getMainLooper());
-//
-//        observer.addModelChangeListener(new FlowContentObserver.OnModelStateChangedListener() {
-//            @Override
-//            public void onModelStateChanged(@Nullable Class<?> table, BaseModel.Action action, @NonNull SQLOperator[] primaryKeyValues) {
-//                Log.d("VBVMI", "onModelStateChanged: ");
-//
-//                mainHandler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        me.configureCategoryPager();
-//                    }
-//                });
-//
-//            }
-//        });
-
-
-//
-//        // Set up the ViewPager with the sections adapter.
         configureCategoryPager();
-//
-        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.studiesTabs);
+
         tabLayout.setupWithViewPager(mViewPager);
 
         return view;
     }
 
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-
-        observer = new FlowContentObserver();
-        observer.registerForContentChanges(getContext(), Category.class);
     }
 
 
@@ -172,22 +144,7 @@ public class StudiesFragment extends AbstractFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-
-
-//        Handler handler = new Handler(getContext().getMainLooper());
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                // if you dont set the adapter to null then the object will not be garbage collected
-//                mViewPager.setAdapter(null);
-//                mViewPager = null;
-//            }
-//        });
-
         mSectionsPagerAdapter = null;
-
-        observer.unregisterForContentChanges(getContext());
-        observer = null;
     }
 
 
@@ -202,6 +159,10 @@ public class StudiesFragment extends AbstractFragment {
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static final String ARG_CATEGORY = "ARG_CATEGORY";
         private Category category;
+
+        private RecyclerView view;
+
+        OnTableChangedListener tableChangedListener;
 
         public PlaceholderFragment() {
         }
@@ -227,30 +188,58 @@ public class StudiesFragment extends AbstractFragment {
             category = ((Category$$Parcelable)getArguments().getParcelable(ARG_CATEGORY)).getParcel();
 
             final List<Study> studies = SQLite.select().from(Study.class).where(Study_Table.category.eq(category.id)).orderBy(Study_Table.bibleIndex, true).queryList();
-
-            final GridView gridView = (GridView) rootView.findViewById(R.id.studiesGridView);
-
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Log.d("Item", "onItemClick: " + position + studies.get(position).title);
-                    Study study = studies.get(position);
-                    APIManager.getInstance().downloadLessons(study.id);
-
-                    ((BackstackDelegate)ServiceLocator.getService(getContext(), MainActivity.StackType.STUDIES.name())).getBackstack().goTo(StudyKey.create(studies.get(position).id));
-
-                }
-            });
             DisplayMetrics displayMetrics = new DisplayMetrics();
             ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displayMetrics);
 
-//            float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
             float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+            int numberOfColumns = (int)(dpWidth / 120);
 
-            gridView.setNumColumns((int)(dpWidth / 120));
-            gridView.setAdapter(new BibleStudiesAdapter(getContext(), studies));
+            if (rootView instanceof RecyclerView) {
+                Context context = rootView.getContext();
+                RecyclerView recyclerView = (RecyclerView) rootView;
+                this.view = recyclerView;
+                recyclerView.setLayoutManager(new GridLayoutManager(context, numberOfColumns));
+                recyclerView.setAdapter(new MyStudyRecyclerViewAdapter(studies, numberOfColumns, new MyStudyRecyclerViewAdapter.OnStudyInteractionListener() {
+                    @Override
+                    public void studyClicked(Study study) {
+                        APIManager.getInstance().downloadLessons(study.id);
+                        ((BackstackDelegate)ServiceLocator.getService(getContext(), MainActivity.StackType.STUDIES.name())).getBackstack().goTo(StudyKey.create(study.id));
+                    }
+                }));
+            }
 
+            final Handler mainHandler = new Handler(getContext().getMainLooper());
+
+            tableChangedListener = new OnTableChangedListener() {
+                @Override
+                public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
+                    if(tableChanged.toString().contains("Study")) {
+                        mainHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                reloadData();
+                            }
+                        });
+                    }
+                }
+            };
+
+            DatabaseManager.observer.addOnTableChangedListener(tableChangedListener);
             return rootView;
+        }
+
+        public void reloadData() {
+            MyStudyRecyclerViewAdapter adapter = (MyStudyRecyclerViewAdapter)view.getAdapter();
+            final List<Study> studies = SQLite.select().from(Study.class).where(Study_Table.category.eq(category.id)).orderBy(Study_Table.bibleIndex, true).queryList();
+            adapter.setStudies(studies);
+        }
+
+        @Override
+        public void onDetach() {
+            super.onDetach();
+            DatabaseManager.observer.removeTableChangedListener(tableChangedListener);
+            Log.d("STUDIESFRAGMENT", "removed table change listener");
+            tableChangedListener = null;
         }
     }
 
@@ -258,7 +247,7 @@ public class StudiesFragment extends AbstractFragment {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
         private List<Category> categories;
 
         public SectionsPagerAdapter(FragmentManager fm, List<Category> categories) {
@@ -275,7 +264,6 @@ public class StudiesFragment extends AbstractFragment {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return categories.size();
         }
 
@@ -283,64 +271,6 @@ public class StudiesFragment extends AbstractFragment {
         public CharSequence getPageTitle(int position) {
             Category category = categories.get(position);
             return category.name;
-        }
-    }
-
-    public static class BibleStudiesAdapter extends BaseAdapter {
-
-        private final List<Study> mStudies;
-        private final LayoutInflater mInflater;
-
-        private Context mContext;
-
-        public BibleStudiesAdapter(Context context, List<Study> studies) {
-            mInflater = LayoutInflater.from(context);
-            mStudies = studies;
-            mContext = context;
-        }
-
-        @Override
-        public int getCount() {
-            return mStudies.size();
-        }
-
-        @Override
-        public Study getItem(int position) {
-            return mStudies.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-
-            if (v == null) {
-                v = mInflater.inflate(R.layout.grid_bible_study_item, parent, false);
-                v.setTag(R.id.bible_study_image_view, v.findViewById(R.id.bible_study_image_view));
-            }
-
-            ImageView picture = (ImageView) v.getTag(R.id.bible_study_image_view);
-
-            Study study = mStudies.get(position);
-
-
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displayMetrics);
-
-            int imageWidth = displayMetrics.widthPixels / 3;
-            String studyImageURL = study.imageForWidth(imageWidth);
-            if (studyImageURL != null) {
-                Glide.with(mContext).load(studyImageURL).into(picture);
-            } else {
-                Glide.with(mContext).load(study.thumbnailSource).into(picture);
-            }
-
-
-            return v;
         }
     }
 

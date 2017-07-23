@@ -1,4 +1,4 @@
-package org.versebyverseministry.vbvmi.fragments.studies;
+package org.versebyverseministry.vbvmi.fragments.studies.study;
 
 import android.support.v4.app.Fragment;
 
@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 
 import org.versebyverseministry.vbvmi.application.Key;
 import org.versebyverseministry.vbvmi.application.MainActivity;
+import org.versebyverseministry.vbvmi.fragments.studies.study.AutoValue_StudyKey;
 
 /**
  * Created by thomascarey on 16/07/17.

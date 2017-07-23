@@ -10,5 +10,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="org.versebyverseministry.vbvmi.fragments.studies.LessonFragment"
+    tools:context="org.versebyverseministry.vbvmi.fragments.studies.study.LessonsFragment"
     tools:listitem="@layout/fragment_lesson"/>
