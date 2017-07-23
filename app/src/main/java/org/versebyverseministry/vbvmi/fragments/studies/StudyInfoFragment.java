@@ -93,43 +93,6 @@ public class StudyInfoFragment extends AbstractFragment {
             Glide.with(getContext()).load(study.thumbnailSource).into(imageView);
         }
 
-
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.d("WEB", "Should url load this: " + url);
-                return false;
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Log.d("WEB", "Should overrideURLLoading");
-
-                return false;
-            }
-
-            @Override
-            public void onLoadResource(WebView view, String url) {
-                Log.d("WEB", "load " + url);
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                Log.d("WEB", "page started: " + url);
-            }
-
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                Log.d("WEB", "ERROR");
-            }
-
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                Log.d("WEB", "INTERCEPT");
-                return null;
-            }
-        });
-
         StringBuilder sb = new StringBuilder();
         sb.append("<head>\n");
         sb.append("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>\n");
@@ -144,7 +107,6 @@ public class StudyInfoFragment extends AbstractFragment {
         sb.append(study.description);
         sb.append("</body>\n");
 
-        webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadData(sb.toString(), "text/html", "UTF-8");
 
