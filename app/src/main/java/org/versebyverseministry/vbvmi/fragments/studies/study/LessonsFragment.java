@@ -1,10 +1,12 @@
 package org.versebyverseministry.vbvmi.fragments.studies.study;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,6 +21,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
+import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
 
@@ -73,6 +76,18 @@ public class LessonsFragment extends AbstractFragment {
 
 
         List<Lesson> lessons = SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).orderBy(Lesson_Table.index, true).queryList();
+
+
+        mListener = new OnLessonFragmentInteractionListener() {
+            @Override
+            public void onListFragmentInteraction(Lesson lesson) {
+                Intent intent = new Intent(getContext(), LessonAudioActivity.class);
+                intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
+                getContext().startActivity(intent);
+                AppCompatActivity activity = (AppCompatActivity) getContext();
+                activity.overridePendingTransition(R.anim.slide_up, R.anim.stay);
+            }
+        };
 
         // Set the adapter
         if (view instanceof RecyclerView) {
