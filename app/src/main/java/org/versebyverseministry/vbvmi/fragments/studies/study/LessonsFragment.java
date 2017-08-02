@@ -18,6 +18,9 @@ import com.raizlabs.android.dbflow.runtime.OnTableChangedListener;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import org.algi.sugarloader.SugarLoader;
+import org.algi.sugarloader.function.Consumer;
+import org.algi.sugarloader.function.Supplier;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
@@ -25,6 +28,7 @@ import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivi
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +47,8 @@ public class LessonsFragment extends AbstractFragment {
     private String studyId;
 
     private RecyclerView view;
+
+    private SugarLoader<List<Lesson>> mLoader;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -72,10 +78,9 @@ public class LessonsFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
+        final RecyclerView view = (RecyclerView) inflater.inflate(R.layout.fragment_lesson_list, container, false);
 
 
-        List<Lesson> lessons = SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).orderBy(Lesson_Table.index, true).queryList();
 
 
         mListener = new OnLessonFragmentInteractionListener() {
@@ -89,13 +94,21 @@ public class LessonsFragment extends AbstractFragment {
             }
         };
 
+        mLoader = new SugarLoader<List<Lesson>>("LessonsLoader")
+                .background(() ->
+                        SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).orderBy(Lesson_Table.index, true).queryList()
+                ).onSuccess(lessons -> {
+                    MyLessonRecyclerViewAdapter adapter = (MyLessonRecyclerViewAdapter)view.getAdapter();
+                    adapter.setLessons(lessons);
+                });
+
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             this.view = recyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new MyLessonRecyclerViewAdapter(lessons, mListener));
+            recyclerView.setAdapter(new MyLessonRecyclerViewAdapter(new ArrayList<>(), mListener));
         }
 
         final Handler mainHandler = new Handler(getContext().getMainLooper());
@@ -121,10 +134,14 @@ public class LessonsFragment extends AbstractFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mLoader.init(this);
+    }
+
     public void reloadData() {
-        MyLessonRecyclerViewAdapter adapter = (MyLessonRecyclerViewAdapter)view.getAdapter();
-        List<Lesson> lessons = SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).orderBy(Lesson_Table.index, true).queryList();
-        adapter.setLessons(lessons);
+        mLoader.restart(this);
     }
 
     @Override
