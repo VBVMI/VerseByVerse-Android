@@ -1,6 +1,10 @@
 package org.versebyverseministry.vbvmi;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -12,10 +16,14 @@ import android.os.PowerManager;
 import android.support.annotation.IntDef;
 import android.util.Log;
 
+import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
 import org.versebyverseministry.vbvmi.model.Lesson;
+
+import java.util.concurrent.TimeUnit;
 
 public class AudioService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
     private static final String TAG = "PlayAudio";
+    private static final int NOTIFY_ID=1;
 
     private MediaPlayer player;
 
@@ -85,7 +93,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        stopForeground(true);
         Log.d(TAG, "onDestroy:");
     }
 
@@ -102,6 +110,66 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+
+        Intent notificationIntent = new Intent(this, LessonAudioActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder builder = new Notification.Builder(this);
+
+        builder.setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_bible_studies_black_24dp)
+                .setTicker(lesson.description)
+                .setOngoing(true)
+                .setContentTitle("Playing")
+                .setContentText(lesson.description);
+
+        Notification notification = builder.getNotification();
+
+//        startForeground(NOTIFY_ID, notification);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        manager.notify(NOTIFY_ID, notification);
+    }
+
+    public int getPosition() {
+        return player.getCurrentPosition();
+    }
+
+    public int getDuration() {
+        return player.getDuration();
+    }
+
+    public boolean isPlaying() {
+        return player.isPlaying();
+    }
+
+    public void pausePlayer() {
+        player.pause();
+    }
+
+    public void seekTo(int positionMsec) {
+        player.seekTo(positionMsec);
+    }
+
+    public void start() {
+        player.start();
+    }
+
+    public void jumpForward() {
+        int position = getPosition();
+        int duration = getDuration();
+        int jump = (int) TimeUnit.SECONDS.toMillis(30);
+        int destination = Math.min(position + jump, duration);
+        seekTo(destination);
+    }
+
+    public void jumpBack() {
+        int position = getPosition();
+        int jump = (int) TimeUnit.SECONDS.toMillis(30);
+        int destination = Math.max(position - jump, 0);
+        seekTo(destination);
     }
 
     public class AudioBinder extends Binder {
