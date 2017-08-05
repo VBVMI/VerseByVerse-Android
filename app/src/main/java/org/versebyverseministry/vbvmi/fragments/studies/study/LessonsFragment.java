@@ -255,6 +255,7 @@ public class LessonsFragment extends AbstractFragment {
 
         Intent intent = new Intent(getContext(), LessonAudioActivity.class);
         intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
+        intent.putExtra(LessonAudioActivity.ARG_LESSON_PATH, audioFilePathForLesson(lesson).getPath());
         getContext().startActivity(intent);
         AppCompatActivity activity = (AppCompatActivity) getContext();
         activity.overridePendingTransition(R.anim.slide_up, R.anim.stay);
