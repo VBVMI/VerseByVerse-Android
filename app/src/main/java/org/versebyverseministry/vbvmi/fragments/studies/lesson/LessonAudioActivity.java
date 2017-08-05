@@ -69,8 +69,8 @@ public class LessonAudioActivity extends AppCompatActivity {
             Glide.with(this).load(study.thumbnailSource).into(imageView);
         }
 
-        Intent audioIntent = new Intent(this, PlayAudio.class);
-        startService(audioIntent);
+//        Intent audioIntent = new Intent(this, PlayAudio.class);
+//        startService(audioIntent);
 
 //        Notification notification = new NotificationCompat.Builder(this)
 //                .setContentTitle(lesson.description)
@@ -82,39 +82,39 @@ public class LessonAudioActivity extends AppCompatActivity {
 //        notificationManager.notify(0, notification);
 
 
-        Uri audioSource = Uri.parse(lesson.audioSource);
-
-        String lastPathComponent = study.id + "_" + lesson.id + "_" + audioSource.getLastPathSegment();
-
-        DownloadManager.Request request = RxDownloadManager.request(Uri.parse(lesson.audioSource), lastPathComponent)
-                .setDescription("Downloading...")
-                .setDestinationInExternalFilesDir(this, Environment.DIRECTORY_PODCASTS, "Audio/" + lastPathComponent);
+//        Uri audioSource = Uri.parse(lesson.audioSource);
+//
+//        String lastPathComponent = study.id + "_" + lesson.id + "_" + audioSource.getLastPathSegment();
+//
+//        DownloadManager.Request request = RxDownloadManager.request(Uri.parse(lesson.audioSource), lastPathComponent)
+//                .setDescription("Downloading...")
+//                .setDestinationInExternalFilesDir(this, Environment.DIRECTORY_PODCASTS, "Audio/" + lastPathComponent);
         File downloadsFile = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-        //uri:file:///storage/emulated/10/Android/data/org.versebyverseministry.vbvmi/files/Podcasts/VBVMI-1
-        //uri:file:///storage/emulated/0/Android/data/org.versebyverseministry.vbvmi/files/Podcasts/Audio/1420_1443_john1a.mp3
-        File download = getExternalFilesDir(Environment.DIRECTORY_PODCASTS);
-        String path = download.getPath();
-        String testPath = path + "/Audio/" + lastPathComponent;
-        File testFile = new File(testPath);
-        if (!testFile.exists()) {
-            RxDownloadManager rxDownloadManager = RxDownloadManager.from(this);
-            rxDownloadManager.download(request).subscribe(new Subscriber<Uri>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Log.d(TAG, "onError: e:" + e.toString());
-                }
-
-                @Override
-                public void onNext(Uri uri) {
-                    Log.d(TAG, "onNext: uri:" + uri.toString());
-                }
-            });
-        }
+//        //uri:file:///storage/emulated/10/Android/data/org.versebyverseministry.vbvmi/files/Podcasts/VBVMI-1
+//        //uri:file:///storage/emulated/0/Android/data/org.versebyverseministry.vbvmi/files/Podcasts/Audio/1420_1443_john1a.mp3
+//        File download = getExternalFilesDir(Environment.DIRECTORY_PODCASTS);
+//        String path = download.getPath();
+//        String testPath = path + "/Audio/" + lastPathComponent;
+//        File testFile = new File(testPath);
+//        if (!testFile.exists()) {
+//            RxDownloadManager rxDownloadManager = RxDownloadManager.from(this);
+//            rxDownloadManager.download(request).subscribe(new Subscriber<Uri>() {
+//                @Override
+//                public void onCompleted() {
+//
+//                }
+//
+//                @Override
+//                public void onError(Throwable e) {
+//                    Log.d(TAG, "onError: e:" + e.toString());
+//                }
+//
+//                @Override
+//                public void onNext(Uri uri) {
+//                    Log.d(TAG, "onNext: uri:" + uri.toString());
+//                }
+//            });
+//        }
     }
 
     @Override
