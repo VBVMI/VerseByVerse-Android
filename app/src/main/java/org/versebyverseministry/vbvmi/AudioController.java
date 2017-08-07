@@ -1,6 +1,8 @@
 package org.versebyverseministry.vbvmi;
 
 import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.MediaController;
 
 /**
@@ -16,4 +18,5 @@ public class AudioController extends MediaController {
     public void hide() {
 
     }
+
 }

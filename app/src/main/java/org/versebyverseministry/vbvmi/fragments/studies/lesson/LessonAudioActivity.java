@@ -51,9 +51,6 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
     @BindView(R.id.imageView)
     ImageView imageView;
 
-    @BindView(R.id.playButton)
-    Button playButton;
-
     @BindView(R.id.playerLayout)
     ConstraintLayout playerLayout;
 
@@ -80,12 +77,12 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
             Glide.with(this).load(study.thumbnailSource).into(imageView);
         }
 
-        playButton.setOnClickListener(v -> {
-            audioService.setLesson(lesson, lessonAudioPath);
-            audioService.playAudio();
-        });
+//        playButton.setOnClickListener(v -> {
+//            audioService.setLesson(lesson, lessonAudioPath);
+//            audioService.playAudio();
+//        });
 
-        setController();
+        //setController();
 
     }
 
@@ -102,7 +99,7 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
             audioService.playAudio();
 
-            controller.show();
+            //controller.show();
         }
 
         @Override
