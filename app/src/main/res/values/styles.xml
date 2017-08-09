@@ -66,4 +66,11 @@
 
   </style>
 
+  <style name="Text">
+  </style>
+
+  <style name="Text.AudioTitle">
+    <item name="android:textSize">16dp</item>
+  </style>
+
 </resources>
