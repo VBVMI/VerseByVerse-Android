@@ -113,8 +113,23 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         return false;
     }
 
+    private AudioManager.OnAudioFocusChangeListener afChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            Log.d(TAG, "audio focus change: " + focusChange);
+        }
+    };
+
     @Override
     public void onPrepared(MediaPlayer mp) {
+        AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int result = mAudioManager.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            Log.d(TAG, "Focus granted");
+        }
+
         mp.start();
 
         Intent notificationIntent = new Intent(this, LessonAudioActivity.class);
@@ -157,6 +172,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     public void pausePlayer() {
         player.pause();
+        AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mAudioManager.setStreamSolo(AudioManager.STREAM_MUSIC, false);
     }
 
     public void seekTo(int positionMsec) {
@@ -164,7 +181,13 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void start() {
-        player.start();
+        AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int result = mAudioManager.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            player.start();
+        }
+
     }
 
     public void jumpForward() {
