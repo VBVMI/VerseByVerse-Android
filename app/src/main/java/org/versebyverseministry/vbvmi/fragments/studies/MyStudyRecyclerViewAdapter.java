@@ -72,7 +72,7 @@ public class MyStudyRecyclerViewAdapter extends RecyclerView.Adapter<MyStudyRecy
             Glide.with(context).load(holder.study.thumbnailSource).into(holder.imageView);
         }
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.topImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
@@ -98,7 +98,7 @@ public class MyStudyRecyclerViewAdapter extends RecyclerView.Adapter<MyStudyRecy
         public SquareImageView imageView;
 
         @BindView(R.id.topImageView)
-        public SquareImageView topImageView;
+        public View topImageView;
 
         public Study study;
 

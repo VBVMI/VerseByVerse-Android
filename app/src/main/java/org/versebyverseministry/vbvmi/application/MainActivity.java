@@ -1,32 +1,37 @@
 package org.versebyverseministry.vbvmi.application;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
-import com.zhuinden.simplestack.Backstack;
 import com.zhuinden.simplestack.BackstackDelegate;
-import com.zhuinden.simplestack.KeyContextWrapper;
 import com.zhuinden.simplestack.StateChange;
 import com.zhuinden.simplestack.StateChanger;
 
+import org.versebyverseministry.vbvmi.AudioService;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.APIManager;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
@@ -36,9 +41,6 @@ import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.util.Multistack;
-import org.versebyverseministry.vbvmi.util.ViewUtils;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         ANSWERS
     }
 
+    private AudioService audioService;
+    private boolean audioBound = false;
+    private Intent playIntent;
+
     @BindView(R.id.root)
     RelativeLayout root;
 
@@ -63,6 +69,22 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
     @BindView(R.id.bottom_navigation)
     BottomNavigationView bottomNavigation;
+
+
+    @BindView(R.id.currently_playing_layout_background)
+    RelativeLayout audioBarLayoutBackground;
+
+    @BindView(R.id.currently_playing_layout)
+    RelativeLayout audioBarLayout;
+
+    @BindView(R.id.audio_title)
+    TextView audioTitle;
+
+    @BindView(R.id.audio_play_pause_button)
+    ImageButton playPauseButton;
+
+    @BindView(R.id.audio_progress_bar)
+    ProgressBar audioProgressBar;
 
     Multistack multistack;
 
@@ -117,6 +139,9 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         DatabaseManager.observer.registerForContentChanges(this, Category.class);
         DatabaseManager.observer.registerForContentChanges(this, Study.class);
 
+        audioBarLayout.setOnClickListener(v -> {
+            Log.d(TAG, "Tapped bar");
+        });
     }
 
 
@@ -155,10 +180,134 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         }
     }
 
+    private void updatePausePlay() {
+        if (playPauseButton == null)
+            return;
+
+        if (isPlaying()) {
+            playPauseButton.setImageResource(R.drawable.ic_pause_button_40dp);
+            playPauseButton.setContentDescription("Pause");
+        } else {
+            playPauseButton.setImageResource(R.drawable.ic_play_button_40dp);
+            playPauseButton.setContentDescription("Play");
+        }
+
+    }
+
+    private BroadcastReceiver audioDidStartReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updatePausePlay();
+            playPauseButton.post(mShowProgress);
+        }
+    };
+
+    private ServiceConnection audioConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            AudioService.AudioBinder binder = (AudioService.AudioBinder)service;
+
+            audioService = binder.getService();
+
+            audioBound = true;
+
+            Lesson lesson = audioService.getCurrentLesson();
+            if (lesson != null) {
+                audioTitle.setText(lesson.title);
+            }
+
+            audioBarLayoutBackground.setVisibility(View.VISIBLE);
+
+            updatePausePlay();
+            playPauseButton.post(mShowProgress);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            audioBound = false;
+            audioBarLayoutBackground.setVisibility(View.GONE);
+        }
+    };
+
+    private final Runnable mShowProgress = new Runnable() {
+        @Override
+        public void run() {
+            int pos = setProgress();
+            if (!isPlaying()) {
+                playPauseButton.postDelayed(mShowProgress, 1000 - (pos % 1000));
+            }
+        }
+    };
+
+    private boolean isPlaying() {
+        if (audioService == null) {
+            return false;
+        }
+        return audioService.isPlaying();
+    }
+
+    private int getCurrentPosition() {
+        if (audioService == null) {
+            return 0;
+        }
+        return audioService.getPosition();
+    }
+
+    int getDuration() {
+        return audioService.getDuration();
+    }
+
+    private int setProgress() {
+        if (audioBound == false) {
+            return 0;
+        }
+        int position = getCurrentPosition();
+        int duration = getDuration();
+        if (audioProgressBar != null) {
+            if (duration > 0) {
+                // use long to avoid overflow
+                long pos = 100L * position / duration;
+                audioProgressBar.setProgress( (int) pos);
+            }
+        }
+
+        return position;
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        LocalBroadcastManager.getInstance(this).registerReceiver(audioDidStartReciever, new IntentFilter(AudioService.DID_START));
+        if(playIntent==null) {
+            playIntent = new Intent(this, AudioService.class);
+        }
+        if (isAudioServiceRunning()) {
+            bindService(playIntent, audioConnection, Context.BIND_AUTO_CREATE);
+        }
+        super.onResume();
+    }
+
     @Override
     protected void onPause() {
         multistack.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(audioDidStartReciever);
+        Log.d(TAG, "onPause");
+        if (audioBound) {
+            unbindService(audioConnection);
+            playIntent = null;
+        }
         super.onPause();
+    }
+
+    private boolean isAudioServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if("org.versebyverseministry.vbvmi.AudioService".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -172,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
     protected void onDestroy() {
         DatabaseManager.observer.unregisterForContentChanges(this);
         multistack.onDestroy();
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
 
@@ -188,35 +338,6 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         }
         return super.getSystemService(name);
     }
-
-//    private void exchangeViewForKey(Key newKey, final int direction) {
-//        multistack.persistViewToState(root.getChildAt(0));
-//        multistack.setSelectedStack(newKey.stackIdentifier());
-//        Context newContext = new KeyContextWrapper(this, newKey);
-//        final View previousView = root.getChildAt(0);
-//        final View newView = LayoutInflater.from(newContext).inflate(newKey.layout(), root, false);
-//        multistack.restoreViewFromState(newView);
-//        root.addView(newView);
-//
-//        if(direction == StateChange.REPLACE) {
-//            finishStateChange(previousView);
-//        } else {
-//            isAnimating = true;
-//
-//            ViewUtils.waitForMeasure(newView, new ViewUtils.OnMeasuredCallback() {
-//                @Override
-//                public void onMeasured(View view, int width, int height) {
-//                    runAnimation(previousView, newView, direction, new AnimatorListenerAdapter() {
-//                        @Override
-//                        public void onAnimationEnd(Animator animation) {
-//                            isAnimating = false;
-//                            finishStateChange(previousView);
-//                        }
-//                    });
-//                }
-//            });
-//        }
-//    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -284,15 +405,5 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         }
         fragmentTransaction.commitNow();
         completionCallback.stateChangeComplete();
-
-//        int direction = StateChange.REPLACE;
-//        if(root.getChildAt(0) != null) {
-//            Key previousKey = Backstack.getKey(root.getChildAt(0).getContext());
-//            StackType previousStack = StackType.valueOf(previousKey.stackIdentifier());
-//            StackType newStack = StackType.valueOf(((Key) stateChange.topNewState()).stackIdentifier());
-//            direction = previousStack.ordinal() < newStack.ordinal() ? StateChange.FORWARD : previousStack.ordinal() > newStack.ordinal() ? StateChange.BACKWARD : StateChange.REPLACE;
-//        }
-//        exchangeViewForKey((Key) stateChange.topNewState(), direction);
-//        completionCallback.stateChangeComplete();
     }
 }

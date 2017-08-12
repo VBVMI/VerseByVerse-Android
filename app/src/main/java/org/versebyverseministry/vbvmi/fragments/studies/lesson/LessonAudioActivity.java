@@ -1,16 +1,21 @@
 package org.versebyverseministry.vbvmi.fragments.studies.lesson;
 
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.os.IBinder;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -59,9 +64,6 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
     private boolean audioBound = false;
 
     private WindowManager mWindowManager;
-
-
-    private AudioController controller;
 
     @BindView(R.id.imageView)
     ImageView imageView;
@@ -148,8 +150,18 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
         seekBar.setOnSeekBarChangeListener(mSeekListener);
         seekBar.setMax(100);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(audioDidStartReciever, new IntentFilter(AudioService.DID_START));
     }
 
+
+    private BroadcastReceiver audioDidStartReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updatePausePlay();
+            playPauseButton.post(mShowProgress);
+        }
+    };
 
 
     private ServiceConnection audioConnection = new ServiceConnection() {
@@ -179,25 +191,42 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
         super.onStart();
         if(playIntent==null) {
             playIntent = new Intent(this, AudioService.class);
+            if (!isAudioServiceRunning()) {
+                startService(playIntent);
+            }
             bindService(playIntent, audioConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
         }
 
-        playPauseButton.post(mShowProgress);
+        //playPauseButton.post(mShowProgress);
+    }
+
+    private boolean isAudioServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if("org.versebyverseministry.vbvmi.AudioService".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
     protected void onPause() {
         playPauseButton.removeCallbacks(mShowProgress);
+        Log.d(TAG, "onPause");
         super.onPause();
 
     }
 
     @Override
     protected void onDestroy() {
-        stopService(playIntent);
+//        stopService(playIntent);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(audioDidStartReciever);
+        unbindService(audioConnection);
         audioService = null;
 
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
 
@@ -290,10 +319,12 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
     private void jumpBack() {
         audioService.jumpBack();
+        setProgress();
     }
 
     private void jumpForward() {
         audioService.jumpForward();
+        setProgress();
     }
 
     @Override
@@ -324,6 +355,9 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
     @Override
     public boolean isPlaying() {
+        if (audioService == null) {
+            return false;
+        }
         return audioService.isPlaying();
     }
 

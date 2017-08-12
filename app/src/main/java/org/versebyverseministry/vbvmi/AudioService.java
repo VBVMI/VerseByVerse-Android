@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.IntDef;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
@@ -25,6 +26,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     private static final String TAG = "PlayAudio";
     private static final int NOTIFY_ID=1;
 
+    public static String DID_START = "AudioServiceDidStart";
+
     private MediaPlayer player;
 
     private Lesson lesson;
@@ -35,7 +38,6 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     public AudioService() {
     }
-
 
     @Override
     public void onCreate() {
@@ -59,6 +61,10 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         this.lessonFilePath = filePath;
     }
 
+    public Lesson getCurrentLesson() {
+        return lesson;
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //@IntDef(value = {Service.START_FLAG_REDELIVERY, Service.START_FLAG_RETRY}, flag = true)
@@ -74,8 +80,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public boolean onUnbind(Intent intent) {
-        player.stop();
-        player.release();
+//        player.stop();
+//        player.release();
         return false;
     }
 
@@ -131,6 +137,9 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         manager.notify(NOTIFY_ID, notification);
+
+        Intent intent = new Intent(DID_START);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     public int getPosition() {
