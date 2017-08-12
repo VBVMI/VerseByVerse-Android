@@ -51,10 +51,10 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
     public static String ARG_LESSON_ID = "ARG_LESSON_ID";
     public static String ARG_LESSON_PATH = "ARG_LESSON_PATH";
+    public static String ARG_START_AUDIO = "ARG_START_AUDIO";
 
     private Lesson lesson;
     private Study study;
-    private String lessonAudioPath;
     private boolean mDragging;
 
     StringBuilder mFormatBuilder;
@@ -63,6 +63,7 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
     private Intent playIntent;
     private boolean audioBound = false;
 
+    private boolean startAudioOnBind = false;
     private WindowManager mWindowManager;
 
     @BindView(R.id.imageView)
@@ -98,7 +99,9 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
         setContentView(R.layout.activity_lesson_audio);
 
         String lessonId = getIntent().getExtras().getString(ARG_LESSON_ID);
-        lessonAudioPath = getIntent().getExtras().getString(ARG_LESSON_PATH);
+
+        startAudioOnBind = getIntent().getBooleanExtra(ARG_START_AUDIO, false);
+
         lesson = SQLite.select().from(Lesson.class).where(Lesson_Table.id.eq(lessonId)).querySingle();
         study = SQLite.select().from(Study.class).where(Study_Table.id.eq(lesson.studyId)).querySingle();
 
@@ -171,12 +174,19 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
             audioService = binder.getService();
 
-            audioService.setLesson(lesson, lessonAudioPath);
+            Lesson audioServiceLesson = audioService.getCurrentLesson();
+
+            if (audioServiceLesson == null || !audioServiceLesson.id.equals(lesson.id)) {
+                audioService.setLesson(lesson);
+                if (startAudioOnBind) {
+                    audioService.playAudio();
+                }
+            }
 
             audioBound = true;
 
-            audioService.playAudio();
             updatePausePlay();
+            playPauseButton.post(mShowProgress);
             //controller.show();
         }
 

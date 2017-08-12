@@ -37,6 +37,7 @@ import org.versebyverseministry.vbvmi.api.APIManager;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.answers.AnswersKey;
 import org.versebyverseministry.vbvmi.fragments.studies.StudiesKey;
+import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
 import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Study;
@@ -141,6 +142,23 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
         audioBarLayout.setOnClickListener(v -> {
             Log.d(TAG, "Tapped bar");
+            Lesson lesson = audioService.getCurrentLesson();
+            Intent intent = new Intent(this, LessonAudioActivity.class);
+            intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_up, R.anim.stay);
+        });
+
+        playPauseButton.setOnClickListener(v -> {
+            if (audioBound) {
+                if (isPlaying()) {
+                    audioService.pausePlayer();
+                } else {
+                    audioService.start();
+                    playPauseButton.post(mShowProgress);
+                }
+                updatePausePlay();
+            }
         });
     }
 

@@ -56,9 +56,9 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         player.setOnErrorListener(this);
     }
 
-    public void setLesson(Lesson lesson, String filePath) {
+    public void setLesson(Lesson lesson) {
         this.lesson = lesson;
-        this.lessonFilePath = filePath;
+        this.lessonFilePath = FileHelpers.audioFilePathForLesson(this, lesson).getPath();
     }
 
     public Lesson getCurrentLesson() {
@@ -118,6 +118,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         mp.start();
 
         Intent notificationIntent = new Intent(this, LessonAudioActivity.class);
+        notificationIntent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

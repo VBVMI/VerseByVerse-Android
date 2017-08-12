@@ -27,6 +27,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 import org.algi.sugarloader.SugarLoader;
 import org.algi.sugarloader.function.Consumer;
 import org.algi.sugarloader.function.Supplier;
+import org.versebyverseministry.vbvmi.FileHelpers;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
@@ -176,22 +177,7 @@ public class LessonsFragment extends AbstractFragment {
 
     private long enqueue = 0;
 
-    private String relativeAudioPath(Lesson lesson) {
-        Uri audioSource = Uri.parse(lesson.audioSource);
-        String audioName = audioSource.getLastPathSegment();
-        return "lessons/" + audioName;
-    }
 
-    private Uri audioFilePathForLesson(Lesson lesson) {
-        File directory = getContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        Uri basePath = Uri.fromFile(directory);
-        return Uri.withAppendedPath(basePath, relativeAudioPath(lesson));
-    }
-
-    private File getAudioFileForLesson(Lesson lesson) {
-        File file = new File(audioFilePathForLesson(lesson).getPath());
-        return file;
-    }
 
     private BroadcastReceiver downloadReceiver;
 
@@ -236,7 +222,7 @@ public class LessonsFragment extends AbstractFragment {
 
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(lesson.audioSource));
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-        request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOCUMENTS, relativeAudioPath(lesson));
+        request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOCUMENTS, FileHelpers.relativeAudioPath(lesson));
         enqueue = dm.enqueue(request);
     }
 
@@ -248,14 +234,9 @@ public class LessonsFragment extends AbstractFragment {
     }
 
     public void playAudio(Lesson lesson) {
-
-//        Intent i = new Intent();
-//        i.setAction(DownloadManager.ACTION_VIEW_DOWNLOADS);
-//        startActivity(i);
-
         Intent intent = new Intent(getContext(), LessonAudioActivity.class);
         intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
-        intent.putExtra(LessonAudioActivity.ARG_LESSON_PATH, audioFilePathForLesson(lesson).getPath());
+        intent.putExtra(LessonAudioActivity.ARG_START_AUDIO, true);
         getContext().startActivity(intent);
         AppCompatActivity activity = (AppCompatActivity) getContext();
         activity.overridePendingTransition(R.anim.slide_up, R.anim.stay);
@@ -268,7 +249,7 @@ public class LessonsFragment extends AbstractFragment {
             enqueue = 0;
         }
 
-        File audio = getAudioFileForLesson(lesson);
+        File audio = FileHelpers.getAudioFileForLesson(getContext(), lesson);
         if (!audio.exists()) {
             // Download the lesson eh
             downloadLesson(lesson);
