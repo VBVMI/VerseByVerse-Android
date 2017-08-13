@@ -6,7 +6,10 @@
   <color name="colorPrimaryLight">#5E92F3</color>
   <color name="colorDimWhite">#EEEEEE</color>
 
+  <color name="colorDownload">#f9a825</color>
+
   <color name="colorUnselectedText">#616161</color>
   <color name="colorGridBackground">#e0e0e0</color>
   <color name="tableCellText">#434343</color>
+  <color name="dimGrey">#bdbdbd</color>
 </resources>

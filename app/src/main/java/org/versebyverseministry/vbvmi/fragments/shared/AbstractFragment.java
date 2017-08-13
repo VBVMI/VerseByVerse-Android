@@ -56,7 +56,7 @@ public abstract class AbstractFragment extends Fragment {
 
     @Override
     public void onPause() {
-        if(shouldBitmapUI()) {
+        if(shouldBitmapUI() && getView().getWidth() > 0) {
             b = loadBitmapFromView(getView());
         }
         super.onPause();

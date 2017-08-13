@@ -70,6 +70,11 @@ public class StudyFragment extends AbstractFragment {
     @BindView(R.id.tabs)
     TabLayout tabLayout;
 
+    @Override
+    public boolean shouldBitmapUI() {
+        return true;
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.

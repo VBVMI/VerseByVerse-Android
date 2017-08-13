@@ -1,24 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?android:attr/selectableItemBackground"
-              android:orientation="horizontal">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
-  <TextView
-      android:id="@+id/id"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="@dimen/text_margin"
-      android:textAppearance="@style/AppTheme.Text.LessonNumber"
-      tools:text="id"/>
 
-  <TextView
-      android:id="@+id/content"
-      android:layout_width="wrap_content"
+    >
+
+
+  <android.support.constraint.ConstraintLayout
+      android:id="@+id/constraintLayout"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_margin="@dimen/text_margin"
-      tools:text="lesson title"
-      android:textAppearance="@style/AppTheme.Text"/>
-</LinearLayout>
+      android:background="?android:attr/selectableItemBackground"
+      android:orientation="horizontal"
+      android:paddingBottom="8dp"
+      android:paddingTop="8dp"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintLeft_toLeftOf="parent"
+      app:layout_constraintRight_toRightOf="parent"
+      app:layout_constraintTop_toTopOf="parent">
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:textAppearance="@style/AppTheme.Text.LessonNumber"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="id"
+        />
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/id"
+        android:layout_alignBottom="@+id/id"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@+id/id"
+        android:layout_toRightOf="@+id/id"
+        android:textAppearance="@style/AppTheme.Text"
+        app:layout_constraintBaseline_toBaselineOf="@+id/id"
+        app:layout_constraintLeft_toRightOf="@+id/id"
+        app:layout_constraintRight_toLeftOf="@+id/audioFileImage"
+        tools:text="lesson title which got really long for some reason"
+        />
+
+    <ImageView
+        android:id="@+id/audioFileImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:tint="@color/tableCellText"
+        app:layout_constraintBottom_toBottomOf="@+id/id"
+        app:layout_constraintRight_toLeftOf="@+id/moreButton"
+        app:srcCompat="@drawable/ic_audio_file"/>
+
+    <ImageButton
+        android:id="@+id/moreButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@android:color/transparent"
+        android:tint="@color/tableCellText"
+        app:layout_constraintBottom_toBottomOf="@+id/id"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_more"/>
+
+  </android.support.constraint.ConstraintLayout>
+
+  <android.support.constraint.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintRight_toRightOf="parent"
+      app:layout_constraintLeft_toLeftOf="parent"
+      >
+
+    <Button
+        android:id="@+id/safe_more_touch_view"
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="0dp"/>
+
+    <Button
+        android:id="@+id/main_button"
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:background="?android:attr/selectableItemBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/safe_more_touch_view"
+        app:layout_constraintTop_toTopOf="parent"/>
+  </android.support.constraint.ConstraintLayout>
+
+
+</FrameLayout>

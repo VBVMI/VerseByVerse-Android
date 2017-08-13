@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.IntDef;
@@ -27,6 +28,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     private static final int NOTIFY_ID=1;
 
     public static String DID_START = "AudioServiceDidStart";
+    public static String DID_END = "AudioServiceDidEnd";
 
     private MediaPlayer player;
 
@@ -35,6 +37,9 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     private String lessonFilePath;
 
     private final IBinder audioBind = new AudioBinder();
+
+    private Handler periodicHandler = new Handler();
+
 
     public AudioService() {
     }
@@ -106,6 +111,17 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     @Override
     public void onCompletion(MediaPlayer mp) {
 
+        AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mAudioManager.abandonAudioFocus(afChangeListener);
+
+        lesson.progress = 1;
+        lesson.save();
+
+        stopRepeatingTask();
+
+        Log.d(TAG, "Audio service did end");
+        Intent intent = new Intent(DID_END);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override
@@ -130,7 +146,14 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             Log.d(TAG, "Focus granted");
         }
 
+        double progress = lesson.progress;
+        if(progress != 0 && progress != 1) {
+            seekTo((int)(progress * (double)getDuration()));
+        }
+
         mp.start();
+
+        startRepeatingTask();
 
         Intent notificationIntent = new Intent(this, LessonAudioActivity.class);
         notificationIntent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
@@ -158,6 +181,17 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
+    private double getProgress() {
+        double position = getPosition();
+        double duration = getDuration();
+
+        if (duration == 0) {
+            return 0;
+        }
+
+        return position / duration;
+    }
+
     public int getPosition() {
         return player.getCurrentPosition();
     }
@@ -173,7 +207,10 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     public void pausePlayer() {
         player.pause();
         AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        mAudioManager.setStreamSolo(AudioManager.STREAM_MUSIC, false);
+        mAudioManager.abandonAudioFocus(afChangeListener);
+
+        stopRepeatingTask();
+        updateProgress();
     }
 
     public void seekTo(int positionMsec) {
@@ -186,8 +223,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             player.start();
+            startRepeatingTask();
         }
-
     }
 
     public void jumpForward() {
@@ -196,6 +233,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         int jump = (int) TimeUnit.SECONDS.toMillis(30);
         int destination = Math.min(position + jump, duration);
         seekTo(destination);
+        updateProgress();
     }
 
     public void jumpBack() {
@@ -203,6 +241,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         int jump = (int) TimeUnit.SECONDS.toMillis(30);
         int destination = Math.max(position - jump, 0);
         seekTo(destination);
+        updateProgress();
     }
 
     public class AudioBinder extends Binder {
@@ -210,4 +249,38 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             return AudioService.this;
         }
     }
+
+    private void updateProgress() {
+        double progress = getProgress();
+        lesson.progress = progress;
+        lesson.save();
+    }
+
+    Runnable progressChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                updateProgress();
+            } finally {
+                periodicHandler.postDelayed(progressChecker, 5000);
+            }
+        }
+    };
+
+    private boolean isRunningRepeatingTask = false;
+
+    private synchronized void startRepeatingTask() {
+        if (!isRunningRepeatingTask) {
+            progressChecker.run();
+        }
+        isRunningRepeatingTask = true;
+    }
+
+    private synchronized void stopRepeatingTask() {
+        if (isRunningRepeatingTask) {
+            periodicHandler.removeCallbacks(progressChecker);
+        }
+        isRunningRepeatingTask = false;
+    }
+
 }

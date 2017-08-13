@@ -119,7 +119,7 @@ public class LessonsFragment extends AbstractFragment {
             RecyclerView recyclerView = (RecyclerView) view;
             this.view = recyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new MyLessonRecyclerViewAdapter(new ArrayList<>(), mListener));
+            recyclerView.setAdapter(new MyLessonRecyclerViewAdapter(new ArrayList<>(), mListener, context));
         }
 
         final Handler mainHandler = new Handler(getContext().getMainLooper());

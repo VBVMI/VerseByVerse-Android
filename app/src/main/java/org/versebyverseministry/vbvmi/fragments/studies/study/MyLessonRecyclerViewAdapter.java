@@ -1,16 +1,26 @@
 package org.versebyverseministry.vbvmi.fragments.studies.study;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.versebyverseministry.vbvmi.FileHelpers;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.fragments.studies.study.LessonsFragment.OnLessonFragmentInteractionListener;
 import org.versebyverseministry.vbvmi.model.Lesson;
 
+import java.io.File;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Lesson} and makes a call to the
@@ -21,14 +31,17 @@ public class MyLessonRecyclerViewAdapter extends RecyclerView.Adapter<MyLessonRe
     private List<Lesson> mValues;
     private final OnLessonFragmentInteractionListener mListener;
 
+    private final Context context;
+
     public void setLessons(List<Lesson> newLessons) {
         mValues = newLessons;
         this.notifyDataSetChanged();
     }
 
-    public MyLessonRecyclerViewAdapter(List<Lesson> items, OnLessonFragmentInteractionListener listener) {
+    public MyLessonRecyclerViewAdapter(List<Lesson> items, OnLessonFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
+        this.context = context;
     }
 
     @Override
@@ -41,10 +54,21 @@ public class MyLessonRecyclerViewAdapter extends RecyclerView.Adapter<MyLessonRe
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).lessonNumber);
-        holder.mContentView.setText(mValues.get(position).description);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        Lesson lesson = mValues.get(position);
+
+        holder.mIdView.setText(lesson.lessonNumber);
+        holder.mContentView.setText(lesson.description);
+
+        File audioFile = FileHelpers.getAudioFileForLesson(context, lesson);
+
+        if (audioFile.exists()) {
+            holder.audioFileImage.setColorFilter(ContextCompat.getColor(context, R.color.tableCellText));
+        } else {
+            holder.audioFileImage.setColorFilter(ContextCompat.getColor(context, R.color.dimGrey));
+        }
+
+        holder.mainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
@@ -54,6 +78,14 @@ public class MyLessonRecyclerViewAdapter extends RecyclerView.Adapter<MyLessonRe
                 }
             }
         });
+
+        holder.moreTouchView.setOnClickListener(v -> {
+            showMore(lesson);
+        });
+    }
+
+    private void showMore(Lesson lesson) {
+
     }
 
     @Override
@@ -63,15 +95,31 @@ public class MyLessonRecyclerViewAdapter extends RecyclerView.Adapter<MyLessonRe
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+
+        @BindView(R.id.id)
+        public TextView mIdView;
+
+        @BindView(R.id.content)
+        public TextView mContentView;
+
+        @BindView(R.id.audioFileImage)
+        public ImageView audioFileImage;
+
+        @BindView(R.id.safe_more_touch_view)
+        public View moreTouchView;
+
+        @BindView(R.id.moreButton)
+        ImageButton moreButton;
+
+        @BindView(R.id.main_button)
+        Button mainButton;
+
         public Lesson mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            ButterKnife.bind(this, view);
         }
 
         @Override

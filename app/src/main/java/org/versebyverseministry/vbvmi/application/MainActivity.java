@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         @Override
         public void run() {
             int pos = setProgress();
-            if (!isPlaying()) {
+            if (isPlaying()) {
                 playPauseButton.postDelayed(mShowProgress, 1000 - (pos % 1000));
             }
         }

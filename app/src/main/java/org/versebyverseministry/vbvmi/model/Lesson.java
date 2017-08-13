@@ -90,6 +90,9 @@ public class Lesson extends BaseModel implements Mergable<Lesson> {
     @Expose
     public List<Topic> topics = null;
 
+    @Column
+    public double progress = 0;
+
     @Override
     public String identifier() {
         return id;
