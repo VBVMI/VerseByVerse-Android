@@ -43,6 +43,9 @@
         android:name=".services.DownloadService"
         android:exported="false">
     </service>
+
+    <activity android:name=".fragments.studies.lesson.LessonExtrasActivity">
+    </activity>
   </application>
 
 </manifest>

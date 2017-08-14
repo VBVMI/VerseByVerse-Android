@@ -25,22 +25,21 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.algi.sugarloader.SugarLoader;
-import org.algi.sugarloader.function.Consumer;
-import org.algi.sugarloader.function.Supplier;
 import org.versebyverseministry.vbvmi.FileHelpers;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
+import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonExtrasActivity;
+import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonRecyclerViewAdapter;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
-import org.versebyverseministry.vbvmi.services.DownloadService;
+import org.versebyverseministry.vbvmi.model.Study;
+import org.versebyverseministry.vbvmi.model.Study_Table;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.http.Query;
 
 /**
  * A fragment representing a list of Items.
@@ -103,13 +102,21 @@ public class LessonsFragment extends AbstractFragment {
             public void onListFragmentInteraction(Lesson lesson) {
                 onStartLesson(lesson);
             }
+
+            @Override
+            public void onMoreButton(Lesson lesson) {
+                Intent moreIntent = new Intent(getContext(), LessonExtrasActivity.class);
+                moreIntent.putExtra(LessonExtrasActivity.ARG_LESSON_ID, lesson.id);
+                moreIntent.putExtra(LessonExtrasActivity.ARG_STUDY_ID, studyId);
+                getContext().startActivity(moreIntent);
+            }
         };
 
         mLoader = new SugarLoader<List<Lesson>>("LessonsLoader")
                 .background(() ->
                         SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).orderBy(Lesson_Table.index, true).queryList()
                 ).onSuccess(lessons -> {
-                    MyLessonRecyclerViewAdapter adapter = (MyLessonRecyclerViewAdapter)view.getAdapter();
+                    LessonRecyclerViewAdapter adapter = (LessonRecyclerViewAdapter)view.getAdapter();
                     adapter.setLessons(lessons);
                 });
 
@@ -119,7 +126,7 @@ public class LessonsFragment extends AbstractFragment {
             RecyclerView recyclerView = (RecyclerView) view;
             this.view = recyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new MyLessonRecyclerViewAdapter(new ArrayList<>(), mListener, context));
+            recyclerView.setAdapter(new LessonRecyclerViewAdapter(new ArrayList<>(), mListener, context));
         }
 
         final Handler mainHandler = new Handler(getContext().getMainLooper());
@@ -270,5 +277,7 @@ public class LessonsFragment extends AbstractFragment {
      */
     public interface OnLessonFragmentInteractionListener {
         void onListFragmentInteraction(Lesson lesson);
+
+        void onMoreButton(Lesson lesson);
     }
 }

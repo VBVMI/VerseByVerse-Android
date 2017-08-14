@@ -1,4 +1,4 @@
-package org.versebyverseministry.vbvmi.fragments.studies.study;
+package org.versebyverseministry.vbvmi.fragments.studies.lesson;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
  * {@link RecyclerView.Adapter} that can display a {@link Lesson} and makes a call to the
  * specified {@link OnLessonFragmentInteractionListener}.
  */
-public class MyLessonRecyclerViewAdapter extends RecyclerView.Adapter<MyLessonRecyclerViewAdapter.ViewHolder> {
+public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecyclerViewAdapter.ViewHolder> {
 
     private List<Lesson> mValues;
     private final OnLessonFragmentInteractionListener mListener;
@@ -38,7 +38,7 @@ public class MyLessonRecyclerViewAdapter extends RecyclerView.Adapter<MyLessonRe
         this.notifyDataSetChanged();
     }
 
-    public MyLessonRecyclerViewAdapter(List<Lesson> items, OnLessonFragmentInteractionListener listener, Context context) {
+    public LessonRecyclerViewAdapter(List<Lesson> items, OnLessonFragmentInteractionListener listener, Context context) {
         mValues = items;
         mListener = listener;
         this.context = context;
@@ -85,7 +85,9 @@ public class MyLessonRecyclerViewAdapter extends RecyclerView.Adapter<MyLessonRe
     }
 
     private void showMore(Lesson lesson) {
-
+        if (null != mListener) {
+            mListener.onMoreButton(lesson);
+        }
     }
 
     @Override
