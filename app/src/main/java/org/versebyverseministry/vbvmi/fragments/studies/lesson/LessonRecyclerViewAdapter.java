@@ -62,6 +62,8 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
 
         File audioFile = FileHelpers.getAudioFileForLesson(context, lesson);
 
+        holder.timeTextView.setText(lesson.audioLength);
+
         if (audioFile.exists()) {
             holder.audioFileImage.setColorFilter(ContextCompat.getColor(context, R.color.tableCellText));
         } else {
@@ -115,6 +117,9 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
 
         @BindView(R.id.main_button)
         Button mainButton;
+
+        @BindView(R.id.timeTextView)
+        TextView timeTextView;
 
         public Lesson mItem;
 
