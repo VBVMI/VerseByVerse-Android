@@ -44,22 +44,22 @@
   </style>
 
   <style name="MediaButton.Play" parent="MediaButton">
-    <item name="android:src">@drawable/ic_play_button_40dp</item>
+    <item name="android:src">@drawable/ic_play_arrow</item>
     <item name="android:contentDescription">@string/lockscreen_transport_play_description</item>
   </style>
 
   <style name="MediaButton.Ffwd" parent="MediaButton">
-    <item name="android:src">@drawable/ic_jump_forward_button_40dp</item>
+    <item name="android:src">@drawable/ic_forward_30</item>
     <item name="android:contentDescription">@string/lockscreen_transport_ffw_description</item>
   </style>
 
   <style name="MediaButton.Rew" parent="MediaButton">
-    <item name="android:src">@drawable/ic_jump_back_button_40dp</item>
+    <item name="android:src">@drawable/ic_replay_30</item>
     <item name="android:contentDescription">@string/lockscreen_transport_rew_description</item>
   </style>
 
   <style name="MediaButton.Pause" parent="MediaButton">
-    <item name="android:src">@drawable/ic_pause_button_40dp</item>
+    <item name="android:src">@drawable/ic_pause</item>
     <item name="android:contentDescription">@string/lockscreen_transport_pause_description</item>
   </style>
 

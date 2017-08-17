@@ -47,7 +47,7 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_lesson, parent, false);
+                .inflate(R.layout.item_lesson, parent, false);
         return new ViewHolder(view);
     }
 
@@ -70,7 +70,7 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
             holder.audioFileImage.setColorFilter(ContextCompat.getColor(context, R.color.dimGrey));
         }
 
-        holder.mainButton.setOnClickListener(new View.OnClickListener() {
+        holder.audioFileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
@@ -81,7 +81,7 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
             }
         });
 
-        holder.moreTouchView.setOnClickListener(v -> {
+        holder.moreButton.setOnClickListener(v -> {
             showMore(lesson);
         });
     }
@@ -109,14 +109,8 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
         @BindView(R.id.audioFileImage)
         public ImageView audioFileImage;
 
-        @BindView(R.id.safe_more_touch_view)
-        public View moreTouchView;
-
         @BindView(R.id.moreButton)
         ImageButton moreButton;
-
-        @BindView(R.id.main_button)
-        Button mainButton;
 
         @BindView(R.id.timeTextView)
         TextView timeTextView;
