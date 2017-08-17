@@ -184,7 +184,18 @@ public class StudiesFragment extends AbstractFragment {
             ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displayMetrics);
 
             float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-            int numberOfColumns = (int)(dpWidth / 120);
+
+            float imageWidth = Math.max((dpWidth / 4) - 1, 120);
+
+            float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+
+            float imageHeight = dpHeight / 3;
+            imageWidth = Math.min(imageHeight, imageWidth);
+
+            int numberOfColumns = (int)(dpWidth / imageWidth);
+
+            // on a large device go with 4 columns?
+
 
             if (rootView instanceof RecyclerView) {
                 Context context = rootView.getContext();

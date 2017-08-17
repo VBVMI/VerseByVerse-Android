@@ -41,6 +41,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -56,7 +59,8 @@ public class LessonsFragment extends AbstractFragment {
 
     private String studyId;
 
-    private RecyclerView view;
+    @BindView(R.id.list)
+    RecyclerView recyclerView;
 
     private SugarLoader<List<Lesson>> mLoader;
 
@@ -92,7 +96,9 @@ public class LessonsFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final RecyclerView view = (RecyclerView) inflater.inflate(R.layout.fragment_lesson_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
+
+        unbinder = ButterKnife.bind(this, view);
 
 
 
@@ -116,18 +122,13 @@ public class LessonsFragment extends AbstractFragment {
                 .background(() ->
                         SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).orderBy(Lesson_Table.index, true).queryList()
                 ).onSuccess(lessons -> {
-                    LessonRecyclerViewAdapter adapter = (LessonRecyclerViewAdapter)view.getAdapter();
+                    LessonRecyclerViewAdapter adapter = (LessonRecyclerViewAdapter)recyclerView.getAdapter();
                     adapter.setLessons(lessons);
                 });
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            this.view = recyclerView;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new LessonRecyclerViewAdapter(new ArrayList<>(), mListener, context));
-        }
+        Context context = view.getContext();
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(new LessonRecyclerViewAdapter(new ArrayList<>(), mListener, context));
 
         final Handler mainHandler = new Handler(getContext().getMainLooper());
 

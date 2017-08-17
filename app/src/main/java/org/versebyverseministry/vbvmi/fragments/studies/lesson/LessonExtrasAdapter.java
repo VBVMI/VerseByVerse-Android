@@ -42,6 +42,8 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
         @Override
         void bindViewHolder(HeaderViewHolder holder) {
 
+
+
         }
     }
 
