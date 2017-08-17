@@ -9,7 +9,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,13 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
 import com.raizlabs.android.dbflow.runtime.OnTableChangedListener;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
@@ -41,7 +34,6 @@ import org.versebyverseministry.vbvmi.fragments.studies.study.StudyKey;
 import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Category$$Parcelable;
 import org.versebyverseministry.vbvmi.model.Category_Table;
-import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.model.Study_Table;
 import org.versebyverseministry.vbvmi.util.ServiceLocator;
@@ -121,7 +113,7 @@ public class StudiesFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_studies_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_studies_root, container, false);
         unbinder = ButterKnife.bind(this, view);
 
         toolbar.setTitle("Studies");

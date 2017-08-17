@@ -12,4 +12,4 @@ android:layout_marginRight="16dp"
 android:background="@color/colorGridBackground"
 app:layoutManager="GridLayoutManager"
 tools:context="org.versebyverseministry.vbvmi.fragments.studies.StudiesFragment"
-tools:listitem="@layout/grid_bible_study_item"/>
+tools:listitem="@layout/item_bible_study"/>

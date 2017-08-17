@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +49,7 @@ public class MyStudyRecyclerViewAdapter extends RecyclerView.Adapter<MyStudyRecy
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_bible_study_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bible_study, parent, false);
         return new ViewHolder(view);
     }
 
