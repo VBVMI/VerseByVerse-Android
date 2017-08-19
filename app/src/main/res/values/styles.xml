@@ -78,4 +78,13 @@
     <item name="android:textSize">12dp</item>
   </style>
 
+  <style name="Text.Extras">
+    <item name="android:textSize">20sp</item>
+    <item name="android:color">@color/tableCellText</item>
+  </style>
+
+  <style name="Dialog" parent="android:Theme.Holo.Light.Dialog">
+    <item name="android:windowBackground">@drawable/dialog_background</item>
+  </style>
+
 </resources>

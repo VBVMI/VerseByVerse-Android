@@ -1,15 +1,24 @@
 package org.versebyverseministry.vbvmi.fragments.studies.lesson;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import org.versebyverseministry.vbvmi.FontManager;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.model.Lesson;
+import org.versebyverseministry.vbvmi.model.Study;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -30,9 +39,17 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
         abstract void bindViewHolder(U holder);
     }
 
-    public class HeaderRow extends LessonExtrasAdapter.Row<HeaderViewHolder> {
+    public static class HeaderRow extends LessonExtrasAdapter.Row<HeaderViewHolder> {
         private Lesson lesson;
 
+        private Study study;
+        private Context context;
+
+        public HeaderRow(Lesson lesson, Study study, Context context) {
+            this.lesson = lesson;
+            this.study = study;
+            this.context = context;
+        }
 
         @Override
         LessonExtrasAdapter.ViewType getViewType() {
@@ -42,12 +59,30 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
         @Override
         void bindViewHolder(HeaderViewHolder holder) {
 
+            int imageWidth = (int) context.getResources().getDimension(R.dimen.study_extra_header_image_width);
+            String studyImageURL = study.imageForWidth(imageWidth);
+            if (studyImageURL != null) {
+                Glide.with(context).load(studyImageURL).into(holder.imageView);
+            } else {
+                Glide.with(context).load(study.thumbnailSource).into(holder.imageView);
+            }
 
-
+            holder.titleView.setText(lesson.title);
         }
     }
 
-    public class ActionRow extends LessonExtrasAdapter.Row<ActionViewHolder> {
+    public static class ActionRow extends LessonExtrasAdapter.Row<ActionViewHolder> {
+
+        public interface Binder {
+            void bindViewHolder(ActionViewHolder holder);
+        }
+
+        private Binder binder;
+
+        public ActionRow(Binder binder) {
+            this.binder = binder;
+        }
+
         @Override
         LessonExtrasAdapter.ViewType getViewType() {
             return LessonExtrasAdapter.ViewType.ACTION;
@@ -55,7 +90,7 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         @Override
         void bindViewHolder(ActionViewHolder holder) {
-
+            binder.bindViewHolder(holder);
         }
     }
 
@@ -135,8 +170,15 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public class ActionViewHolder extends ViewHolder {
 
+        @BindView(R.id.title_view)
+        TextView titleView;
+
+        @BindView(R.id.icon_view)
+        TextView iconView;
+
         public ActionViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 

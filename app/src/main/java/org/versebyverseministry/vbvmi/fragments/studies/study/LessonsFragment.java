@@ -12,6 +12,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +34,7 @@ import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonExtrasActivity;
+import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonExtrasFragment;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonRecyclerViewAdapter;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
@@ -111,10 +115,22 @@ public class LessonsFragment extends AbstractFragment {
 
             @Override
             public void onMoreButton(Lesson lesson) {
-                Intent moreIntent = new Intent(getContext(), LessonExtrasActivity.class);
-                moreIntent.putExtra(LessonExtrasActivity.ARG_LESSON_ID, lesson.id);
-                moreIntent.putExtra(LessonExtrasActivity.ARG_STUDY_ID, studyId);
-                getContext().startActivity(moreIntent);
+
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag("moreDialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+
+                ft.addToBackStack(null);
+
+                DialogFragment newFragment = LessonExtrasFragment.newInstance(lesson.id, studyId);
+                newFragment.show(ft, "moreDialog");
+                getActivity().getSupportFragmentManager().executePendingTransactions();
+//                Intent moreIntent = new Intent(getContext(), LessonExtrasActivity.class);
+//                moreIntent.putExtra(LessonExtrasActivity.ARG_LESSON_ID, lesson.id);
+//                moreIntent.putExtra(LessonExtrasActivity.ARG_STUDY_ID, studyId);
+//                getContext().startActivity(moreIntent);
             }
         };
 

@@ -12,6 +12,8 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxWidth="720dp"
+        android:maxHeight="720dp"
         android:id="@+id/imageView"/>
 
     <WebView
