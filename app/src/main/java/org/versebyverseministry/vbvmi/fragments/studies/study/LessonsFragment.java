@@ -33,13 +33,10 @@ import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
-import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonExtrasActivity;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonExtrasFragment;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonRecyclerViewAdapter;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
-import org.versebyverseministry.vbvmi.model.Study;
-import org.versebyverseministry.vbvmi.model.Study_Table;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -127,10 +124,6 @@ public class LessonsFragment extends AbstractFragment {
                 DialogFragment newFragment = LessonExtrasFragment.newInstance(lesson.id, studyId);
                 newFragment.show(ft, "moreDialog");
                 getActivity().getSupportFragmentManager().executePendingTransactions();
-//                Intent moreIntent = new Intent(getContext(), LessonExtrasActivity.class);
-//                moreIntent.putExtra(LessonExtrasActivity.ARG_LESSON_ID, lesson.id);
-//                moreIntent.putExtra(LessonExtrasActivity.ARG_STUDY_ID, studyId);
-//                getContext().startActivity(moreIntent);
             }
         };
 
@@ -246,7 +239,8 @@ public class LessonsFragment extends AbstractFragment {
 
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(lesson.audioSource));
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-        request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOCUMENTS, FileHelpers.relativeAudioPath(lesson));
+        //File path = Environment.getExternalStorageDirectory(); // + /Android/data/org.versebyverseministry.vbvmi/files/Documents/lessons/ //"Documents"
+        request.setDestinationInExternalFilesDir(getContext(), "Documents", FileHelpers.relativeAudioPath(lesson)); //Environment.DIRECTORY_DOCUMENTS
         enqueue = dm.enqueue(request);
     }
 
