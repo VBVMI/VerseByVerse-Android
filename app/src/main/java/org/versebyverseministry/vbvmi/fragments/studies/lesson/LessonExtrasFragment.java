@@ -29,6 +29,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import org.versebyverseministry.vbvmi.FileHelpers;
 import org.versebyverseministry.vbvmi.FontManager;
 import org.versebyverseministry.vbvmi.GenericFileProvider;
+import org.versebyverseministry.vbvmi.LessonResourceManager;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
@@ -67,7 +68,7 @@ public class LessonExtrasFragment extends DialogFragment {
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
-    private DownloadManager dm;
+
     private Typeface iconFont;
 
     public LessonExtrasFragment() {
@@ -101,9 +102,7 @@ public class LessonExtrasFragment extends DialogFragment {
 
             lesson = SQLite.select().from(Lesson.class).where(Lesson_Table.id.eq(lessonId)).querySingle();
         }
-        dm = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
 
-        getContext().registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         iconFont = FontManager.getTypeface(getContext(), FontManager.FONTAWESOME);
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.Dialog);
     }
@@ -118,10 +117,6 @@ public class LessonExtrasFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_lesson_extras, container, false);
-
-
-
-
 
         unbinder = ButterKnife.bind(this, view);
 
@@ -237,9 +232,12 @@ public class LessonExtrasFragment extends DialogFragment {
 
         final int textId = iconIdForType(type);
 
-        final DownloadCallback callback = new DownloadCallback() {
+        final LessonResourceManager.DownloadCallback callback = new LessonResourceManager.DownloadCallback() {
             @Override
             public void downloadComplete(boolean success, String fileUri) {
+                if (isDetached()) {
+                    return;
+                }
                 holder.iconView.clearAnimation();
                 holder.iconView.setText(textId);
                 if (success) {
@@ -254,10 +252,11 @@ public class LessonExtrasFragment extends DialogFragment {
         fadeOut.setRepeatMode(Animation.REVERSE);
         fadeOut.setRepeatCount(Animation.INFINITE);
 
-        if (downloadIdsByType.containsKey(type)) {
+
+        if (LessonResourceManager.getInstance().isDownloadingResource(lessonId, type)) {
             holder.iconView.setText(R.string.fa_download);
             holder.iconView.startAnimation(fadeOut);
-            download(lesson, type, callback);
+            LessonResourceManager.getInstance().setDownloadCallback(lessonId, type, callback);
         } else {
             holder.iconView.setText(textId);
         }
@@ -271,99 +270,16 @@ public class LessonExtrasFragment extends DialogFragment {
 
             holder.iconView.setText(R.string.fa_download);
             holder.iconView.startAnimation(fadeOut);
-            download(lesson, type, callback);
+            LessonResourceManager.getInstance().download(lesson, type, callback);
         });
     }
 
-    private interface DownloadCallback {
-        void downloadComplete(boolean success, String fileUri);
-    }
 
-    private Map<Long, DownloadCallback> queuedCompletions = new HashMap<>();
-
-    private Map<String, Long> downloadIdsByType = new HashMap<>();
-
-    private BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                // Download was complete
-                long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                DownloadManager.Query query = new DownloadManager.Query();
-                query.setFilterById(downloadId);
-                if (!queuedCompletions.containsKey(downloadId)) {
-                    // this is not the download you're looking for
-                    return;
-                }
-                DownloadCallback callback = queuedCompletions.remove(downloadId);
-                Cursor c = dm.query(query);
-
-                if (c.moveToFirst()) {
-                    int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                    switch (c.getInt(columnIndex)) {
-                        case DownloadManager.STATUS_SUCCESSFUL: {
-
-                            int fileUriIndex = c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
-                            String fileUri = c.getString(fileUriIndex);
-
-                            callback.downloadComplete(true, fileUri);
-                            return;
-                        }
-                        case DownloadManager.STATUS_FAILED: {
-                            dm.remove(downloadId);
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                }
-
-                callback.downloadComplete(false, null);
-
-            }
-        }
-    };
-
-
-    private void download(Lesson lesson, String type, DownloadCallback callback) {
-        String source = FileHelpers.sourceForType(lesson, type);
-        if (source == null || callback == null || source.isEmpty()) {
-            return;
-        }
-        DownloadCallback myCallback = new DownloadCallback() {
-            @Override
-            public void downloadComplete(boolean success, String fileUri) {
-                if (downloadIdsByType.containsKey(type))
-                    downloadIdsByType.remove(type);
-
-                callback.downloadComplete(success, fileUri);
-            }
-        };
-
-        if (downloadIdsByType.containsKey(type)) {
-            long downloadId = downloadIdsByType.get(type);
-            queuedCompletions.put(downloadId, myCallback);
-            return;
-        }
-
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(source));
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-
-        request.setDestinationInExternalFilesDir(getContext(), "Documents", FileHelpers.relativePath(lesson, type));
-        long downloadId = dm.enqueue(request);
-        queuedCompletions.put(downloadId, myCallback);
-        downloadIdsByType.put(type, downloadId);
-    }
 
     @Override
     public void onDestroyView() {
         if (unbinder != null) {
             unbinder.unbind();
-        }
-        if (downloadReceiver != null) {
-            getContext().unregisterReceiver(downloadReceiver);
-            downloadReceiver = null;
         }
         super.onDestroyView();
     }

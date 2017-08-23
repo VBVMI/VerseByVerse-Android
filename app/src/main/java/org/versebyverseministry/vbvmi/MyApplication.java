@@ -16,5 +16,6 @@ public class MyApplication extends Application {
         super.onCreate();
 
         FlowManager.init(new FlowConfig.Builder(this).build());
+        LessonResourceManager.getInstance().setup(this);
     }
 }

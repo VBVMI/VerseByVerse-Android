@@ -29,6 +29,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.algi.sugarloader.SugarLoader;
 import org.versebyverseministry.vbvmi.FileHelpers;
+import org.versebyverseministry.vbvmi.LessonResourceManager;
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
@@ -65,7 +66,6 @@ public class LessonsFragment extends AbstractFragment {
 
     private SugarLoader<List<Lesson>> mLoader;
 
-    private DownloadManager dm;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -85,8 +85,6 @@ public class LessonsFragment extends AbstractFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dm = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-
         if (getArguments() != null) {
             studyId = getArguments().getString(ARG_STUDY_ID);
         }
@@ -100,9 +98,6 @@ public class LessonsFragment extends AbstractFragment {
         final View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
 
         unbinder = ButterKnife.bind(this, view);
-
-
-
 
         mListener = new OnLessonFragmentInteractionListener() {
             @Override
@@ -192,65 +187,6 @@ public class LessonsFragment extends AbstractFragment {
         mListener = null;
     }
 
-    private long enqueue = 0;
-
-
-
-    private BroadcastReceiver downloadReceiver;
-
-    private void downloadLesson(Lesson lesson) {
-        if (lesson.audioSource == null) {
-            return;
-        }
-
-        cleanUpReceiver();
-        downloadReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                    // Download was complete
-                    long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                    DownloadManager.Query query = new DownloadManager.Query();
-                    query.setFilterById(enqueue);
-                    Cursor c = dm.query(query);
-                    if (c.moveToFirst()) {
-                        int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                        switch (c.getInt(columnIndex)) {
-                            case DownloadManager.STATUS_SUCCESSFUL: {
-                                playAudio(lesson);
-                                break;
-                            }
-                            case DownloadManager.STATUS_FAILED: {
-                                dm.remove(enqueue);
-                                break;
-                            }
-                            default:
-                                return;
-                        }
-                    }
-                    enqueue = 0;
-                    cleanUpReceiver();
-                }
-            }
-        };
-
-        getContext().registerReceiver(downloadReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(lesson.audioSource));
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-        //File path = Environment.getExternalStorageDirectory(); // + /Android/data/org.versebyverseministry.vbvmi/files/Documents/lessons/ //"Documents"
-        request.setDestinationInExternalFilesDir(getContext(), "Documents", FileHelpers.relativeAudioPath(lesson)); //Environment.DIRECTORY_DOCUMENTS
-        enqueue = dm.enqueue(request);
-    }
-
-    private void cleanUpReceiver() {
-        if (downloadReceiver != null) {
-            getContext().unregisterReceiver(downloadReceiver);
-            downloadReceiver = null;
-        }
-    }
-
     public void playAudio(Lesson lesson) {
         Intent intent = new Intent(getContext(), LessonAudioActivity.class);
         intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
@@ -260,17 +196,20 @@ public class LessonsFragment extends AbstractFragment {
         activity.overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
 
+    private String expectedLessonID = null;
+
     public void onStartLesson(Lesson lesson) {
 
-        if (enqueue != 0) {
-            dm.remove(enqueue);
-            enqueue = 0;
-        }
+        expectedLessonID = lesson.id;
 
         File audio = FileHelpers.getAudioFileForLesson(getContext(), lesson);
         if (!audio.exists()) {
             // Download the lesson eh
-            downloadLesson(lesson);
+            LessonResourceManager.getInstance().download(lesson, FileHelpers.FILE_AUDIO, (success, fileUri) -> {
+                if (success && expectedLessonID != null && expectedLessonID.equals(lesson.id)) {
+                    playAudio(lesson);
+                }
+            });
         } else {
             playAudio(lesson);
         }

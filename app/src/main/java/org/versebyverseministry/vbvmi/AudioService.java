@@ -10,11 +10,13 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.IntDef;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -23,9 +25,11 @@ import org.versebyverseministry.vbvmi.model.Lesson;
 
 import java.util.concurrent.TimeUnit;
 
+import retrofit2.http.Path;
+
 public class AudioService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
     private static final String TAG = "PlayAudio";
-    private static final int NOTIFY_ID=1;
+    private static final int NOTIFY_ID=142345;
 
     public static String DID_START = "AudioServiceDidStart";
     public static String DID_END = "AudioServiceDidEnd";
@@ -90,6 +94,14 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         return false;
     }
 
+    private void testShutdown() {
+        if (!isPlaying()) {
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.cancel(NOTIFY_ID);
+            //stopSelf();
+        }
+    }
+
     public void playAudio() {
         player.reset();
 
@@ -122,6 +134,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         Log.d(TAG, "Audio service did end");
         Intent intent = new Intent(DID_END);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+        stopHandle.postDelayed(stopRunnable, 1000 * 20);
     }
 
     @Override
@@ -155,30 +169,37 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
         startRepeatingTask();
 
+        setupNotification();
+
+        Intent intent = new Intent(DID_START);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+
+    private void setupNotification() {
         Intent notificationIntent = new Intent(this, LessonAudioActivity.class);
         notificationIntent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification.Builder builder = new Notification.Builder(this);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
         builder.setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_bible_studies_black_24dp)
                 .setTicker(lesson.description)
                 .setOngoing(true)
-                .setContentTitle("Playing")
+                .setContentTitle(lesson.title)
                 .setContentText(lesson.description);
 
-        Notification notification = builder.getNotification();
 
-//        startForeground(NOTIFY_ID, notification);
+//        NotificationCompat.Action.Builder builder3 =  new NotificationCompat.Action.Builder(R.drawable.ic_play_button_40dp, "Play", pendingIntent);
+//        builder.addAction(builder3.build());
+
+        Notification notification = builder.build();
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+        manager.cancel(NOTIFY_ID);
         manager.notify(NOTIFY_ID, notification);
-
-        Intent intent = new Intent(DID_START);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private double getProgress() {
@@ -204,6 +225,15 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         return player.isPlaying();
     }
 
+    Handler stopHandle = new Handler();
+
+    Runnable stopRunnable = new Runnable() {
+        @Override
+        public void run() {
+            testShutdown();
+        }
+    };
+
     public void pausePlayer() {
         player.pause();
         AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -211,6 +241,9 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
         stopRepeatingTask();
         updateProgress();
+
+        stopHandle.postDelayed(stopRunnable, 1000 * 20);
+
     }
 
     public void seekTo(int positionMsec) {
@@ -218,12 +251,14 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void start() {
+        stopHandle.removeCallbacks(stopRunnable);
         AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         int result = mAudioManager.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             player.start();
             startRepeatingTask();
+            setupNotification();
         }
     }
 
