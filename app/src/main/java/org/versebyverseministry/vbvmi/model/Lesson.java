@@ -15,7 +15,7 @@ import org.versebyverseministry.vbvmi.database.AppDatabase;
 import java.util.List;
 
 /**
- * Created by thomascarey on 17/07/17.
+ * Created by thomascarey on 17/07/17
  */
 
 @Table(database = AppDatabase.class)

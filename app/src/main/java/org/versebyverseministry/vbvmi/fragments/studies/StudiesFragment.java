@@ -66,7 +66,6 @@ public class StudiesFragment extends AbstractFragment {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-
     private static boolean categoriesCompleted = false;
     private static boolean studiesCompleted = false;
     private static Date lastRequestDate = null;
@@ -140,7 +139,7 @@ public class StudiesFragment extends AbstractFragment {
         View view = inflater.inflate(R.layout.fragment_studies_root, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        toolbar.setTitle("Studies");
+        toolbar.setTitle(R.string.title_studies);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(this.getChildFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -163,7 +162,7 @@ public class StudiesFragment extends AbstractFragment {
                 if (success) {
                     //configureCategoryPager();
                     categoriesCompleted = true;
-                    if (studiesCompleted && categoriesCompleted) {
+                    if (studiesCompleted && categoriesCompleted && StudiesFragment.activeRunner != null) {
                         StudiesFragment.activeRunner.run();
                     }
                 }
@@ -173,7 +172,7 @@ public class StudiesFragment extends AbstractFragment {
                 // Studies downloaded... refresh!
                 if (success) {
                     studiesCompleted = true;
-                    if (studiesCompleted && categoriesCompleted) {
+                    if (studiesCompleted && categoriesCompleted && StudiesFragment.activeRunner != null) {
                         StudiesFragment.activeRunner.run();
                     }
                 }

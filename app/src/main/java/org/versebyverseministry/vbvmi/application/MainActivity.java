@@ -33,21 +33,18 @@ import com.zhuinden.simplestack.StateChanger;
 
 import org.versebyverseministry.vbvmi.AudioService;
 import org.versebyverseministry.vbvmi.R;
-import org.versebyverseministry.vbvmi.api.APIManager;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
-import org.versebyverseministry.vbvmi.fragments.answers.AnswersKey;
+import org.versebyverseministry.vbvmi.fragments.answers.TopicsKey;
 import org.versebyverseministry.vbvmi.fragments.studies.StudiesKey;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
-import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Lesson;
-import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.util.Multistack;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static org.versebyverseministry.vbvmi.application.MainActivity.StackType.STUDIES;
-import static org.versebyverseministry.vbvmi.application.MainActivity.StackType.ANSWERS;
+import static org.versebyverseministry.vbvmi.application.MainActivity.StackType.TOPICS;
 
 public class MainActivity extends AppCompatActivity implements StateChanger {
 
@@ -55,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
     public enum StackType {
         STUDIES,
-        ANSWERS
+        TOPICS
     }
 
     private AudioService audioService;
@@ -96,14 +93,14 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         this.multistack = new Multistack();
 
         multistack.add(STUDIES.name(), new BackstackDelegate(null));
-        multistack.add(ANSWERS.name(), new BackstackDelegate(null));
+        multistack.add(TOPICS.name(), new BackstackDelegate(null));
 
         Multistack.NonConfigurationInstance nonConfigurationInstance = (Multistack.NonConfigurationInstance) getLastCustomNonConfigurationInstance();
 
         multistack.onCreate(savedInstanceState);
 
         multistack.onCreate(STUDIES.name(), savedInstanceState, nonConfigurationInstance, StudiesKey.create());
-        multistack.onCreate(ANSWERS.name(), savedInstanceState, nonConfigurationInstance, AnswersKey.create());
+        multistack.onCreate(TOPICS.name(), savedInstanceState, nonConfigurationInstance, TopicsKey.create());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -118,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
                         newStack = STUDIES.name();
                         break;
                     case R.id.navigation_answers:
-                        newStack = ANSWERS.name();
+                        newStack = TOPICS.name();
                         break;
                 }
 

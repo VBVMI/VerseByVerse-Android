@@ -1,5 +1,9 @@
 package org.versebyverseministry.vbvmi.api;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -8,6 +12,7 @@ import android.util.Log;
 import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Study;
+import org.versebyverseministry.vbvmi.model.pojo.Articles;
 import org.versebyverseministry.vbvmi.model.pojo.Lessons;
 import org.versebyverseministry.vbvmi.model.pojo.Studies;
 
@@ -18,7 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by thomascarey on 8/06/17.
+ * Created by thomascarey on 8/06/17
  */
 
 public class APIManager {
@@ -32,9 +37,24 @@ public class APIManager {
 
     private APIInterface apiInterface;
 
+    private ConnectivityManager connectivityManager = null;
+
+    public static void configureAPIManager(Context context) {
+        getInstance().connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    }
+
     private APIManager() {
         apiInterface = APIClient.getClient().create(APIInterface.class);
     }
+
+    private boolean isOnWifi() {
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        if (info != null && info.getType() == ConnectivityManager.TYPE_WIFI && info.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
 
     public interface RequestComplete {
         void didComplete(boolean success);
@@ -126,6 +146,34 @@ public class APIManager {
 
             @Override
             public void onFailure(Call<Lessons> call, Throwable t) {
+                call.cancel();
+                mainHandler.post(() -> {
+                    callback.didComplete(false);
+                });
+            }
+        });
+
+    }
+
+    public void downloadArticles(RequestComplete callback) {
+
+        boolean fullDownload = isOnWifi();
+        Call<Articles> call = fullDownload ? apiInterface.doGetArticles() : apiInterface.doGetLatestArticles();
+
+        call.enqueue(new Callback<Articles>() {
+            @Override
+            public void onResponse(Call<Articles> call, Response<Articles> response) {
+                AsyncTask.execute(() -> {
+                    Articles articles = response.body();
+                    DatabaseManager.getInstance().saveArticles(articles.getLessons(), fullDownload);
+                    mainHandler.post(() -> {
+                        callback.didComplete(true);
+                    });
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Articles> call, Throwable t) {
                 call.cancel();
                 mainHandler.post(() -> {
                     callback.didComplete(false);

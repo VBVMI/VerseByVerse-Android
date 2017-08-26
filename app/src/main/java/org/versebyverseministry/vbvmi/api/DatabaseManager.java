@@ -14,6 +14,9 @@ import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTr
 import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import org.versebyverseministry.vbvmi.database.AppDatabase;
+import org.versebyverseministry.vbvmi.model.Article;
+import org.versebyverseministry.vbvmi.model.Article_Table;
+import org.versebyverseministry.vbvmi.model.Article_Topic;
 import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
@@ -115,6 +118,36 @@ public class DatabaseManager {
         });
     }
 
+    public void saveArticles(List<Article> articles, boolean cleanOutMissingArticles) {
+        List<Article> persistedLessons = SQLite.select().from(Article.class).queryList();
+
+        mergeAPIData(persistedLessons, articles, cleanOutMissingArticles, new MergeOperation<Article>() {
+            @Override
+            public void didPersist(Article instance) {
+                // find all the relevant topic relationships and update them
+                List<Lesson_Topic> lessonTopics = SQLite.select().from(Lesson_Topic.class).where(Lesson_Topic_Table.lesson_id.eq(instance.id)).queryList();
+
+                for(Lesson_Topic lesson_topic : lessonTopics) {
+                    lesson_topic.delete();
+                }
+
+                for(Topic t: instance.topics) {
+                    t.save();
+
+                    Article_Topic lessonTopic = new Article_Topic();
+                    lessonTopic.setArticle(instance);
+                    lessonTopic.setTopic(t);
+                    lessonTopic.save();
+                }
+            }
+
+            @Override
+            public void didDelete(Article instance) {
+                SQLite.delete().from(Lesson_Topic.class).where(Lesson_Topic_Table.lesson_id.eq(instance.id)).execute();
+            }
+        });
+    }
+
     public void saveCategories(List<Category> categories) {
         List<Category> persistedCategories = SQLite.select().from(Category.class).queryList();
         mergeAPIData(persistedCategories, categories);
@@ -137,6 +170,10 @@ public class DatabaseManager {
     }
 
     private static <T extends BaseModel & Mergable<T>> MergePair<T> mergeAPIData(List<T> persistedEntries, List<T> apiEntries, final MergeOperation<T> operation) {
+        return mergeAPIData(persistedEntries, apiEntries, true, operation);
+    }
+
+    private static <T extends BaseModel & Mergable<T>> MergePair<T> mergeAPIData(List<T> persistedEntries, List<T> apiEntries, boolean deleteDifference , final MergeOperation<T> operation) {
 
         Map<String, T> mergedMap = new HashMap<>();
 
@@ -144,7 +181,8 @@ public class DatabaseManager {
 
         for (T entry : persistedEntries) {
             mergedMap.put(entry.identifier(), entry);
-            unconsumedIds.add(entry.identifier());
+            if (deleteDifference)
+                unconsumedIds.add(entry.identifier());
         }
 
         for (T apiEntry : apiEntries) {
@@ -187,17 +225,19 @@ public class DatabaseManager {
                 }
         ).addAll(saveList).build());
 
-        database.executeTransaction(new ProcessModelTransaction.Builder<>(
-                new ProcessModelTransaction.ProcessModel<T>() {
-                    @Override
-                    public void processModel(T instance, DatabaseWrapper wrapper) {
-                        instance.delete();
-                        if (operation != null) {
-                            operation.didDelete(instance);
+        if (deleteDifference) {
+            database.executeTransaction(new ProcessModelTransaction.Builder<>(
+                    new ProcessModelTransaction.ProcessModel<T>() {
+                        @Override
+                        public void processModel(T instance, DatabaseWrapper wrapper) {
+                            instance.delete();
+                            if (operation != null) {
+                                operation.didDelete(instance);
+                            }
                         }
                     }
-                }
-        ).addAll(entriesToDelete).build());
+            ).addAll(entriesToDelete).build());
+        }
 
         observer.endTransactionAndNotify();
 

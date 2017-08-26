@@ -3,6 +3,7 @@ package org.versebyverseministry.vbvmi.api;
 import android.support.annotation.NonNull;
 
 import org.versebyverseministry.vbvmi.model.Category;
+import org.versebyverseministry.vbvmi.model.pojo.Articles;
 import org.versebyverseministry.vbvmi.model.pojo.Lessons;
 import org.versebyverseministry.vbvmi.model.pojo.Studies;
 
@@ -27,4 +28,10 @@ public interface APIInterface {
 
     @GET("/corev2/json-lessons/{id}")
     Call<Lessons> doGetLessons(@NonNull @Path("id") String studyId);
+
+    @GET("/corev2/json-articles")
+    Call<Articles> doGetArticles();
+
+    @GET("/corev2/json-articlesp")
+    Call<Articles> doGetLatestArticles();
 }

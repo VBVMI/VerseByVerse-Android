@@ -1,10 +1,10 @@
 package org.versebyverseministry.vbvmi.fragments.answers;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.google.auto.value.AutoValue;
 
-import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.application.Key;
 import org.versebyverseministry.vbvmi.application.MainActivity;
 
@@ -13,24 +13,31 @@ import org.versebyverseministry.vbvmi.application.MainActivity;
  */
 
 @AutoValue
-public abstract class AnswersKey extends Key {
+public abstract class TopicsKey extends Key {
 
-    public static AnswersKey create() {
-        return new AutoValue_AnswersKey();
+    @Nullable
+    abstract String topicId();
+
+    public static TopicsKey create() {
+        return createWithTopic(null);
+    }
+
+    public static TopicsKey createWithTopic(String topicId) {
+        return new AutoValue_TopicsKey(topicId);
     }
 
     @Override
     public String stackIdentifier() {
-        return MainActivity.StackType.ANSWERS.name();
+        return MainActivity.StackType.TOPICS.name();
     }
 
     @Override
     public String getFragmentTag() {
-        return "AnswersKey";
+        return "TopicsKey";
     }
 
     @Override
     public Fragment createFragment() {
-        return AnswersFragment.newInstance("Answers", "FRAGMENT");
+        return TopicsFragment.newInstance(topicId());
     }
 }
