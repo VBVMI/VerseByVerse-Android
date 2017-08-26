@@ -37,8 +37,12 @@ import org.versebyverseministry.vbvmi.model.Category_Table;
 import org.versebyverseministry.vbvmi.model.Study;
 import org.versebyverseministry.vbvmi.model.Study_Table;
 import org.versebyverseministry.vbvmi.util.ServiceLocator;
+import org.versebyverseministry.vbvmi.views.LoadingView;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,7 +55,7 @@ import butterknife.ButterKnife;
  */
 public class StudiesFragment extends AbstractFragment {
 
-
+    private static final String TAG = "StudiesFragment";
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -61,6 +65,13 @@ public class StudiesFragment extends AbstractFragment {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+
+    private static boolean categoriesCompleted = false;
+    private static boolean studiesCompleted = false;
+    private static Date lastRequestDate = null;
+
+    private static Runnable activeRunner = null;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -73,6 +84,9 @@ public class StudiesFragment extends AbstractFragment {
 
     @BindView(R.id.studiesTabs)
     TabLayout tabLayout;
+
+    @BindView(R.id.loading_view)
+    LoadingView loadingView;
 
     public StudiesFragment() {
         // Required empty public constructor
@@ -105,8 +119,18 @@ public class StudiesFragment extends AbstractFragment {
 
     private void configureCategoryPager() {
         List<Category> categories = SQLite.select().from(Category.class).orderBy(Category_Table.order, true).queryList();
-        mSectionsPagerAdapter = new SectionsPagerAdapter(this.getChildFragmentManager(), categories);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        if (SQLite.selectCountOf().from(Study.class).count() > 0) {
+            mSectionsPagerAdapter.setCategories(categories);
+            mViewPager.setVisibility(View.VISIBLE);
+            loadingView.setVisibility(View.GONE);
+            Log.d(TAG, "configureCategoryPager: " + this);
+        }
+    }
+
+    private boolean hasContent() {
+        if (SQLite.selectCountOf().from(Study.class).count() > 0 && SQLite.selectCountOf().from(Category.class).count() > 0)
+            return true;
+        return false;
     }
 
     @Override
@@ -118,9 +142,43 @@ public class StudiesFragment extends AbstractFragment {
 
         toolbar.setTitle("Studies");
 
+        mSectionsPagerAdapter = new SectionsPagerAdapter(this.getChildFragmentManager());
+        mViewPager.setAdapter(mSectionsPagerAdapter);
         configureCategoryPager();
 
         tabLayout.setupWithViewPager(mViewPager);
+
+        if (!hasContent()) {
+            loadingView.setVisibility(View.VISIBLE);
+            mViewPager.setVisibility(View.GONE);
+        }
+
+        if(lastRequestDate == null || TimeUnit.MILLISECONDS.toSeconds((new Date()).getTime() - lastRequestDate.getTime()) > 300 ) {
+            categoriesCompleted = false;
+            studiesCompleted = false;
+            lastRequestDate = new Date();
+            Log.d(TAG, "onCreateView: ");
+            APIManager.getInstance().downloadCategories(success -> {
+                // Categories downloaded... refresh that screen!
+                if (success) {
+                    //configureCategoryPager();
+                    categoriesCompleted = true;
+                    if (studiesCompleted && categoriesCompleted) {
+                        StudiesFragment.activeRunner.run();
+                    }
+                }
+            });
+
+            APIManager.getInstance().downloadStudies(success -> {
+                // Studies downloaded... refresh!
+                if (success) {
+                    studiesCompleted = true;
+                    if (studiesCompleted && categoriesCompleted) {
+                        StudiesFragment.activeRunner.run();
+                    }
+                }
+            });
+        }
 
         return view;
     }
@@ -129,6 +187,14 @@ public class StudiesFragment extends AbstractFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        Log.d(TAG, "onAttach: " + this);
+        activeRunner = new Runnable() {
+            @Override
+            public void run() {
+                if (!isDetached())
+                    configureCategoryPager();
+            }
+        };
     }
 
 
@@ -137,6 +203,8 @@ public class StudiesFragment extends AbstractFragment {
     public void onDetach() {
         super.onDetach();
         mSectionsPagerAdapter = null;
+        Log.d(TAG, "onDetach: " + this);
+        activeRunner = null;
     }
 
 
@@ -183,6 +251,8 @@ public class StudiesFragment extends AbstractFragment {
             DisplayMetrics displayMetrics = new DisplayMetrics();
             ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displayMetrics);
 
+            Log.d("Placeholder", "onCreateView: found " + studies.size() + " studies");
+
             float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
             float imageWidth = Math.max((dpWidth / 4) - 1, 120);
@@ -196,7 +266,6 @@ public class StudiesFragment extends AbstractFragment {
 
             // on a large device go with 4 columns?
 
-
             if (rootView instanceof RecyclerView) {
                 Context context = rootView.getContext();
                 RecyclerView recyclerView = (RecyclerView) rootView;
@@ -205,7 +274,9 @@ public class StudiesFragment extends AbstractFragment {
                 recyclerView.setAdapter(new MyStudyRecyclerViewAdapter(studies, numberOfColumns, new MyStudyRecyclerViewAdapter.OnStudyInteractionListener() {
                     @Override
                     public void studyClicked(Study study) {
-                        APIManager.getInstance().downloadLessons(study.id);
+                        APIManager.getInstance().downloadLessons(study.id, success -> {
+                            Log.d(TAG, "Downloaded the lessons successfully " + success);
+                        });
                         ((BackstackDelegate)ServiceLocator.getService(getContext(), MainActivity.StackType.STUDIES.name())).getBackstack().goTo(StudyKey.create(study.id));
                     }
                 }));
@@ -251,11 +322,20 @@ public class StudiesFragment extends AbstractFragment {
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private List<Category> categories;
+        private List<Category> categories = new ArrayList<>();
 
-        public SectionsPagerAdapter(FragmentManager fm, List<Category> categories) {
+        public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+        public void setCategories(List<Category> categories) {
+            if (categories == null) {
+                categories = new ArrayList<>();
+                notifyDataSetChanged();
+                return;
+            }
             this.categories = categories;
+            notifyDataSetChanged();
         }
 
         @Override

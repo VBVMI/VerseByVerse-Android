@@ -109,9 +109,6 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        APIManager.getInstance().downloadStudies();
-        APIManager.getInstance().downloadCategories();
-
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -137,8 +134,8 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
 
         DatabaseManager.observer.registerForContentChanges(this, Lesson.class);
-        DatabaseManager.observer.registerForContentChanges(this, Category.class);
-        DatabaseManager.observer.registerForContentChanges(this, Study.class);
+//        DatabaseManager.observer.registerForContentChanges(this, Category.class);
+//        DatabaseManager.observer.registerForContentChanges(this, Study.class);
 
         audioBarLayout.setOnClickListener(v -> {
             Log.d(TAG, "Tapped bar");

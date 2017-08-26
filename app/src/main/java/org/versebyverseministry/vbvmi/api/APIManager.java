@@ -1,6 +1,7 @@
 package org.versebyverseministry.vbvmi.api;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -27,6 +28,7 @@ public class APIManager {
         return ourInstance;
     }
 
+    private final Handler mainHandler = new Handler();
 
     private APIInterface apiInterface;
 
@@ -34,8 +36,11 @@ public class APIManager {
         apiInterface = APIClient.getClient().create(APIInterface.class);
     }
 
+    public interface RequestComplete {
+        void didComplete(boolean success);
+    }
 
-    public void downloadStudies() {
+    public void downloadStudies(RequestComplete callback) {
 
         Call<Studies> call = apiInterface.doGetStudies();
 
@@ -49,6 +54,9 @@ public class APIManager {
                         Studies studies = response.body();
                         List<Study> studyList = studies.getStudies();
                         DatabaseManager.getInstance().saveStudies(studyList);
+                        mainHandler.post(() -> {
+                           callback.didComplete(true);
+                        });
                     }
                 });
 
@@ -57,12 +65,15 @@ public class APIManager {
             @Override
             public void onFailure(Call<Studies> call, Throwable t) {
                 call.cancel();
+                mainHandler.post(() -> {
+                    callback.didComplete(false);
+                });
             }
         });
 
     }
 
-    public void downloadCategories() {
+    public void downloadCategories(RequestComplete callback) {
 
         Call<List<Category>> call = apiInterface.doGetCategories();
         call.enqueue(new Callback<List<Category>>() {
@@ -75,6 +86,9 @@ public class APIManager {
                     public void run() {
                         List<Category> categories = response.body();
                         DatabaseManager.getInstance().saveCategories(categories);
+                        mainHandler.post(() -> {
+                            callback.didComplete(true);
+                        });
                     }
                 });
 
@@ -83,12 +97,15 @@ public class APIManager {
             @Override
             public void onFailure(Call<List<Category>> call, Throwable t) {
                 call.cancel();
+                mainHandler.post(() -> {
+                    callback.didComplete(false);
+                });
             }
         });
 
     }
 
-    public void downloadLessons(@NonNull final String studyId) {
+    public void downloadLessons(@NonNull final String studyId, RequestComplete callback) {
 
         Call<Lessons> call = apiInterface.doGetLessons(studyId);
         call.enqueue(new Callback<Lessons>() {
@@ -100,6 +117,9 @@ public class APIManager {
                         Lessons lessons = response.body();
                         List<Lesson> lessonList = lessons.getLessons();
                         DatabaseManager.getInstance().saveLessons(lessonList, studyId);
+                        mainHandler.post(() -> {
+                            callback.didComplete(true);
+                        });
                     }
                 });
             }
@@ -107,6 +127,9 @@ public class APIManager {
             @Override
             public void onFailure(Call<Lessons> call, Throwable t) {
                 call.cancel();
+                mainHandler.post(() -> {
+                    callback.didComplete(false);
+                });
             }
         });
 

@@ -28,9 +28,11 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.algi.sugarloader.SugarLoader;
+import org.algi.sugarloader.function.Supplier;
 import org.versebyverseministry.vbvmi.FileHelpers;
 import org.versebyverseministry.vbvmi.LessonResourceManager;
 import org.versebyverseministry.vbvmi.R;
+import org.versebyverseministry.vbvmi.api.APIManager;
 import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
@@ -38,9 +40,11 @@ import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonExtrasFragm
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonRecyclerViewAdapter;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
+import org.versebyverseministry.vbvmi.views.LoadingView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -64,6 +68,9 @@ public class LessonsFragment extends AbstractFragment {
     @BindView(R.id.list)
     RecyclerView recyclerView;
 
+    @BindView(R.id.loading_view)
+    LoadingView loadingView;
+
     private SugarLoader<List<Lesson>> mLoader;
 
     /**
@@ -81,12 +88,24 @@ public class LessonsFragment extends AbstractFragment {
         return fragment;
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
             studyId = getArguments().getString(ARG_STUDY_ID);
+        }
+    }
+
+    private void toggleLoading() {
+        if (SQLite.selectCountOf().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).count() > 0) {
+            loadingView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+        } else {
+            loadingView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
         }
     }
 
@@ -98,6 +117,8 @@ public class LessonsFragment extends AbstractFragment {
         final View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
 
         unbinder = ButterKnife.bind(this, view);
+
+        toggleLoading();
 
         mListener = new OnLessonFragmentInteractionListener() {
             @Override
@@ -122,12 +143,14 @@ public class LessonsFragment extends AbstractFragment {
             }
         };
 
-        mLoader = new SugarLoader<List<Lesson>>("LessonsLoader")
+        mLoader = new SugarLoader<List<Lesson>>("LessonsLoader" + studyId)
                 .background(() ->
                         SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).orderBy(Lesson_Table.index, true).queryList()
                 ).onSuccess(lessons -> {
                     LessonRecyclerViewAdapter adapter = (LessonRecyclerViewAdapter)recyclerView.getAdapter();
                     adapter.setLessons(lessons);
+
+                    toggleLoading();
                 });
 
         Context context = view.getContext();
@@ -170,6 +193,7 @@ public class LessonsFragment extends AbstractFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
 //        if (context instanceof OnListFragmentInteractionListener) {
 //            mListener = (OnListFragmentInteractionListener) context;
 //        } else {
