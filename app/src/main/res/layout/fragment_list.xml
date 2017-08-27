@@ -13,7 +13,7 @@
       android:background="@color/colorGridBackground"
       tools:listitem="@layout/item_bible_study"/>
 
-  <org.versebyverseministry.vbvmi.views.LoadingView
+  <com.erpdevelopment.vbvm.views.LoadingView
       android:id="@+id/loading_view"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

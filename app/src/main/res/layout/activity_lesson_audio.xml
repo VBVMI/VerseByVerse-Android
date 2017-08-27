@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:gravity="bottom"
     android:orientation="vertical"
-    tools:context="org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity">
+    tools:context="com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity">
 
   <RelativeLayout
       android:layout_width="match_parent"

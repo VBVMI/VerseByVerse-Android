@@ -13,14 +13,14 @@
       tools:text="TextView"
       android:textAlignment="center"/>
 
-  <org.versebyverseministry.vbvmi.views.SquareImageView
+  <com.erpdevelopment.vbvm.views.SquareImageView
       android:id="@+id/bible_study_image_view"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:scaleType="centerCrop"
       >
 
-  </org.versebyverseministry.vbvmi.views.SquareImageView>
+  </com.erpdevelopment.vbvm.views.SquareImageView>
 
   <Button
       android:layout_width="match_parent"

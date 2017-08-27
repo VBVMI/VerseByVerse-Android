@@ -11,5 +11,5 @@ android:layout_marginLeft="16dp"
 android:layout_marginRight="16dp"
 android:background="@color/colorGridBackground"
 app:layoutManager="GridLayoutManager"
-tools:context="org.versebyverseministry.vbvmi.fragments.studies.StudiesFragment"
+tools:context="com.erpdevelopment.vbvm.fragments.studies.StudiesFragment"
 tools:listitem="@layout/item_bible_study"/>

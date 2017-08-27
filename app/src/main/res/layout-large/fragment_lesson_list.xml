@@ -12,7 +12,7 @@
       android:layout_width="0dp"
       android:layout_height="0dp"
       app:layoutManager="LinearLayoutManager"
-      tools:context="org.versebyverseministry.vbvmi.fragments.studies.study.LessonsFragment"
+      tools:context="com.erpdevelopment.vbvm.fragments.studies.study.LessonsFragment"
       tools:listitem="@layout/item_lesson"
       android:layout_marginLeft="64dp"
       app:layout_constraintLeft_toLeftOf="parent"
@@ -23,7 +23,7 @@
       app:layout_constraintBottom_toBottomOf="parent"
       android:layout_marginBottom="0dp"/>
 
-  <org.versebyverseministry.vbvmi.views.LoadingView
+  <com.erpdevelopment.vbvm.views.LoadingView
       android:id="@+id/loading_view"
       android:layout_width="0dp"
       android:layout_height="0dp"
