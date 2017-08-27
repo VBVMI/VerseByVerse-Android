@@ -11,9 +11,11 @@ import org.versebyverseministry.vbvmi.StringHelpers;
 import org.versebyverseministry.vbvmi.model.Article;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -27,14 +29,16 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
 
 
     private List<Article> articles;
+    private Map<String, List<ArticlesListFragment.QueryTopic>> topicMap;
 
-    public void setArticles(List<Article> articles) {
+    public void setArticles(List<Article> articles, Map<String, List<ArticlesListFragment.QueryTopic>> topicMap) {
+        this.topicMap = topicMap;
         this.articles = articles;
         this.notifyDataSetChanged();
     }
 
-    public ArticlesRecyclerAdapter(List<Article> articles) {
-        this.articles = articles;
+    public ArticlesRecyclerAdapter() {
+        this.articles = new ArrayList<>();
     }
 
     @Override
