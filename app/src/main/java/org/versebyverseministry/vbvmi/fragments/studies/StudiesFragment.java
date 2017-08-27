@@ -210,7 +210,7 @@ public class StudiesFragment extends AbstractFragment {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class StudiesListFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -223,15 +223,15 @@ public class StudiesFragment extends AbstractFragment {
 
         OnTableChangedListener tableChangedListener;
 
-        public PlaceholderFragment() {
+        public StudiesListFragment() {
         }
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(Category category) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public static StudiesListFragment newInstance(Category category) {
+            StudiesListFragment fragment = new StudiesListFragment();
             Bundle args = new Bundle();
             args.putParcelable(ARG_CATEGORY, new Category$$Parcelable(category));
             fragment.setArguments(args);
@@ -320,7 +320,7 @@ public class StudiesFragment extends AbstractFragment {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
         private List<Category> categories = new ArrayList<>();
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -341,7 +341,7 @@ public class StudiesFragment extends AbstractFragment {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(categories.get(position));
+            return StudiesListFragment.newInstance(categories.get(position));
         }
 
         @Override

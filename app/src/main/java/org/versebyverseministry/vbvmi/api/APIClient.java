@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 
 import org.versebyverseministry.vbvmi.database.DBFlowExclusionStrategy;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -24,7 +26,11 @@ public class APIClient {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .connectTimeout(120, TimeUnit.SECONDS)
+                .build();
 
         Gson gson = new GsonBuilder().setExclusionStrategies(new DBFlowExclusionStrategy()).create();
 

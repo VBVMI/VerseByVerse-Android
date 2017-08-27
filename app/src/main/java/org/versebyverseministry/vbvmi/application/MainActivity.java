@@ -37,6 +37,7 @@ import org.versebyverseministry.vbvmi.api.DatabaseManager;
 import org.versebyverseministry.vbvmi.fragments.answers.TopicsKey;
 import org.versebyverseministry.vbvmi.fragments.studies.StudiesKey;
 import org.versebyverseministry.vbvmi.fragments.studies.lesson.LessonAudioActivity;
+import org.versebyverseministry.vbvmi.model.Article;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.util.Multistack;
 
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
 
         DatabaseManager.observer.registerForContentChanges(this, Lesson.class);
+        DatabaseManager.observer.registerForContentChanges(this, Article.class);
 //        DatabaseManager.observer.registerForContentChanges(this, Category.class);
 //        DatabaseManager.observer.registerForContentChanges(this, Study.class);
 

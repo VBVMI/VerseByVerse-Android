@@ -36,6 +36,20 @@
     <item name="android:textSize">24sp</item>
   </style>
 
+  <style name="AppTheme.Text.Topics">
+    <item name="android:textColorPrimary">@color/tableCellText</item>
+    <item name="android:textColorSecondary">@color/tableCellText</item>
+    <item name="android:textColor">@color/tableCellText</item>
+  </style>
+
+  <style name="AppTheme.Text.Topics.Title" parent="AppTheme.Text.Topics">
+    <item name="android:textSize">16sp</item>
+  </style>
+
+  <style name="AppTheme.Text.Topics.Supplementary" parent="AppTheme.Text.Topics">
+    <item name="android:textSize">12sp</item>
+  </style>
+
   <style name="MediaButton">
     <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
     <item name="android:tint">@color/tableCellText</item>

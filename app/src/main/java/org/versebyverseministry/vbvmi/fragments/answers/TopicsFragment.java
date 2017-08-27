@@ -4,6 +4,8 @@ package org.versebyverseministry.vbvmi.fragments.answers;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -11,12 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+
 import org.versebyverseministry.vbvmi.R;
 import org.versebyverseministry.vbvmi.api.APIManager;
 import org.versebyverseministry.vbvmi.fragments.shared.AbstractFragment;
+import org.versebyverseministry.vbvmi.model.Topic;
 import org.versebyverseministry.vbvmi.views.LoadingView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -42,8 +50,6 @@ public class TopicsFragment extends AbstractFragment {
     @BindView(R.id.studiesTabs)
     TabLayout tabLayout;
 
-    @BindView(R.id.loading_view)
-    LoadingView loadingView;
 
     private static Date lastRequestDate = null;
 
@@ -83,19 +89,66 @@ public class TopicsFragment extends AbstractFragment {
 
         toolbar.setTitle(R.string.title_topics);
 
-        loadingView.setVisibility(View.VISIBLE);
+//        FlowCursor cursor1 = SQLite.select().from(Article_Topic.class).as("A")
+//                .join(Topic.class, Join.JoinType.INNER).as("T")
+//                .on(Article_Topic_Table.topic_id
+//                        .withTable(NameAlias.builder("A").build())
+//                        .eq(Topic_Table.id.withTable(NameAlias.builder("T").build()))).orderBy(Article_Topic_Table.article_id, true).query();
+//        cursor1.moveToFirst();
+//        cursor1.moveToNext();
+//        cursor1.getCount();
+//String str = "_id:" + cursor1.getInt(0) + " aid:" + cursor1.getInt(1) + " topic:" + cursor1.getString(4);
 
         if(lastRequestDate == null || TimeUnit.MILLISECONDS.toSeconds((new Date()).getTime() - lastRequestDate.getTime()) > 3600 ) {
             lastRequestDate = new Date();
             APIManager.getInstance().downloadArticles(success -> {
                 Log.d(TAG, "Downloaded all them articles (" + success + ")");
-                if (!isDetached()) {
-                    loadingView.setVisibility(View.GONE);
-                }
             });
         }
 
+        SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(this.getChildFragmentManager());
+        mViewPager.setAdapter(pagerAdapter);
+        tabLayout.setupWithViewPager(mViewPager);
+
         return view;
+    }
+
+    private enum Topics {
+        ANSWERS,
+        ARTICLES
+    }
+
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
+        private List<Topics> topics = Arrays.asList(Topics.ARTICLES); //Topics.ANSWERS,
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Topics topic = topics.get(position);
+            switch (topic) {
+                case ANSWERS: return null;
+                case ARTICLES: return ArticlesListFragment.newInstance();
+                default: return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return topics.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Topics topic = topics.get(position);
+            switch (topic) {
+                case ANSWERS: return "Answers";
+                case ARTICLES: return "Articles";
+                default: return "";
+            }
+        }
     }
 
 }

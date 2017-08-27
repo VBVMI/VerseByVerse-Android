@@ -17,6 +17,7 @@ import org.versebyverseministry.vbvmi.database.AppDatabase;
 import org.versebyverseministry.vbvmi.model.Article;
 import org.versebyverseministry.vbvmi.model.Article_Table;
 import org.versebyverseministry.vbvmi.model.Article_Topic;
+import org.versebyverseministry.vbvmi.model.Article_Topic_Table;
 import org.versebyverseministry.vbvmi.model.Category;
 import org.versebyverseministry.vbvmi.model.Lesson;
 import org.versebyverseministry.vbvmi.model.Lesson_Table;
@@ -125,9 +126,9 @@ public class DatabaseManager {
             @Override
             public void didPersist(Article instance) {
                 // find all the relevant topic relationships and update them
-                List<Lesson_Topic> lessonTopics = SQLite.select().from(Lesson_Topic.class).where(Lesson_Topic_Table.lesson_id.eq(instance.id)).queryList();
+                List<Article_Topic> lessonTopics = SQLite.select().from(Article_Topic.class).where(Article_Topic_Table.article_id.eq(instance.id)).queryList();
 
-                for(Lesson_Topic lesson_topic : lessonTopics) {
+                for(Article_Topic lesson_topic : lessonTopics) {
                     lesson_topic.delete();
                 }
 

@@ -40,7 +40,7 @@ public class Article extends BaseModel implements Mergable<Article> {
     @Column
     @SerializedName("postedDate")
     @Expose
-    public String postedDate;
+    public Long postedDate;
 
     @Column
     @SerializedName("title")
