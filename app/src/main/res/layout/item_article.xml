@@ -12,16 +12,16 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:id="@+id/title_view"
-      android:layout_marginLeft="16dp"
-      android:layout_marginRight="16dp"
+      android:layout_marginLeft="@dimen/activity_horizontal_margin"
+      android:layout_marginRight="@dimen/activity_horizontal_margin"
       tools:text="Spiritual Maturity is the Answer"
       style="@style/AppTheme.Text.Topics.Title"/>
 
   <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginLeft="16dp"
-      android:layout_marginRight="16dp"
+      android:layout_marginLeft="@dimen/activity_horizontal_margin"
+      android:layout_marginRight="@dimen/activity_horizontal_margin"
       android:layout_marginTop="4dp"
       >
 
@@ -47,5 +47,15 @@
         tools:text="4/06/16"/>
 
   </RelativeLayout>
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/tag_recycler_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:paddingLeft="@dimen/activity_horizontal_margin"
+      android:paddingRight="@dimen/activity_horizontal_margin"
+      android:layout_marginTop="4dp"
+      android:clipToPadding="false"
+      />
 
 </LinearLayout>

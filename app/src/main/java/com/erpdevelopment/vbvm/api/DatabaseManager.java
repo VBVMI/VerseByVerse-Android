@@ -1,5 +1,6 @@
 package com.erpdevelopment.vbvm.api;
 
+import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.database.AppDatabase;
 import com.erpdevelopment.vbvm.model.Article_Topic;
 import com.erpdevelopment.vbvm.model.Study;
@@ -62,6 +63,7 @@ public class DatabaseManager {
                 }
 
                 for(Topic t: instance.topics) {
+                    t.id = StringHelpers.toSlug(t.id);
                     t.save();
 
                     Study_Topic studyTopic = new Study_Topic();
@@ -96,6 +98,7 @@ public class DatabaseManager {
                 }
 
                 for(Topic t: instance.topics) {
+                    t.id = StringHelpers.toSlug(t.id);
                     t.save();
 
                     Lesson_Topic lessonTopic = new Lesson_Topic();
@@ -126,6 +129,7 @@ public class DatabaseManager {
                 }
 
                 for(Topic t: instance.topics) {
+                    t.id = StringHelpers.toSlug(t.id);
                     t.save();
 
                     Article_Topic lessonTopic = new Article_Topic();

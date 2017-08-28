@@ -1,5 +1,6 @@
 package com.erpdevelopment.vbvm.fragments.answers;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +59,15 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
 
         holder.dateView.setText(dateFormat.format(date));
         holder.authorView.setText(StringHelpers.fromHtmlString(article.authorName));
+
+        List<ArticlesListFragment.QueryTopic> topics = topicMap.get(article.id);
+
+        if (topics != null && !topics.isEmpty()) {
+            holder.adapter.setTopics(topics);
+            holder.tagRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            holder.tagRecyclerView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -76,9 +86,17 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
         @BindView(R.id.date_view)
         TextView dateView;
 
+        @BindView(R.id.tag_recycler_view)
+        RecyclerView tagRecyclerView;
+
+        QueryTopicRecyclerViewAdapter adapter = new QueryTopicRecyclerViewAdapter();
+
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            tagRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+            tagRecyclerView.setAdapter(adapter);
         }
     }
 

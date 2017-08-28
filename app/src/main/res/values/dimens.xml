@@ -10,4 +10,8 @@
   <dimen name="study_extra_header_image_width">190dp</dimen>
   <dimen name="extras_vertical_margin">16dp</dimen>
   <dimen name="extras_frame_margin">32dp</dimen>
+  <dimen name="lessons_horizontal_margin">0dp</dimen>
+
+  <dimen name="tag_corner_radius">2dp</dimen>
+  <dimen name="tag_border_width">1dp</dimen>
 </resources>

@@ -50,6 +50,11 @@
     <item name="android:textSize">12sp</item>
   </style>
 
+  <style name="AppTheme.Tag">
+    <item name="android:textColor">@color/colorDownload</item>
+    <item name="android:textSize">12sp</item>
+  </style>
+
   <style name="MediaButton">
     <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
     <item name="android:tint">@color/tableCellText</item>
