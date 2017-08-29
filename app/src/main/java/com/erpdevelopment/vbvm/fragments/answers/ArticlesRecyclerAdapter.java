@@ -31,6 +31,7 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
 
     private List<Article> articles;
     private Map<String, List<ArticlesListFragment.QueryTopic>> topicMap;
+    private ArticleSelectionListener articleSelectionListener;
 
     public void setArticles(List<Article> articles, Map<String, List<ArticlesListFragment.QueryTopic>> topicMap) {
         this.topicMap = topicMap;
@@ -38,8 +39,9 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
         this.notifyDataSetChanged();
     }
 
-    public ArticlesRecyclerAdapter() {
+    public ArticlesRecyclerAdapter(ArticleSelectionListener articleSelectionListener) {
         this.articles = new ArrayList<>();
+        this.articleSelectionListener = articleSelectionListener;
     }
 
     @Override
@@ -67,6 +69,12 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
             holder.tagRecyclerView.setVisibility(View.VISIBLE);
         } else {
             holder.tagRecyclerView.setVisibility(View.GONE);
+        }
+
+        if (articleSelectionListener != null) {
+            holder.itemView.setOnClickListener(v -> {
+                articleSelectionListener.didSelectArticle(article);
+            });
         }
     }
 

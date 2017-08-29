@@ -84,16 +84,6 @@ public class TopicsFragment extends AbstractFragment {
 
         toolbar.setTitle(R.string.title_topics);
 
-//        FlowCursor cursor1 = SQLite.select().from(Article_Topic.class).as("A")
-//                .join(Topic.class, Join.JoinType.INNER).as("T")
-//                .on(Article_Topic_Table.topic_id
-//                        .withTable(NameAlias.builder("A").build())
-//                        .eq(Topic_Table.id.withTable(NameAlias.builder("T").build()))).orderBy(Article_Topic_Table.article_id, true).query();
-//        cursor1.moveToFirst();
-//        cursor1.moveToNext();
-//        cursor1.getCount();
-//String str = "_id:" + cursor1.getInt(0) + " aid:" + cursor1.getInt(1) + " topic:" + cursor1.getString(4);
-
         if(lastRequestDate == null || TimeUnit.MILLISECONDS.toSeconds((new Date()).getTime() - lastRequestDate.getTime()) > 3600 ) {
             lastRequestDate = new Date();
             APIManager.getInstance().downloadArticles(success -> {

@@ -21,4 +21,45 @@
   <string name="lockscreen_transport_rew_description">Rewind 30 seconds</string>
   <!-- Shown on transport control screens. Pressing button fast forwards playback [CHAR LIMIT=NONE]-->
   <string name="lockscreen_transport_ffw_description">Fast forward</string>
+
+  <string name="article_html"><![CDATA[<head>
+<style>
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family:helvetica;
+}
+.container p {
+  margin-bottom: 10px;
+  line-height: 21px;
+}
+p {
+  display: block;
+  -webkit-margin-before: 1em;
+  -webkit-margin-after: 1em;
+  -webkit-margin-start: 0px;
+  -webkit-margin-end: 0px;
+
+  color: #595655;
+  font-size: 14px;
+  font-family: "Open Sans",sans-serif;
+}
+.profile {
+  width: 100px;
+  margin-right: 16px;
+  margin-bottom: 4px;
+}
+img.profile {
+  float: left;
+}
+</style>
+
+</head>
+<body>
+  <img class="profile" src="{{image_source}}" alt="{{image_alt}}"/>
+  <div class="container">
+    {{content}}
+  </div>
+</body>]]></string>
+
 </resources>

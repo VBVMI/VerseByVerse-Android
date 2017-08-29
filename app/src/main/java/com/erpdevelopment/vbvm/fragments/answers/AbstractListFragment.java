@@ -57,11 +57,17 @@ public abstract class AbstractListFragment extends Fragment {
 
 
     protected void showLoading() {
+        if(isDetached() || loadingView == null || recyclerView == null) {
+            return;
+        }
         loadingView.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
     }
 
     protected void showList() {
+        if(isDetached() || loadingView == null || recyclerView == null) {
+            return;
+        }
         loadingView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
     }

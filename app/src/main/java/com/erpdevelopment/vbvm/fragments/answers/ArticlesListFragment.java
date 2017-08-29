@@ -2,9 +2,13 @@ package com.erpdevelopment.vbvm.fragments.answers;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
+import com.erpdevelopment.vbvm.application.MainActivity;
+import com.erpdevelopment.vbvm.fragments.article.ArticleKey;
 import com.erpdevelopment.vbvm.model.Article_Topic;
 import com.erpdevelopment.vbvm.model.Topic_Table;
+import com.erpdevelopment.vbvm.util.ServiceLocator;
 import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.NameAlias;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -14,7 +18,9 @@ import com.erpdevelopment.vbvm.model.Article;
 import com.erpdevelopment.vbvm.model.Article_Table;
 import com.erpdevelopment.vbvm.model.Article_Topic_Table;
 import com.erpdevelopment.vbvm.model.Topic;
+import com.zhuinden.simplestack.BackstackDelegate;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +30,7 @@ import java.util.Map;
  * Created by thomascarey on 27/08/17.
  */
 
-public class ArticlesListFragment extends AbstractListFragment {
+public class ArticlesListFragment extends AbstractListFragment implements ArticleSelectionListener {
 
     ArticlesRecyclerAdapter adapter;
 
@@ -45,7 +51,7 @@ public class ArticlesListFragment extends AbstractListFragment {
 
     @Override
     protected void configureRecyclerView(RecyclerView recyclerView) {
-        adapter = new ArticlesRecyclerAdapter();
+        adapter = new ArticlesRecyclerAdapter(this);
         reloadData();
         if (adapter.getItemCount() > 0) {
             showList();
@@ -92,6 +98,11 @@ public class ArticlesListFragment extends AbstractListFragment {
                 showLoading();
             }
         }
+    }
+
+    @Override
+    public void didSelectArticle(Article article) {
+        ((BackstackDelegate) ServiceLocator.getService(getContext(), MainActivity.StackType.TOPICS.name())).getBackstack().goTo(ArticleKey.create(article.id));
     }
 
     public class QueryTopic {
