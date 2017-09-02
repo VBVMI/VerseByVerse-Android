@@ -22,6 +22,8 @@
   <!-- Shown on transport control screens. Pressing button fast forwards playback [CHAR LIMIT=NONE]-->
   <string name="lockscreen_transport_ffw_description">Fast forward</string>
 
+  <string name="empty">No results</string>
+
   <string name="html_container"><![CDATA[<head>
 <style>
 body {

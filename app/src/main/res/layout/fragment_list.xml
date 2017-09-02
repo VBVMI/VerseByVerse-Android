@@ -21,4 +21,13 @@
       tools:visibility="visible"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
       />
+
+  <com.erpdevelopment.vbvm.views.EmptyView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:id="@+id/empty_view"
+      android:visibility="gone"
+      tools:visibility="visible"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
 </android.support.design.widget.CoordinatorLayout>

@@ -11,7 +11,9 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.fragments.topics.QueryTopic;
 import com.erpdevelopment.vbvm.fragments.topics.QueryTopicRecyclerViewAdapter;
+import com.erpdevelopment.vbvm.fragments.topics.TopicSelectionListener;
 import com.erpdevelopment.vbvm.model.Article;
+import com.erpdevelopment.vbvm.model.Topic;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
     private List<Article> articles;
     private Map<String, List<QueryTopic>> topicMap;
     private ArticleSelectionListener articleSelectionListener;
+    private TopicSelectionListener topicSelectionListener;
 
     void setArticles(List<Article> articles, Map<String, List<QueryTopic>> topicMap) {
         this.topicMap = topicMap;
@@ -41,15 +44,16 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
         this.notifyDataSetChanged();
     }
 
-    ArticlesRecyclerAdapter(ArticleSelectionListener articleSelectionListener) {
+    ArticlesRecyclerAdapter(ArticleSelectionListener articleSelectionListener, TopicSelectionListener topicSelectionListener) {
         this.articles = new ArrayList<>();
         this.articleSelectionListener = articleSelectionListener;
+        this.topicSelectionListener = topicSelectionListener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_article, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, topicSelectionListener);
     }
 
     @Override
@@ -99,12 +103,13 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
         @BindView(R.id.tag_recycler_view)
         RecyclerView tagRecyclerView;
 
-        QueryTopicRecyclerViewAdapter adapter = new QueryTopicRecyclerViewAdapter();
+        QueryTopicRecyclerViewAdapter adapter;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, TopicSelectionListener topicSelectionListener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
+            adapter = new QueryTopicRecyclerViewAdapter(topicSelectionListener);
             tagRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
             tagRecyclerView.setAdapter(adapter);
         }

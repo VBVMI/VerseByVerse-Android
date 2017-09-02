@@ -21,6 +21,12 @@ public class QueryTopicRecyclerViewAdapter extends RecyclerView.Adapter<QueryTop
 
     private List<QueryTopic> topics;
 
+    private TopicSelectionListener topicSelectionListener;
+
+    public QueryTopicRecyclerViewAdapter(TopicSelectionListener topicSelectionListener) {
+        this.topicSelectionListener = topicSelectionListener;
+    }
+
     public void setTopics(List<QueryTopic> topics) {
         this.topics = topics;
         notifyDataSetChanged();
@@ -40,6 +46,12 @@ public class QueryTopicRecyclerViewAdapter extends RecyclerView.Adapter<QueryTop
         QueryTopic topic = topics.get(position);
 
         holder.tagTextView.setText(topic.topic);
+
+        holder.tagTextView.setOnClickListener(v -> {
+            if (topicSelectionListener != null) {
+                topicSelectionListener.didSelectTopic(topic.topicId);
+            }
+        });
     }
 
     @Override

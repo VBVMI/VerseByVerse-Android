@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.erpdevelopment.vbvm.views.EmptyView;
 import com.raizlabs.android.dbflow.runtime.OnTableChangedListener;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
@@ -35,6 +36,9 @@ public abstract class AbstractListFragment extends Fragment {
     @BindView(R.id.loading_view)
     protected LoadingView loadingView;
 
+    @BindView(R.id.empty_view)
+    protected EmptyView emptyView;
+
     private Handler mainHandler;
 
     private Handler getMainHandler() {
@@ -55,21 +59,31 @@ public abstract class AbstractListFragment extends Fragment {
 
     protected abstract void configureRecyclerView(RecyclerView recyclerView);
 
+    protected void showEmpty() {
+        if(isDetached() || loadingView == null || recyclerView == null || emptyView == null) {
+            return;
+        }
+        loadingView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+    }
 
     protected void showLoading() {
-        if(isDetached() || loadingView == null || recyclerView == null) {
+        if(isDetached() || loadingView == null || recyclerView == null || emptyView == null) {
             return;
         }
         loadingView.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
     }
 
     protected void showList() {
-        if(isDetached() || loadingView == null || recyclerView == null) {
+        if(isDetached() || loadingView == null || recyclerView == null || emptyView == null) {
             return;
         }
         loadingView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
     }
 
     protected abstract void reloadData();

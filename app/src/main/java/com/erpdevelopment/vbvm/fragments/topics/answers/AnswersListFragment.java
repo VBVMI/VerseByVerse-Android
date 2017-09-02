@@ -1,5 +1,7 @@
 package com.erpdevelopment.vbvm.fragments.topics.answers;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -7,6 +9,8 @@ import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.answer.AnswerKey;
 import com.erpdevelopment.vbvm.fragments.topics.AbstractListFragment;
 import com.erpdevelopment.vbvm.fragments.topics.QueryTopic;
+import com.erpdevelopment.vbvm.fragments.topics.TopicSelectionListener;
+import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.model.Answer;
 import com.erpdevelopment.vbvm.model.Answer_Table;
 import com.erpdevelopment.vbvm.model.Answer_Topic;
@@ -31,13 +35,27 @@ import java.util.Map;
  * Created by thomascarey on 2/09/17.
  */
 
-public class AnswersListFragment extends AbstractListFragment implements AnswerSelectionListener {
+public class AnswersListFragment extends AbstractListFragment implements AnswerSelectionListener, TopicSelectionListener {
+    private static final String ARG_TOPIC = "ARG_TOPIC";
 
+    private String topicId;
     AnswersRecylcerAdapter adapter;
 
     private SugarLoader<AnswersContainer> mLoader = new SugarLoader<AnswersContainer>("AnswersListFragment")
             .background(() -> {
-                List<Answer> articles = SQLite.select().from(Answer.class).orderBy(Answer_Table.postedDate, false).queryList();
+                List<Answer> answers;
+
+                if (topicId == null) {
+                    answers = SQLite.select().from(Answer.class).orderBy(Answer_Table.postedDate, false).queryList();
+                } else {
+                    answers = SQLite.select().from(Answer.class).as("A")
+                            .join(Answer_Topic.class, Join.JoinType.INNER).as("T")
+                            .on(Answer_Table.id.withTable(NameAlias.builder("A").build())
+                                    .eq(Answer_Topic_Table.answer_id.withTable(NameAlias.builder("T").build())))
+                            .where(Answer_Topic_Table.topic_id.withTable(NameAlias.builder("T").build())
+                                    .eq(topicId))
+                            .orderBy(Answer_Table.postedDate, false).queryList();
+                }
 
                 FlowCursor cursor = SQLite.select().from(Answer_Topic.class).as("A")
                         .join(Topic.class, Join.JoinType.INNER).as("T")
@@ -64,7 +82,7 @@ public class AnswersListFragment extends AbstractListFragment implements AnswerS
                     }
                 }
 
-                return new AnswersContainer(articles, mappedTopics);
+                return new AnswersContainer(answers, mappedTopics);
             }).onSuccess(answersContainer -> {
                 setAnswers(answersContainer.answers, answersContainer.mappedTopics);
             });
@@ -73,12 +91,21 @@ public class AnswersListFragment extends AbstractListFragment implements AnswerS
 
     }
 
-    public static AnswersListFragment newInstance() {
+    public static AnswersListFragment newInstance(String topicId) {
         AnswersListFragment fragment = new AnswersListFragment();
-
+        Bundle args = new Bundle();
+        args.putString(ARG_TOPIC, topicId);
+        fragment.setArguments(args);
         return fragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            topicId = getArguments().getString(ARG_TOPIC);
+        }
+    }
 
     @Override
     public void onResume() {
@@ -98,8 +125,7 @@ public class AnswersListFragment extends AbstractListFragment implements AnswerS
 
     @Override
     protected void configureRecyclerView(RecyclerView recyclerView) {
-        adapter = new AnswersRecylcerAdapter(this);
-        reloadData();
+        adapter = new AnswersRecylcerAdapter(this, this);
         if (adapter.getItemCount() > 0) {
             showList();
         } else {
@@ -121,9 +147,14 @@ public class AnswersListFragment extends AbstractListFragment implements AnswerS
             if (adapter.getItemCount() > 0) {
                 showList();
             } else {
-                showLoading();
+                showEmpty();
             }
         }
+    }
+
+    @Override
+    public void didSelectTopic(String topicId) {
+        ((BackstackDelegate) ServiceLocator.getService(getContext(), MainActivity.StackType.TOPICS.name())).getBackstack().goTo(TopicsKey.createWithTopic(topicId));
     }
 
     private class AnswersContainer {

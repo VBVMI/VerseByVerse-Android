@@ -33,7 +33,7 @@ public abstract class TopicsKey extends Key {
 
     @Override
     public String getFragmentTag() {
-        return "TopicsKey";
+        return "TopicsKey-" + topicId();
     }
 
     @Override

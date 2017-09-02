@@ -12,6 +12,8 @@ import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.article.ArticleKey;
 import com.erpdevelopment.vbvm.fragments.topics.AbstractListFragment;
 import com.erpdevelopment.vbvm.fragments.topics.QueryTopic;
+import com.erpdevelopment.vbvm.fragments.topics.TopicSelectionListener;
+import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.model.Article_Topic;
 import com.erpdevelopment.vbvm.model.Topic_Table;
 import com.erpdevelopment.vbvm.util.ServiceLocator;
@@ -37,13 +39,28 @@ import java.util.Map;
  * Created by thomascarey on 27/08/17.
  */
 
-public class ArticlesListFragment extends AbstractListFragment implements ArticleSelectionListener {
+public class ArticlesListFragment extends AbstractListFragment implements ArticleSelectionListener, TopicSelectionListener {
 
+    private static final String ARG_TOPIC = "ARG_TOPIC";
+
+    private String topicId;
     ArticlesRecyclerAdapter adapter;
 
     private SugarLoader<ArticlesContainer> mLoader = new SugarLoader<ArticlesContainer>("ArticlesListFragment")
             .background(() -> {
-                List<Article> articles = SQLite.select().from(Article.class).orderBy(Article_Table.postedDate, false).queryList();
+                List<Article> articles;
+
+                if (topicId == null) {
+                    articles = SQLite.select().from(Article.class).orderBy(Article_Table.postedDate, false).queryList();
+                } else {
+                    articles = SQLite.select().from(Article.class).as("A")
+                            .join(Article_Topic.class, Join.JoinType.INNER).as("T")
+                            .on(Article_Table.id.withTable(NameAlias.builder("A").build())
+                            .eq(Article_Topic_Table.article_id.withTable(NameAlias.builder("T").build())))
+                            .where(Article_Topic_Table.topic_id.withTable(NameAlias.builder("T").build())
+                                    .eq(topicId)).orderBy(Article_Table.postedDate, false).queryList();
+                }
+
 
                 FlowCursor cursor = SQLite.select().from(Article_Topic.class).as("A")
                         .join(Topic.class, Join.JoinType.INNER).as("T")
@@ -79,10 +96,20 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
 
     }
 
-    public static ArticlesListFragment newInstance() {
+    public static ArticlesListFragment newInstance(String topicId) {
         ArticlesListFragment fragment = new ArticlesListFragment();
-
+        Bundle args = new Bundle();
+        args.putString(ARG_TOPIC, topicId);
+        fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            topicId = getArguments().getString(ARG_TOPIC);
+        }
     }
 
     @Override
@@ -98,8 +125,7 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
 
     @Override
     protected void configureRecyclerView(RecyclerView recyclerView) {
-        adapter = new ArticlesRecyclerAdapter(this);
-        reloadData();
+        adapter = new ArticlesRecyclerAdapter(this, this);
         if (adapter.getItemCount() > 0) {
             showList();
         } else {
@@ -110,11 +136,16 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
         recyclerView.setAdapter(adapter);
     }
 
+    @Override
+    public void didSelectTopic(String topicId) {
+        ((BackstackDelegate) ServiceLocator.getService(getContext(), MainActivity.StackType.TOPICS.name())).getBackstack().goTo(TopicsKey.createWithTopic(topicId));
+    }
+
     private class ArticlesContainer {
         public List<Article> articles;
-        public Map<String, List<QueryTopic>> mappedTopics;
+        Map<String, List<QueryTopic>> mappedTopics;
 
-        public ArticlesContainer(List<Article> articles, Map<String, List<QueryTopic>> mappedTopics) {
+        ArticlesContainer(List<Article> articles, Map<String, List<QueryTopic>> mappedTopics) {
             this.articles = articles;
             this.mappedTopics = mappedTopics;
         }
@@ -131,7 +162,7 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
             if (adapter.getItemCount() > 0) {
                 showList();
             } else {
-                showLoading();
+                showEmpty();
             }
         }
     }
