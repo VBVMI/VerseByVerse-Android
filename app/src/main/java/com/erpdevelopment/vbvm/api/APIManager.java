@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.erpdevelopment.vbvm.model.Study;
+import com.erpdevelopment.vbvm.model.pojo.Answers;
 import com.erpdevelopment.vbvm.model.pojo.Lessons;
 import com.erpdevelopment.vbvm.model.pojo.Studies;
 import com.erpdevelopment.vbvm.model.Category;
@@ -164,7 +165,7 @@ public class APIManager {
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 AsyncTask.execute(() -> {
                     Articles articles = response.body();
-                    DatabaseManager.getInstance().saveArticles(articles.getLessons(), fullDownload);
+                    DatabaseManager.getInstance().saveArticles(articles.getArticles(), fullDownload);
                     mainHandler.post(() -> {
                         callback.didComplete(true);
                     });
@@ -173,6 +174,34 @@ public class APIManager {
 
             @Override
             public void onFailure(Call<Articles> call, Throwable t) {
+                call.cancel();
+                mainHandler.post(() -> {
+                    callback.didComplete(false);
+                });
+            }
+        });
+
+    }
+
+    public void downloadAnswers(RequestComplete callback) {
+
+        boolean fullDownload = isOnWifi();
+        Call<Answers> call = fullDownload ? apiInterface.doGetAnswers() : apiInterface.doGetLatestAnswers();
+
+        call.enqueue(new Callback<Answers>() {
+            @Override
+            public void onResponse(Call<Answers> call, Response<Answers> response) {
+                AsyncTask.execute(() -> {
+                    Answers answers = response.body();
+                    DatabaseManager.getInstance().saveAnswers(answers.getAnswers(), fullDownload);
+                    mainHandler.post(() -> {
+                        callback.didComplete(true);
+                    });
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Answers> call, Throwable t) {
                 call.cancel();
                 mainHandler.post(() -> {
                     callback.didComplete(false);

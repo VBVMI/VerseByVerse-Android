@@ -2,6 +2,9 @@ package com.erpdevelopment.vbvm.api;
 
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.database.AppDatabase;
+import com.erpdevelopment.vbvm.model.Answer;
+import com.erpdevelopment.vbvm.model.Answer_Topic;
+import com.erpdevelopment.vbvm.model.Answer_Topic_Table;
 import com.erpdevelopment.vbvm.model.Article_Topic;
 import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.model.Study_Topic;
@@ -48,7 +51,7 @@ public class DatabaseManager {
 
     public static FlowContentObserver observer = new FlowContentObserver();
 
-    public void saveStudies(List<Study> studies) {
+    void saveStudies(List<Study> studies) {
         // In order to save these studies we must first fetch all the existing ones and create merge and delete lists
         List<Study> persistedStudies = SQLite.select().from(Study.class).queryList();
 
@@ -80,7 +83,7 @@ public class DatabaseManager {
         });
     }
 
-    public void saveLessons(List<Lesson> lessons, String studyId) {
+    void saveLessons(List<Lesson> lessons, String studyId) {
         for(Lesson lesson : lessons) {
             lesson.studyId = studyId;
         }
@@ -115,38 +118,69 @@ public class DatabaseManager {
         });
     }
 
-    public void saveArticles(List<Article> articles, boolean cleanOutMissingArticles) {
+    void saveArticles(List<Article> articles, boolean cleanOutMissingArticles) {
         List<Article> persistedLessons = SQLite.select().from(Article.class).queryList();
 
         mergeAPIData(persistedLessons, articles, cleanOutMissingArticles, new MergeOperation<Article>() {
             @Override
             public void didPersist(Article instance) {
                 // find all the relevant topic relationships and update them
-                List<Article_Topic> lessonTopics = SQLite.select().from(Article_Topic.class).where(Article_Topic_Table.article_id.eq(instance.id)).queryList();
+                List<Article_Topic> topics = SQLite.select().from(Article_Topic.class).where(Article_Topic_Table.article_id.eq(instance.id)).queryList();
 
-                for(Article_Topic lesson_topic : lessonTopics) {
-                    lesson_topic.delete();
+                for(Article_Topic topic : topics) {
+                    topic.delete();
                 }
 
                 for(Topic t: instance.topics) {
                     t.id = StringHelpers.toSlug(t.id);
                     t.save();
 
-                    Article_Topic lessonTopic = new Article_Topic();
-                    lessonTopic.setArticle(instance);
-                    lessonTopic.setTopic(t);
-                    lessonTopic.save();
+                    Article_Topic topic = new Article_Topic();
+                    topic.setArticle(instance);
+                    topic.setTopic(t);
+                    topic.save();
                 }
             }
 
             @Override
             public void didDelete(Article instance) {
-                SQLite.delete().from(Lesson_Topic.class).where(Lesson_Topic_Table.lesson_id.eq(instance.id)).execute();
+                SQLite.delete().from(Article_Topic.class).where(Article_Topic_Table.article_id.eq(instance.id)).execute();
             }
         });
     }
 
-    public void saveCategories(List<Category> categories) {
+    void saveAnswers(List<Answer> articles, boolean cleanOutMissingAnswers) {
+        List<Answer> persistedLessons = SQLite.select().from(Answer.class).queryList();
+
+        mergeAPIData(persistedLessons, articles, cleanOutMissingAnswers, new MergeOperation<Answer>() {
+            @Override
+            public void didPersist(Answer instance) {
+                // find all the relevant topic relationships and update them
+                List<Answer_Topic> topics = SQLite.select().from(Answer_Topic.class).where(Article_Topic_Table.article_id.eq(instance.id)).queryList();
+
+                for(Answer_Topic topic : topics) {
+                    topic.delete();
+                }
+
+                for(Topic t: instance.topics) {
+                    t.id = StringHelpers.toSlug(t.id);
+                    t.save();
+
+                    Answer_Topic topic = new Answer_Topic();
+                    topic.setAnswer(instance);
+                    topic.setTopic(t);
+                    topic.save();
+                }
+            }
+
+            @Override
+            public void didDelete(Answer instance) {
+                SQLite.delete().from(Answer_Topic.class).where(Answer_Topic_Table.answer_id.eq(instance.id)).execute();
+            }
+        });
+    }
+
+    void saveCategories(List<Category> categories) {
         List<Category> persistedCategories = SQLite.select().from(Category.class).queryList();
         mergeAPIData(persistedCategories, categories);
     }

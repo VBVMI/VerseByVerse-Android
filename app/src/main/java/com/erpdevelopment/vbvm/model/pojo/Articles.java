@@ -13,11 +13,11 @@ import java.util.List;
 public class Articles {
     @SerializedName("articles")
     @Expose
-    private List<Article> lessons = null;
+    private List<Article> articles = null;
 
-    public List<Article> getLessons() { return lessons; }
+    public List<Article> getArticles() { return articles; }
 
-    public void setLessons(List<Article> lessons) {
-        this.lessons = lessons;
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
     }
 }

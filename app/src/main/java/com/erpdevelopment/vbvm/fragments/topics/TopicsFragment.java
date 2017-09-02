@@ -1,4 +1,4 @@
-package com.erpdevelopment.vbvm.fragments.answers;
+package com.erpdevelopment.vbvm.fragments.topics;
 
 
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.api.APIManager;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
+import com.erpdevelopment.vbvm.fragments.topics.articles.ArticlesListFragment;
 
 import java.util.Arrays;
 import java.util.Date;

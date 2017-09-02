@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 
 import com.erpdevelopment.vbvm.api.DatabaseManager;
-import com.erpdevelopment.vbvm.fragments.answers.TopicsKey;
+import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.fragments.studies.StudiesKey;
 import com.erpdevelopment.vbvm.model.Article;
 import com.erpdevelopment.vbvm.util.Multistack;

@@ -1,4 +1,4 @@
-package com.erpdevelopment.vbvm.fragments.answers;
+package com.erpdevelopment.vbvm.fragments.topics;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;

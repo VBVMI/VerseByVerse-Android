@@ -35,7 +35,7 @@ public class APIClient {
         Gson gson = new GsonBuilder().setExclusionStrategies(new DBFlowExclusionStrategy()).create();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://www.versebyverseministry.org")
+                .baseUrl("https://www.versebyverseministry.org")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client)
                 .build();

@@ -1,4 +1,4 @@
-package com.erpdevelopment.vbvm.fragments.answers;
+package com.erpdevelopment.vbvm.fragments.topics;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,7 +40,7 @@ public abstract class AbstractListFragment extends Fragment {
     private Handler getMainHandler() {
         return mainHandler;
     }
-    abstract String tableName();
+    protected abstract String tableName();
 
     OnTableChangedListener tableChangedListener = new OnTableChangedListener() {
         @Override
@@ -72,7 +72,7 @@ public abstract class AbstractListFragment extends Fragment {
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    abstract void reloadData();
+    protected abstract void reloadData();
 
     @Nullable
     @Override

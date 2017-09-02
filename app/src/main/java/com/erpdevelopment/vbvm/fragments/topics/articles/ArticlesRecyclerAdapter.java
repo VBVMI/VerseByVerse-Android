@@ -1,4 +1,4 @@
-package com.erpdevelopment.vbvm.fragments.answers;
+package com.erpdevelopment.vbvm.fragments.topics.articles;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
+import com.erpdevelopment.vbvm.fragments.topics.QueryTopic;
+import com.erpdevelopment.vbvm.fragments.topics.QueryTopicRecyclerViewAdapter;
 import com.erpdevelopment.vbvm.model.Article;
 
 import java.text.DateFormat;
@@ -30,10 +32,10 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
 
 
     private List<Article> articles;
-    private Map<String, List<ArticlesListFragment.QueryTopic>> topicMap;
+    private Map<String, List<QueryTopic>> topicMap;
     private ArticleSelectionListener articleSelectionListener;
 
-    public void setArticles(List<Article> articles, Map<String, List<ArticlesListFragment.QueryTopic>> topicMap) {
+    public void setArticles(List<Article> articles, Map<String, List<QueryTopic>> topicMap) {
         this.topicMap = topicMap;
         this.articles = articles;
         this.notifyDataSetChanged();
@@ -62,7 +64,7 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
         holder.dateView.setText(dateFormat.format(date));
         holder.authorView.setText(StringHelpers.fromHtmlString(article.authorName));
 
-        List<ArticlesListFragment.QueryTopic> topics = topicMap.get(article.id);
+        List<QueryTopic> topics = topicMap.get(article.id);
 
         if (topics != null && !topics.isEmpty()) {
             holder.adapter.setTopics(topics);

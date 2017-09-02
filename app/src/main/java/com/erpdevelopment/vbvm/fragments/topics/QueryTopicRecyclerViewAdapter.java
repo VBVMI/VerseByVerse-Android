@@ -1,4 +1,4 @@
-package com.erpdevelopment.vbvm.fragments.answers;
+package com.erpdevelopment.vbvm.fragments.topics;
 
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.RecyclerView;
@@ -19,9 +19,9 @@ import butterknife.ButterKnife;
 
 public class QueryTopicRecyclerViewAdapter extends RecyclerView.Adapter<QueryTopicRecyclerViewAdapter.QueryTopicViewHolder> {
 
-    private List<ArticlesListFragment.QueryTopic> topics;
+    private List<QueryTopic> topics;
 
-    public void setTopics(List<ArticlesListFragment.QueryTopic> topics) {
+    public void setTopics(List<QueryTopic> topics) {
         this.topics = topics;
         notifyDataSetChanged();
     }
@@ -37,7 +37,7 @@ public class QueryTopicRecyclerViewAdapter extends RecyclerView.Adapter<QueryTop
         if (topics == null) {
             return;
         }
-        ArticlesListFragment.QueryTopic topic = topics.get(position);
+        QueryTopic topic = topics.get(position);
 
         holder.tagTextView.setText(topic.topic);
     }

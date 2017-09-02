@@ -3,6 +3,7 @@ package com.erpdevelopment.vbvm.api;
 import android.support.annotation.NonNull;
 
 import com.erpdevelopment.vbvm.model.Category;
+import com.erpdevelopment.vbvm.model.pojo.Answers;
 import com.erpdevelopment.vbvm.model.pojo.Articles;
 import com.erpdevelopment.vbvm.model.pojo.Lessons;
 import com.erpdevelopment.vbvm.model.pojo.Studies;
@@ -33,4 +34,10 @@ public interface APIInterface {
 
     @GET("/corev2/json-articlesp")
     Call<Articles> doGetLatestArticles();
+
+    @GET("/corev2/json-qa")
+    Call<Answers> doGetAnswers();
+
+    @GET("/corev2/json-qap")
+    Call<Answers> doGetLatestAnswers();
 }
