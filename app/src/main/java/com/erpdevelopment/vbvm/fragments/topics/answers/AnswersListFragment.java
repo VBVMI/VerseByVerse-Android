@@ -18,9 +18,15 @@ import com.erpdevelopment.vbvm.model.Answer_Topic_Table;
 import com.erpdevelopment.vbvm.model.Topic;
 import com.erpdevelopment.vbvm.model.Topic_Table;
 import com.erpdevelopment.vbvm.util.ServiceLocator;
+import com.raizlabs.android.dbflow.sql.language.BaseModelQueriable;
+import com.raizlabs.android.dbflow.sql.language.BaseTransformable;
+import com.raizlabs.android.dbflow.sql.language.From;
 import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.NameAlias;
+import com.raizlabs.android.dbflow.sql.language.OperatorGroup;
+import com.raizlabs.android.dbflow.sql.language.SQLOperator;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Where;
 import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 import com.zhuinden.simplestack.BackstackDelegate;
 
@@ -37,24 +43,35 @@ import java.util.Map;
 
 public class AnswersListFragment extends AbstractListFragment implements AnswerSelectionListener, TopicSelectionListener {
     private static final String ARG_TOPIC = "ARG_TOPIC";
+    private static final String ARG_SEARCH_TEXT = "ARG_SEARCH_TEXT";
 
     private String topicId;
     AnswersRecylcerAdapter adapter;
+    private String searchText;
 
     private SugarLoader<AnswersContainer> mLoader = new SugarLoader<AnswersContainer>("AnswersListFragment")
             .background(() -> {
                 List<Answer> answers;
 
+
                 if (topicId == null) {
-                    answers = SQLite.select().from(Answer.class).orderBy(Answer_Table.postedDate, false).queryList();
+                    if (searchText != null) {
+                        answers = SQLite.select().from(Answer.class).where(Answer_Table.title.like("%" + searchText + "%")).or(Answer_Table.body.like("%" + searchText + "%")).orderBy(Answer_Table.postedDate, false).queryList();
+                    } else {
+                        answers = SQLite.select().from(Answer.class).orderBy(Answer_Table.postedDate, false).queryList();
+                    }
                 } else {
-                    answers = SQLite.select().from(Answer.class).as("A")
+                    Where<Answer> query = SQLite.select().from(Answer.class).as("A")
                             .join(Answer_Topic.class, Join.JoinType.INNER).as("T")
                             .on(Answer_Table.id.withTable(NameAlias.builder("A").build())
                                     .eq(Answer_Topic_Table.answer_id.withTable(NameAlias.builder("T").build())))
                             .where(Answer_Topic_Table.topic_id.withTable(NameAlias.builder("T").build())
-                                    .eq(topicId))
-                            .orderBy(Answer_Table.postedDate, false).queryList();
+                                    .eq(topicId));
+                    if (searchText != null) {
+                        OperatorGroup searchGroup = OperatorGroup.clause().and(Answer_Table.title.like("%" + searchText + "%")).or(Answer_Table.body.like("%" + searchText + "%"));
+                        query = query.and(searchGroup);
+                    }
+                    answers = query.orderBy(Answer_Table.postedDate, false).queryList();
                 }
 
                 FlowCursor cursor = SQLite.select().from(Answer_Topic.class).as("A")
@@ -91,10 +108,18 @@ public class AnswersListFragment extends AbstractListFragment implements AnswerS
 
     }
 
-    public static AnswersListFragment newInstance(String topicId) {
+
+    @Override
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+        mLoader.restart(this);
+    }
+
+    public static AnswersListFragment newInstance(String topicId, String searchText) {
         AnswersListFragment fragment = new AnswersListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TOPIC, topicId);
+        args.putString(ARG_SEARCH_TEXT, searchText);
         fragment.setArguments(args);
         return fragment;
     }

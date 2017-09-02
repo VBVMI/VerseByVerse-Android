@@ -116,4 +116,7 @@ public abstract class AbstractListFragment extends Fragment {
         DatabaseManager.observer.removeTableChangedListener(tableChangedListener);
         tableChangedListener = null;
     }
+
+    public void setSearchText(String searchText) {
+    }
 }

@@ -7,9 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -38,7 +42,7 @@ import butterknife.ButterKnife;
  * Use the {@link TopicsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TopicsFragment extends AbstractFragment {
+public class TopicsFragment extends AbstractFragment implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
     private static final String TAG = "TopicsFragment";
     private static final String ARG_TOPIC_ID = "ARG_TOPIC_ID";
 
@@ -54,12 +58,14 @@ public class TopicsFragment extends AbstractFragment {
     @BindView(R.id.studiesTabs)
     TabLayout tabLayout;
 
+    SearchView searchView;
 
     private SugarLoader<Topic> mLoader = new SugarLoader<Topic>(TAG)
             .background(() -> SQLite.select().from(Topic.class).where(Topic_Table.id.eq(topicId)).querySingle())
             .onSuccess(t -> {
                 topic = t;
                 toolbar.setTitle("#" + topic.topic);
+                updateQueryHint();
             });
 
     private static Date lastRequestDate = null;
@@ -89,6 +95,7 @@ public class TopicsFragment extends AbstractFragment {
         if (getArguments() != null) {
             topicId = getArguments().getString(ARG_TOPIC_ID);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -98,11 +105,10 @@ public class TopicsFragment extends AbstractFragment {
         View view = inflater.inflate(R.layout.fragment_topics, container, false);
         unbinder = ButterKnife.bind(this, view);
 
+        MainActivity.get(getContext()).setSupportActionBar(toolbar);
         if (topicId != null) {
-            toolbar.setTitle("");
-            MainActivity.get(getContext()).setSupportActionBar(toolbar);
+            MainActivity.get(getContext()).getSupportActionBar().setTitle("");
             MainActivity.get(getContext()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -111,7 +117,7 @@ public class TopicsFragment extends AbstractFragment {
             });
             mLoader.init(this);
         } else {
-            toolbar.setTitle(R.string.title_topics);
+            MainActivity.get(getContext()).getSupportActionBar().setTitle(R.string.title_topics);
         }
 
         if(lastRequestDate == null || TimeUnit.MILLISECONDS.toSeconds((new Date()).getTime() - lastRequestDate.getTime()) > 3600 ) {
@@ -131,6 +137,51 @@ public class TopicsFragment extends AbstractFragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_search_topic, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+        searchView.setQueryHint("Search");
+        updateQueryHint();
+    }
+
+    private void updateQueryHint() {
+        if (searchView == null) {
+            return;
+        }
+        if (topic != null) {
+            searchView.setQueryHint("Search in #" + topic.topic);
+        } else {
+            searchView.setQueryHint("Search");
+        }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.d(TAG, "onQueryTextChange: " + newText);
+        SectionsPagerAdapter adapter = (SectionsPagerAdapter) mViewPager.getAdapter();
+        adapter.setSearchText(newText);
+        return false;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item) {
+        return true;
+    }
+
     private enum Topics {
         ANSWERS,
         ARTICLES
@@ -140,6 +191,12 @@ public class TopicsFragment extends AbstractFragment {
         private List<Topics> topics = Arrays.asList(Topics.ANSWERS, Topics.ARTICLES);
 
         private String topicId;
+        private String searchText;
+
+        public void setSearchText(String text) {
+            this.searchText = text;
+            notifyDataSetChanged();
+        }
 
         public SectionsPagerAdapter(FragmentManager fm, String topicId) {
             super(fm);
@@ -150,10 +207,18 @@ public class TopicsFragment extends AbstractFragment {
         public Fragment getItem(int position) {
             Topics topic = topics.get(position);
             switch (topic) {
-                case ANSWERS: return AnswersListFragment.newInstance(topicId);
+                case ANSWERS: return AnswersListFragment.newInstance(topicId, searchText);
                 case ARTICLES: return ArticlesListFragment.newInstance(topicId);
                 default: return null;
             }
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            if (object instanceof AbstractListFragment) {
+                ((AbstractListFragment)object).setSearchText(searchText);
+            }
+            return super.getItemPosition(object);
         }
 
         @Override

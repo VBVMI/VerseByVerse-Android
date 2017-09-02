@@ -19,7 +19,9 @@ import com.erpdevelopment.vbvm.model.Topic_Table;
 import com.erpdevelopment.vbvm.util.ServiceLocator;
 import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.NameAlias;
+import com.raizlabs.android.dbflow.sql.language.OperatorGroup;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.sql.language.Where;
 import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 
 import com.erpdevelopment.vbvm.model.Article;
@@ -44,6 +46,8 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
     private static final String ARG_TOPIC = "ARG_TOPIC";
 
     private String topicId;
+    private String searchText;
+
     ArticlesRecyclerAdapter adapter;
 
     private SugarLoader<ArticlesContainer> mLoader = new SugarLoader<ArticlesContainer>("ArticlesListFragment")
@@ -51,14 +55,26 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
                 List<Article> articles;
 
                 if (topicId == null) {
-                    articles = SQLite.select().from(Article.class).orderBy(Article_Table.postedDate, false).queryList();
+                    if (searchText != null) {
+                        articles = SQLite.select().from(Article.class).where(Article_Table.title.like("%" + searchText + "%")).or(Article_Table.body.like("%" + searchText + "%")).orderBy(Article_Table.postedDate, false).queryList();
+                    } else {
+                        articles = SQLite.select().from(Article.class).orderBy(Article_Table.postedDate, false).queryList();
+                    }
+
                 } else {
-                    articles = SQLite.select().from(Article.class).as("A")
+
+                    Where<Article> query = SQLite.select().from(Article.class).as("A")
                             .join(Article_Topic.class, Join.JoinType.INNER).as("T")
                             .on(Article_Table.id.withTable(NameAlias.builder("A").build())
-                            .eq(Article_Topic_Table.article_id.withTable(NameAlias.builder("T").build())))
+                                    .eq(Article_Topic_Table.article_id.withTable(NameAlias.builder("T").build())))
                             .where(Article_Topic_Table.topic_id.withTable(NameAlias.builder("T").build())
-                                    .eq(topicId)).orderBy(Article_Table.postedDate, false).queryList();
+                                    .eq(topicId));
+                    if (searchText != null) {
+                        OperatorGroup searchGroup = OperatorGroup.clause().and(Article_Table.title.like("%" + searchText + "%")).or(Article_Table.body.like("%" + searchText + "%"));
+                        query = query.and(searchGroup);
+                    }
+
+                    articles = query.orderBy(Article_Table.postedDate, false).queryList();
                 }
 
 
@@ -94,6 +110,12 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
 
     public ArticlesListFragment() {
 
+    }
+
+    @Override
+    public void setSearchText(String searchText) {
+        this.searchText = searchText;
+        mLoader.restart(this);
     }
 
     public static ArticlesListFragment newInstance(String topicId) {
