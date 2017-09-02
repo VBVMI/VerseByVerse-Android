@@ -22,7 +22,7 @@
   <!-- Shown on transport control screens. Pressing button fast forwards playback [CHAR LIMIT=NONE]-->
   <string name="lockscreen_transport_ffw_description">Fast forward</string>
 
-  <string name="article_html"><![CDATA[<head>
+  <string name="html_container"><![CDATA[<head>
 <style>
 body {
   -webkit-font-smoothing: antialiased;
@@ -56,10 +56,18 @@ img.profile {
 
 </head>
 <body>
+  {{content}}
+</body>]]></string>
+
+  <string name="article_html"><![CDATA[
   <img class="profile" src="{{image_source}}" alt="{{image_alt}}"/>
   <div class="container">
     {{content}}
-  </div>
-</body>]]></string>
+  </div>]]></string>
+
+  <string name="answer_html"><![CDATA[
+  <div class="container">
+    {{content}}
+  </div>]]></string>
 
 </resources>

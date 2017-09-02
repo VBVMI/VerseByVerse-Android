@@ -25,7 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by thomascarey on 27/08/17.
+ * Created by thomascarey on 27/08/17
  */
 
 public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecyclerAdapter.ViewHolder> {
@@ -35,13 +35,13 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
     private Map<String, List<QueryTopic>> topicMap;
     private ArticleSelectionListener articleSelectionListener;
 
-    public void setArticles(List<Article> articles, Map<String, List<QueryTopic>> topicMap) {
+    void setArticles(List<Article> articles, Map<String, List<QueryTopic>> topicMap) {
         this.topicMap = topicMap;
         this.articles = articles;
         this.notifyDataSetChanged();
     }
 
-    public ArticlesRecyclerAdapter(ArticleSelectionListener articleSelectionListener) {
+    ArticlesRecyclerAdapter(ArticleSelectionListener articleSelectionListener) {
         this.articles = new ArrayList<>();
         this.articleSelectionListener = articleSelectionListener;
     }

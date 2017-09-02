@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.erpdevelopment.vbvm.api.DatabaseManager;
 import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.fragments.studies.StudiesKey;
+import com.erpdevelopment.vbvm.model.Answer;
 import com.erpdevelopment.vbvm.model.Article;
 import com.erpdevelopment.vbvm.util.Multistack;
 import com.zhuinden.simplestack.BackstackDelegate;
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
         DatabaseManager.observer.registerForContentChanges(this, Lesson.class);
         DatabaseManager.observer.registerForContentChanges(this, Article.class);
+        DatabaseManager.observer.registerForContentChanges(this, Answer.class);
 //        DatabaseManager.observer.registerForContentChanges(this, Category.class);
 //        DatabaseManager.observer.registerForContentChanges(this, Study.class);
 

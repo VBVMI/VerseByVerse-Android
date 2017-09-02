@@ -1,8 +1,7 @@
-package com.erpdevelopment.vbvm.fragments.article;
+package com.erpdevelopment.vbvm.fragments.answer;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,8 +13,8 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
-import com.erpdevelopment.vbvm.model.Article;
-import com.erpdevelopment.vbvm.model.Article_Table;
+import com.erpdevelopment.vbvm.model.Answer;
+import com.erpdevelopment.vbvm.model.Answer_Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.algi.sugarloader.SugarLoader;
@@ -26,22 +25,20 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by thomascarey on 29/08/17.
+ * Created by thomascarey on 2/09/17.
  */
 
-public class ArticleFragment extends AbstractFragment {
+public class AnswerFragment extends AbstractFragment {
 
-    private static final String TAG = "ArticleFragment";
-    private static final String ARG_ARTICLE_ID = "ARG_ARTICLE_ID";
+    private static final String TAG = "AnswerFragment";
+    private static final String ARG_ANSWER_ID = "ARG_ANSWER_ID";
 
-    private String articleId;
+    private String answerId;
+    private Answer answer;
 
-    private Article article;
-
-    private SugarLoader<Article> mLoader = new SugarLoader<Article>(TAG)
-            .background(() -> SQLite.select().from(Article.class).where(Article_Table.id.eq(articleId)).querySingle())
-            .onSuccess(a -> {
-                article = a;
+    private SugarLoader<Answer> mLoader = new SugarLoader<Answer>(TAG)
+            .background(() -> SQLite.select().from(Answer.class).where(Answer_Table.id.eq(answerId)).querySingle()).onSuccess(a -> {
+                answer = a;
                 reloadContent();
             });
 
@@ -51,25 +48,8 @@ public class ArticleFragment extends AbstractFragment {
     @BindView(R.id.webView)
     WebView webView;
 
-    public ArticleFragment() {
+    public AnswerFragment() {
 
-    }
-
-    public static ArticleFragment newInstance(String articleId) {
-        ArticleFragment fragment = new ArticleFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_ARTICLE_ID, articleId);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            articleId = getArguments().getString(ARG_ARTICLE_ID);
-            mLoader.init(this);
-        }
     }
 
     @Nullable
@@ -79,6 +59,8 @@ public class ArticleFragment extends AbstractFragment {
         unbinder = ButterKnife.bind(this, view);
 
         toolbar.setTitle("");
+
+        reloadContent();
 
         MainActivity.get(getContext()).setSupportActionBar(toolbar);
         MainActivity.get(getContext()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -93,23 +75,38 @@ public class ArticleFragment extends AbstractFragment {
         return view;
     }
 
+    public static AnswerFragment newInstance(String answerId) {
+        AnswerFragment fragment = new AnswerFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ANSWER_ID, answerId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            answerId = getArguments().getString(ARG_ANSWER_ID);
+            mLoader.init(this);
+        }
+    }
+
     private void reloadContent() {
-        if (toolbar == null || webView == null || article == null) {
+        if (toolbar == null || webView == null || answer == null) {
             return;
         }
 
-        toolbar.setTitle(StringHelpers.fromHtmlString(article.title));
+        toolbar.setTitle(StringHelpers.fromHtmlString(answer.title));
 
         String html = getContext().getString(R.string.html_container);
 
-        String htmlBody = getContext().getString(R.string.article_html);
-        htmlBody = htmlBody.replace("{{image_source}}", article.authorThumbnailSource);
-        htmlBody = htmlBody.replace("{{image_alt}}", article.authorThumbnailAltText);
+        String htmlBody = getContext().getString(R.string.answer_html);
 
-        String articleString = article.body;
+        String answerString = answer.body;
         try {
-            articleString = articleString.replaceAll("%", "%25");
-            String result = java.net.URLDecoder.decode(articleString, "UTF-8");
+            answerString = answerString.replaceAll("%", "%25");
+            String result = java.net.URLDecoder.decode(answerString, "UTF-8");
             htmlBody = htmlBody.replace("{{content}}", result);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

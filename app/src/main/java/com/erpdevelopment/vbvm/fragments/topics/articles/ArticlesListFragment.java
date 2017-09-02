@@ -41,33 +41,19 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
 
     ArticlesRecyclerAdapter adapter;
 
-    private SugarLoader<ArticlesContainer> mLoader;
+    private SugarLoader<ArticlesContainer> mLoader = new SugarLoader<ArticlesContainer>("ArticlesListFragment")
+            .background(() -> {
+                List<Article> articles = SQLite.select().from(Article.class).orderBy(Article_Table.postedDate, false).queryList();
 
-    public ArticlesListFragment() {
-
-    }
-
-    public static ArticlesListFragment newInstance() {
-        ArticlesListFragment fragment = new ArticlesListFragment();
-
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mLoader = new SugarLoader<ArticlesContainer>("ArticlesListFragment")
-                .background(() -> {
-                    List<Article> articles = SQLite.select().from(Article.class).orderBy(Article_Table.postedDate, false).queryList();
-
-                    FlowCursor cursor = SQLite.select().from(Article_Topic.class).as("A")
-                            .join(Topic.class, Join.JoinType.INNER).as("T")
-                            .on(Article_Topic_Table.topic_id
-                                    .withTable(NameAlias.builder("A").build())
-                                    .eq(Topic_Table.id.withTable(NameAlias.builder("T").build()))).orderBy(Article_Topic_Table.article_id, true).query();
+                FlowCursor cursor = SQLite.select().from(Article_Topic.class).as("A")
+                        .join(Topic.class, Join.JoinType.INNER).as("T")
+                        .on(Article_Topic_Table.topic_id
+                                .withTable(NameAlias.builder("A").build())
+                                .eq(Topic_Table.id.withTable(NameAlias.builder("T").build()))).orderBy(Article_Topic_Table.article_id, true).query();
 
 
-                    Map<String, List<QueryTopic>> mappedTopics = new HashMap<>();
+                Map<String, List<QueryTopic>> mappedTopics = new HashMap<>();
+                if (cursor != null) {
                     while (cursor.moveToNext()) {
                         String articleId = cursor.getString(1);
                         String topic = cursor.getString(4);
@@ -82,18 +68,21 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
                             mappedTopics.put(articleId, list);
                         }
                     }
+                }
 
-                    return new ArticlesContainer(articles, mappedTopics);
-                }).onSuccess(articlesContainer -> {
-                    setArticles(articlesContainer.articles, articlesContainer.mappedTopics);
-                });
+                return new ArticlesContainer(articles, mappedTopics);
+            }).onSuccess(articlesContainer -> {
+                setArticles(articlesContainer.articles, articlesContainer.mappedTopics);
+            });
+
+    public ArticlesListFragment() {
+
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view =  super.onCreateView(inflater, container, savedInstanceState);
-        return view;
+    public static ArticlesListFragment newInstance() {
+        ArticlesListFragment fragment = new ArticlesListFragment();
+
+        return fragment;
     }
 
     @Override

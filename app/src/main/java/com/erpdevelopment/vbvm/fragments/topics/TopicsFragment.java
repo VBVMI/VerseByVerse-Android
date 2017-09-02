@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.api.APIManager;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
+import com.erpdevelopment.vbvm.fragments.topics.answers.AnswersListFragment;
 import com.erpdevelopment.vbvm.fragments.topics.articles.ArticlesListFragment;
 
 import java.util.Arrays;
@@ -90,6 +91,9 @@ public class TopicsFragment extends AbstractFragment {
             APIManager.getInstance().downloadArticles(success -> {
                 Log.d(TAG, "Downloaded all them articles (" + success + ")");
             });
+            APIManager.getInstance().downloadAnswers(success -> {
+                Log.d(TAG, "Downloaded all them answers (" + success + ")");
+            });
         }
 
         SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(this.getChildFragmentManager());
@@ -105,7 +109,7 @@ public class TopicsFragment extends AbstractFragment {
     }
 
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private List<Topics> topics = Arrays.asList(Topics.ARTICLES); //Topics.ANSWERS,
+        private List<Topics> topics = Arrays.asList(Topics.ANSWERS, Topics.ARTICLES);
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -115,7 +119,7 @@ public class TopicsFragment extends AbstractFragment {
         public Fragment getItem(int position) {
             Topics topic = topics.get(position);
             switch (topic) {
-                case ANSWERS: return null;
+                case ANSWERS: return AnswersListFragment.newInstance();
                 case ARTICLES: return ArticlesListFragment.newInstance();
                 default: return null;
             }

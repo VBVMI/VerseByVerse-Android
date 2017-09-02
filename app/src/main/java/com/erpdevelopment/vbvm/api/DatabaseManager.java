@@ -1,5 +1,7 @@
 package com.erpdevelopment.vbvm.api;
 
+import android.util.Log;
+
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.database.AppDatabase;
 import com.erpdevelopment.vbvm.model.Answer;
@@ -156,7 +158,7 @@ public class DatabaseManager {
             @Override
             public void didPersist(Answer instance) {
                 // find all the relevant topic relationships and update them
-                List<Answer_Topic> topics = SQLite.select().from(Answer_Topic.class).where(Article_Topic_Table.article_id.eq(instance.id)).queryList();
+                List<Answer_Topic> topics = SQLite.select().from(Answer_Topic.class).where(Answer_Topic_Table.answer_id.eq(instance.id)).queryList();
 
                 for(Answer_Topic topic : topics) {
                     topic.delete();
@@ -217,6 +219,9 @@ public class DatabaseManager {
                 unconsumedIds.add(entry.identifier());
         }
 
+        if (apiEntries == null) {
+            Log.d("EWF", "mergeAPIData: ");
+        }
         for (T apiEntry : apiEntries) {
             unconsumedIds.remove(apiEntry.identifier());
 

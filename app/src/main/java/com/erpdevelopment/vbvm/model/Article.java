@@ -1,5 +1,7 @@
 package com.erpdevelopment.vbvm.model;
 
+import android.support.annotation.Nullable;
+
 import com.erpdevelopment.vbvm.database.AppDatabase;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -48,8 +50,8 @@ public class Article extends BaseModel implements Mergable<Article> {
     public String title;
 
     @Column
-    @SerializedName("summary")
-    @Expose
+//    @SerializedName("summary")
+//    @Expose
     public String summary;
 
     @Column

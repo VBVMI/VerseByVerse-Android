@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class Answers {
-    @SerializedName("Answers")
+    @SerializedName("answers")
     @Expose
     private List<Answer> answers = null;
 
