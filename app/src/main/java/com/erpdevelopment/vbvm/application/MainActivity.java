@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.crashlytics.android.Crashlytics;
 import com.erpdevelopment.vbvm.api.DatabaseManager;
 import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.fragments.studies.StudiesKey;
@@ -44,6 +45,7 @@ import com.erpdevelopment.vbvm.model.Lesson;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.fabric.sdk.android.Fabric;
 
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.STUDIES;
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.TOPICS;
@@ -105,6 +107,9 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         multistack.onCreate(TOPICS.name(), savedInstanceState, nonConfigurationInstance, TopicsKey.create());
 
         super.onCreate(savedInstanceState);
+
+        Fabric.with(this, new Crashlytics());
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
