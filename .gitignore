@@ -134,3 +134,4 @@ google-services.json
 # End of https://www.gitignore.io/api/androidstudio
 /.idea
 /app/secrets.properties
+/keystore_android
