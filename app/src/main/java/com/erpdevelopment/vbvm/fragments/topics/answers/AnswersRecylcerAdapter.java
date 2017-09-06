@@ -50,7 +50,7 @@ public class AnswersRecylcerAdapter extends RecyclerView.Adapter<AnswersRecylcer
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_article, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_answer, parent, false);
         return new ViewHolder(view, topicSelectionListener);
     }
 

@@ -2,6 +2,8 @@ package com.erpdevelopment.vbvm.fragments.topics.articles;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,6 @@ import com.erpdevelopment.vbvm.fragments.topics.QueryTopic;
 import com.erpdevelopment.vbvm.fragments.topics.QueryTopicRecyclerViewAdapter;
 import com.erpdevelopment.vbvm.fragments.topics.TopicSelectionListener;
 import com.erpdevelopment.vbvm.model.Article;
-import com.erpdevelopment.vbvm.model.Topic;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -82,6 +83,14 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
                 articleSelectionListener.didSelectArticle(article);
             });
         }
+
+        if (article.summary != null && article.summary.length() > 0) {
+            holder.summaryTextView.setVisibility(View.VISIBLE);
+            SpannableString string = new SpannableString(Html.fromHtml(article.summary));
+            holder.summaryTextView.setText(string.toString().trim());
+        } else {
+            holder.summaryTextView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -102,6 +111,9 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
 
         @BindView(R.id.tag_recycler_view)
         RecyclerView tagRecyclerView;
+
+        @BindView(R.id.summaryTextView)
+        TextView summaryTextView;
 
         QueryTopicRecyclerViewAdapter adapter;
 

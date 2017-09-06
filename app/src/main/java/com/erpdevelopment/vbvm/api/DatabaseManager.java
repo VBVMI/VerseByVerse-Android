@@ -69,6 +69,7 @@ public class DatabaseManager {
 
                 for(Topic t: instance.topics) {
                     t.id = StringHelpers.toSlug(t.id);
+                    t.topic = StringHelpers.changeStringCase(t.topic);
                     t.save();
 
                     Study_Topic studyTopic = new Study_Topic();
@@ -104,6 +105,7 @@ public class DatabaseManager {
 
                 for(Topic t: instance.topics) {
                     t.id = StringHelpers.toSlug(t.id);
+                    t.topic = StringHelpers.changeStringCase(t.topic);
                     t.save();
 
                     Lesson_Topic lessonTopic = new Lesson_Topic();
@@ -135,6 +137,7 @@ public class DatabaseManager {
 
                 for(Topic t: instance.topics) {
                     t.id = StringHelpers.toSlug(t.id);
+                    t.topic = StringHelpers.changeStringCase(t.topic);
                     t.save();
 
                     Article_Topic topic = new Article_Topic();
@@ -166,6 +169,7 @@ public class DatabaseManager {
 
                 for(Topic t: instance.topics) {
                     t.id = StringHelpers.toSlug(t.id);
+                    t.topic = StringHelpers.changeStringCase(t.topic);
                     t.save();
 
                     Answer_Topic topic = new Answer_Topic();

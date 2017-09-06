@@ -5,8 +5,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@color/white"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+              android:paddingTop="8dp"
+              android:paddingBottom="8dp">
 
   <TextView
       android:layout_width="match_parent"
@@ -47,16 +47,6 @@
         tools:text="4/06/16"/>
 
   </RelativeLayout>
-
-  <TextView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="@dimen/activity_horizontal_margin"
-      android:layout_marginRight="@dimen/activity_horizontal_margin"
-      android:layout_marginTop="4dp"
-      android:id="@+id/summaryTextView"
-      style="@style/AppTheme.Text.Summary"
-      tools:text="This is some supplementary text to help describe the contents of the article. It might be about a paragraph long though so make sure that it fits."/>
 
   <android.support.v7.widget.RecyclerView
       android:id="@+id/tag_recycler_view"
