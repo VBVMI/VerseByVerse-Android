@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.model.pojo.Answers;
+import com.erpdevelopment.vbvm.model.pojo.Channels;
+import com.erpdevelopment.vbvm.model.pojo.GroupStudies;
 import com.erpdevelopment.vbvm.model.pojo.Lessons;
 import com.erpdevelopment.vbvm.model.pojo.Studies;
 import com.erpdevelopment.vbvm.model.Category;
@@ -206,6 +208,66 @@ public class APIManager {
                 mainHandler.post(() -> {
                     callback.didComplete(false);
                 });
+            }
+        });
+
+    }
+
+    public void downloadChannels(RequestComplete callback) {
+
+        Call<Channels> call = apiInterface.doGetChannels();
+        call.enqueue(new Callback<Channels>() {
+            @Override
+            public void onResponse(Call<Channels> call, Response<Channels> response) {
+                AsyncTask.execute(() -> {
+                    Channels channels = response.body();
+                    DatabaseManager.getInstance().saveChannels(channels.getChannels());
+                    if(callback != null) {
+                        mainHandler.post(() -> {
+                            callback.didComplete(true);
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Channels> call, Throwable t) {
+                call.cancel();
+                if (callback != null) {
+                    mainHandler.post(() -> {
+                        callback.didComplete(false);
+                    });
+                }
+            }
+        });
+
+    }
+
+    public void downloadGroupStudies(RequestComplete callback) {
+
+        Call<GroupStudies> call = apiInterface.doGetGroupStudies();
+        call.enqueue(new Callback<GroupStudies>() {
+            @Override
+            public void onResponse(Call<GroupStudies> call, Response<GroupStudies> response) {
+                AsyncTask.execute(() -> {
+                    GroupStudies groupStudies = response.body();
+                    DatabaseManager.getInstance().saveGroupStudies(groupStudies.getChannels());
+                    if(callback != null) {
+                        mainHandler.post(() -> {
+                            callback.didComplete(true);
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<GroupStudies> call, Throwable t) {
+                call.cancel();
+                if (callback != null) {
+                    mainHandler.post(() -> {
+                        callback.didComplete(false);
+                    });
+                }
             }
         });
 

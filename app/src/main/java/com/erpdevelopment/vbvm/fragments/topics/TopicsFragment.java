@@ -80,7 +80,6 @@ public class TopicsFragment extends AbstractFragment implements SearchView.OnQue
      *
      * @return A new instance of fragment AnswersFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static TopicsFragment newInstance(String topicId) {
         TopicsFragment fragment = new TopicsFragment();
         Bundle args = new Bundle();

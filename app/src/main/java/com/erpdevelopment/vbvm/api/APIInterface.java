@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.erpdevelopment.vbvm.model.Category;
 import com.erpdevelopment.vbvm.model.pojo.Answers;
 import com.erpdevelopment.vbvm.model.pojo.Articles;
+import com.erpdevelopment.vbvm.model.pojo.Channels;
+import com.erpdevelopment.vbvm.model.pojo.GroupStudies;
 import com.erpdevelopment.vbvm.model.pojo.Lessons;
 import com.erpdevelopment.vbvm.model.pojo.Studies;
 
@@ -40,4 +42,10 @@ public interface APIInterface {
 
     @GET("/corev2/json-qap")
     Call<Answers> doGetLatestAnswers();
+
+    @GET("/corev2/json-channels")
+    Call<Channels> doGetChannels();
+
+    @GET("/corev2/json-curriculum")
+    Call<GroupStudies> doGetGroupStudies();
 }

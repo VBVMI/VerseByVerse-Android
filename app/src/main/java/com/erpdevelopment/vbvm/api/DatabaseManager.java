@@ -8,8 +8,12 @@ import com.erpdevelopment.vbvm.model.Answer;
 import com.erpdevelopment.vbvm.model.Answer_Topic;
 import com.erpdevelopment.vbvm.model.Answer_Topic_Table;
 import com.erpdevelopment.vbvm.model.Article_Topic;
+import com.erpdevelopment.vbvm.model.Channel;
+import com.erpdevelopment.vbvm.model.GroupStudy;
 import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.model.Study_Topic;
+import com.erpdevelopment.vbvm.model.Video;
+import com.erpdevelopment.vbvm.model.Video_Table;
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
@@ -191,6 +195,41 @@ public class DatabaseManager {
         mergeAPIData(persistedCategories, categories);
     }
 
+    void saveChannels(List<Channel> channels) {
+
+        List<Channel> persistedChannels = SQLite.select().from(Channel.class).queryList();
+        mergeAPIData(persistedChannels, channels);
+
+        for(Channel c : channels) {
+            saveChannelVideos(c.videos, c.id);
+        }
+    }
+
+    void saveChannelVideos(List<Video> videos, String channelId) {
+        for (Video v : videos) {
+            v.channelId = channelId;
+        }
+
+        List<Video> persistedVideos = SQLite.select().from(Video.class).where(Video_Table.channelId.eq(channelId)).queryList();
+        mergeAPIData(persistedVideos, videos);
+    }
+
+    void saveGroupStudies(List<GroupStudy> studies) {
+        List<GroupStudy> persisted = SQLite.select().from(GroupStudy.class).queryList();
+        mergeAPIData(persisted, studies);
+
+        for (GroupStudy g : studies){
+            saveGroupStudyVideos(g.videos, g.id);
+        }
+    }
+
+    void saveGroupStudyVideos(List<Video> videos, String groupStudyId) {
+        for (Video v : videos) {
+            v.groupStudyId = groupStudyId;
+        }
+        List<Video> persistedVideos = SQLite.select().from(Video.class).where(Video_Table.groupStudyId.eq(groupStudyId)).queryList();
+        mergeAPIData(persistedVideos, videos);
+    }
 
 
     private static class MergePair<T> {

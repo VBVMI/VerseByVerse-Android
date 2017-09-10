@@ -29,10 +29,13 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.erpdevelopment.vbvm.api.DatabaseManager;
+import com.erpdevelopment.vbvm.fragments.media.MediaKey;
 import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.fragments.studies.StudiesKey;
 import com.erpdevelopment.vbvm.model.Answer;
 import com.erpdevelopment.vbvm.model.Article;
+import com.erpdevelopment.vbvm.model.Channel;
+import com.erpdevelopment.vbvm.model.GroupStudy;
 import com.erpdevelopment.vbvm.util.Multistack;
 import com.zhuinden.simplestack.BackstackDelegate;
 import com.zhuinden.simplestack.StateChange;
@@ -47,6 +50,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
+import static com.erpdevelopment.vbvm.application.MainActivity.StackType.MEDIA;
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.STUDIES;
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.TOPICS;
 
@@ -56,7 +60,8 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
     public enum StackType {
         STUDIES,
-        TOPICS
+        TOPICS,
+        MEDIA
     }
 
     private AudioService audioService;
@@ -98,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
         multistack.add(STUDIES.name(), new BackstackDelegate(null));
         multistack.add(TOPICS.name(), new BackstackDelegate(null));
+        multistack.add(MEDIA.name(), new BackstackDelegate(null));
 
         Multistack.NonConfigurationInstance nonConfigurationInstance = (Multistack.NonConfigurationInstance) getLastCustomNonConfigurationInstance();
 
@@ -105,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
         multistack.onCreate(STUDIES.name(), savedInstanceState, nonConfigurationInstance, StudiesKey.create());
         multistack.onCreate(TOPICS.name(), savedInstanceState, nonConfigurationInstance, TopicsKey.create());
+        multistack.onCreate(MEDIA.name(), savedInstanceState, nonConfigurationInstance, MediaKey.create());
 
         super.onCreate(savedInstanceState);
 
@@ -124,6 +131,9 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
                     case R.id.navigation_answers:
                         newStack = TOPICS.name();
                         break;
+                    case R.id.navigation_videos:
+                        newStack = MEDIA.name();
+                        break;
                 }
 
                 if (multistack.getSelectedStackIdentifier() != newStack) {
@@ -140,6 +150,8 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         DatabaseManager.observer.registerForContentChanges(this, Lesson.class);
         DatabaseManager.observer.registerForContentChanges(this, Article.class);
         DatabaseManager.observer.registerForContentChanges(this, Answer.class);
+        DatabaseManager.observer.registerForContentChanges(this, Channel.class);
+        DatabaseManager.observer.registerForContentChanges(this, GroupStudy.class);
 //        DatabaseManager.observer.registerForContentChanges(this, Category.class);
 //        DatabaseManager.observer.registerForContentChanges(this, Study.class);
 

@@ -13,4 +13,9 @@
       android:title="@string/title_topics"
       />
 
+  <item
+    android:id="@+id/navigation_videos"
+    android:icon="@drawable/ic_videos_24dp"
+    android:title="Videos" />
+
 </menu>
