@@ -48,6 +48,9 @@ public class Channel extends BaseModel implements Mergable<Channel> {
     @Expose
     public String url;
 
+    @Column
+    public int videoCount;
+
     @SerializedName("videos")
     @Expose
     public List<Video> videos;
@@ -76,5 +79,6 @@ public class Channel extends BaseModel implements Mergable<Channel> {
         this.title = apiVersion.title;
         this.thumbnailSource = apiVersion.thumbnailSource;
         this.url = apiVersion.url;
+        this.videoCount = apiVersion.videoCount;
     }
 }

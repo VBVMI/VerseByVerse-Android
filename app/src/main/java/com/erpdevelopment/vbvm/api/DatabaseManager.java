@@ -196,13 +196,13 @@ public class DatabaseManager {
     }
 
     void saveChannels(List<Channel> channels) {
+        for(Channel c : channels) {
+            saveChannelVideos(c.videos, c.id);
+            c.videoCount = c.videos.size();
+        }
 
         List<Channel> persistedChannels = SQLite.select().from(Channel.class).queryList();
         mergeAPIData(persistedChannels, channels);
-
-        for(Channel c : channels) {
-            saveChannelVideos(c.videos, c.id);
-        }
     }
 
     void saveChannelVideos(List<Video> videos, String channelId) {
@@ -215,12 +215,13 @@ public class DatabaseManager {
     }
 
     void saveGroupStudies(List<GroupStudy> studies) {
-        List<GroupStudy> persisted = SQLite.select().from(GroupStudy.class).queryList();
-        mergeAPIData(persisted, studies);
-
         for (GroupStudy g : studies){
             saveGroupStudyVideos(g.videos, g.id);
+            g.videoCount = g.videos.size();
         }
+
+        List<GroupStudy> persisted = SQLite.select().from(GroupStudy.class).queryList();
+        mergeAPIData(persisted, studies);
     }
 
     void saveGroupStudyVideos(List<Video> videos, String groupStudyId) {

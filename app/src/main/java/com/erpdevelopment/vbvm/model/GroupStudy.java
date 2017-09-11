@@ -57,10 +57,14 @@ public class GroupStudy extends BaseModel implements Mergable<GroupStudy> {
     @Expose
     public List<Video> videos;
 
+    @Column
+    public int videoCount;
+
     public List<Video> fetchVideos() {
         if (videos == null || videos.isEmpty()) {
             videos = SQLite.select().from(Video.class)
                     .where(Video_Table.groupStudyId.eq(id))
+                    .orderBy(Video_Table.id, true)
                     .queryList();
         }
         return videos;
@@ -83,5 +87,6 @@ public class GroupStudy extends BaseModel implements Mergable<GroupStudy> {
         this.pdf = apiVersion.pdf;
         this.coverImage = apiVersion.coverImage;
         this.url = apiVersion.url;
+        this.videoCount = apiVersion.videoCount;
     }
 }

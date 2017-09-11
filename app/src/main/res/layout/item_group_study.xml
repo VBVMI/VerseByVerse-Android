@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:translationZ="2dp">
+
+  <RelativeLayout
+      android:id="@+id/background"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:paddingEnd="@dimen/activity_horizontal_margin"
+                  android:paddingLeft="@dimen/lessons_horizontal_margin"
+                  android:paddingRight="@dimen/activity_horizontal_margin"
+                  android:paddingStart="@dimen/lessons_horizontal_margin"
+                  android:background="?attr/selectableItemBackground"
+                  >
+
+    <ImageView
+        android:id="@+id/poster_image_view"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/poster_image_view"
+        android:layout_toEndOf="@id/poster_image_view">
+
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          tools:text="End Times Group Study"
+          android:layout_marginTop="16dp"
+          android:layout_marginLeft="16dp"
+          android:layout_marginStart="16dp"
+          android:id="@+id/title_view"
+          style="@style/AppTheme.Text.GroupStudy.Title"/>
+
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:layout_below="@id/title_view">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:id="@+id/count_text_view"
+            style="@style/AppTheme.Text.GroupStudy.Supplementary"
+            tools:text="12 Videos"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@id/count_text_view"
+            android:layout_toEndOf="@id/count_text_view"
+            android:textAlignment="textEnd"
+            android:gravity="end"
+            android:id="@+id/date_view"
+            style="@style/AppTheme.Text.GroupStudy.Supplementary"
+            tools:text="12/12/2016"/>
+
+      </RelativeLayout>
+
+    </RelativeLayout>
+
+  </RelativeLayout>
+</RelativeLayout>

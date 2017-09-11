@@ -172,7 +172,11 @@ public class AnswersListFragment extends AbstractListFragment implements AnswerS
             if (adapter.getItemCount() > 0) {
                 showList();
             } else {
-                showEmpty();
+                if (searchText == null || searchText.isEmpty() && topicId == null) {
+                    showLoading();
+                } else {
+                    showEmpty();
+                }
             }
         }
     }

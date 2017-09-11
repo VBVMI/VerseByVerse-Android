@@ -72,5 +72,6 @@ img.profile {
   <div class="container">
     {{content}}
   </div>]]></string>
+  <string name="download_study_book">Download Study Book</string>
 
 </resources>

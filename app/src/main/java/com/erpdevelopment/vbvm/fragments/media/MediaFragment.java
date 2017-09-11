@@ -3,6 +3,9 @@ package com.erpdevelopment.vbvm.fragments.media;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,9 +16,12 @@ import android.view.ViewGroup;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.api.APIManager;
 import com.erpdevelopment.vbvm.application.MainActivity;
+import com.erpdevelopment.vbvm.fragments.media.groupStudies.GroupStudiesFragment;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -61,19 +67,65 @@ public class MediaFragment extends AbstractFragment {
 
         if(lastRequestDate == null || TimeUnit.MILLISECONDS.toSeconds((new Date()).getTime() - lastRequestDate.getTime()) > 3600 ) {
             lastRequestDate = new Date();
-            APIManager.getInstance().downloadChannels(success -> {
-                Log.d(TAG, "Downloaded all them channels (" + success + ")");
-            });
-//            APIManager.getInstance().downloa(success -> {
-//                Log.d(TAG, "Downloaded all them answers (" + success + ")");
-//            });
+            APIManager.getInstance().downloadChannels(null);
+            APIManager.getInstance().downloadGroupStudies(null);
         }
 
+        SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(this.getChildFragmentManager());
+        mViewPager.setAdapter(pagerAdapter);
+        tabLayout.setupWithViewPager(mViewPager);
         return view;
     }
 
     @Override
     public boolean shouldBitmapUI() {
         return true;
+    }
+
+    private enum Media {
+        STUDIES,
+        VIDEOS
+    }
+
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        private List<Media> mediaList = Arrays.asList(Media.STUDIES);
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+
+        @Override
+        public Fragment getItem(int position) {
+            Media media = mediaList.get(position);
+
+            switch (media) {
+                case STUDIES:
+                    return GroupStudiesFragment.newInstance();
+                case VIDEOS:
+                    return null;
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return mediaList.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Media media = mediaList.get(position);
+            switch (media) {
+                case STUDIES:
+                    return "Group Studies";
+                case VIDEOS:
+                    return "Video";
+                default:
+                    return "";
+            }
+        }
     }
 }

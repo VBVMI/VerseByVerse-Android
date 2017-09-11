@@ -88,10 +88,14 @@ public abstract class AbstractListFragment extends Fragment {
 
     protected abstract void reloadData();
 
+    protected int layoutId() {
+        return R.layout.fragment_list;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        View view = inflater.inflate(layoutId(), container, false);
         unbinder = ButterKnife.bind(this, view);
         mainHandler = new Handler(getContext().getMainLooper());
 
