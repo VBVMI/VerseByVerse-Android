@@ -135,3 +135,4 @@ google-services.json
 /.idea
 /app/secrets.properties
 /keystore_android
+/app/src/main/res/values/secrets.xml

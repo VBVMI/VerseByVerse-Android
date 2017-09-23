@@ -1,12 +1,13 @@
-package com.erpdevelopment.vbvm.fragments.media.groupStudies;
+package com.erpdevelopment.vbvm.fragments.media.videos;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.erpdevelopment.vbvm.application.MainActivity;
-import com.erpdevelopment.vbvm.fragments.groupStudy.GroupStudyKey;
+import com.erpdevelopment.vbvm.fragments.groupStudy.VideoKey;
+import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 import com.erpdevelopment.vbvm.fragments.topics.AbstractListFragment;
-import com.erpdevelopment.vbvm.model.GroupStudy;
+import com.erpdevelopment.vbvm.model.Channel;
 import com.erpdevelopment.vbvm.util.ServiceLocator;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.zhuinden.simplestack.BackstackDelegate;
@@ -16,37 +17,36 @@ import org.algi.sugarloader.SugarLoader;
 import java.util.List;
 
 /**
- * Created by thomascarey on 10/09/17.
+ * Created by thomascarey on 23/09/17.
  */
 
-public class GroupStudiesFragment extends AbstractListFragment implements  GroupStudySelectionListener {
+public class VideoSeriesFragment extends AbstractListFragment implements VideoSeriesSelectionListener {
 
-    GroupStudiesRecyclerAdapter adapter;
+    VideoSeriesRecylcerAdapter adapter;
 
-    private SugarLoader<List<GroupStudy>> mLoader = new SugarLoader<List<GroupStudy>>("GroupStudyListFragment")
-                .background(() -> {
-                    return SQLite.select().from(GroupStudy.class).queryList();
-                }).onSuccess(groupStudies -> {
-               adapter.setGroupStudies(groupStudies);
-                if (groupStudies.size() > 0) {
+    private SugarLoader<List<Channel>> mLoader = new SugarLoader<List<Channel>>("VideoSeriesFragment")
+            .background(() -> {
+                return SQLite.select().from(Channel.class).queryList();
+            }).onSuccess(channels -> {
+                adapter.setVideoSeries(channels);
+                if (channels.size() > 0) {
                     showList();
                 } else {
                     showEmpty();
                 }
             });
 
-    public GroupStudiesFragment() {
+    public VideoSeriesFragment() {
 
     }
 
-    public static GroupStudiesFragment newInstance() {
-        return new GroupStudiesFragment();
+    public static VideoSeriesFragment newInstance() {
+        return new VideoSeriesFragment();
     }
-
 
     @Override
-    public void didSelectGroupStudy(GroupStudy groupStudy) {
-        ((BackstackDelegate) ServiceLocator.getService(getContext(), MainActivity.StackType.MEDIA.name())).getBackstack().goTo(GroupStudyKey.create(groupStudy.id));
+    public void didSelectVideoSeries(Channel channel) {
+        ((BackstackDelegate) ServiceLocator.getService(getContext(), MainActivity.StackType.MEDIA.name())).getBackstack().goTo(VideoKey.create(channel.id));
     }
 
     @Override
@@ -57,12 +57,12 @@ public class GroupStudiesFragment extends AbstractListFragment implements  Group
 
     @Override
     protected String tableName() {
-        return "GroupStudy";
+        return "Channel";
     }
 
     @Override
     protected void configureRecyclerView(RecyclerView recyclerView) {
-        adapter = new GroupStudiesRecyclerAdapter(this, getContext());
+        adapter = new VideoSeriesRecylcerAdapter(this);
         if (adapter.getItemCount() > 0) {
             showList();
         } else {

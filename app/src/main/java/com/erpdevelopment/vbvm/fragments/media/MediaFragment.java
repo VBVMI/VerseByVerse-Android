@@ -17,6 +17,7 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.api.APIManager;
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.media.groupStudies.GroupStudiesFragment;
+import com.erpdevelopment.vbvm.fragments.media.videos.VideoSeriesFragment;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 
 import java.util.Arrays;
@@ -89,7 +90,7 @@ public class MediaFragment extends AbstractFragment {
 
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        private List<Media> mediaList = Arrays.asList(Media.STUDIES);
+        private List<Media> mediaList = Arrays.asList(Media.STUDIES, Media.VIDEOS);
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -104,7 +105,7 @@ public class MediaFragment extends AbstractFragment {
                 case STUDIES:
                     return GroupStudiesFragment.newInstance();
                 case VIDEOS:
-                    return null;
+                    return VideoSeriesFragment.newInstance();
                 default:
                     return null;
             }

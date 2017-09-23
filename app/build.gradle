@@ -35,7 +35,7 @@ android {
         versionName "4.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        manifestPlaceholders = [FabricApiKey: getApiKey()]
+        manifestPlaceholders = getKeys()
         jackOptions {
             enabled true
         }
@@ -52,14 +52,11 @@ android {
     }
 }
 
-
-
-def getApiKey(){
+def getKeys(){
     def Properties props = new Properties()
     props.load(new FileInputStream(new File('app/secrets.properties')))
-    return props['FABRIC_API_KEY']
+    return [FabricApiKey: props['FABRIC_API_KEY']]
 }
-
 
 def dbflow_version = "4.0.3"
 
@@ -100,4 +97,5 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
+    compile 'com.vimeo.networking:vimeo-networking:1.1.0'
 }
