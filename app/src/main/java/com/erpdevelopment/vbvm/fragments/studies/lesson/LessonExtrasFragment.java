@@ -7,10 +7,13 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 import com.erpdevelopment.vbvm.model.Study;
+import com.erpdevelopment.vbvm.model.Video;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import com.erpdevelopment.vbvm.FileHelpers;
@@ -29,6 +33,10 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.model.Lesson;
 import com.erpdevelopment.vbvm.model.Lesson_Table;
 import com.erpdevelopment.vbvm.model.Study_Table;
+import com.vimeo.networking.VimeoClient;
+import com.vimeo.networking.callbacks.ModelCallback;
+import com.vimeo.networking.model.VideoFile;
+import com.vimeo.networking.model.error.VimeoError;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -158,9 +166,17 @@ public class LessonExtrasFragment extends DialogFragment {
                 holder.iconView.setTypeface(iconFont);
                 holder.iconView.setText(R.string.fa_youtube_play);
                 holder.itemView.setOnClickListener(v -> {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(lesson.videoSource));
-                    startActivity(i);
+                    if (lesson.videoSource.contains("vimeo")) {
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+                        Uri data = Uri.parse(lesson.videoSource);
+                        intent.setDataAndType(data, "video/mp4");
+                        startActivity(intent);
+                    } else {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(lesson.videoSource));
+                        startActivity(i);
+                    }
+
                 });
             }));
         }
@@ -180,12 +196,47 @@ public class LessonExtrasFragment extends DialogFragment {
 
         // Handout
         rowList.add(new LessonExtrasAdapter.ActionRow(holder -> {
-            holder.titleView.setText("Mark as complete");
+            holder.titleView.setText(R.string.mark_complete);
+
             holder.iconView.setTypeface(iconFont);
-            holder.iconView.setText(R.string.fa_check_square_o);
+            if (!lesson.complete) {
+                holder.iconView.setText(R.string.fa_square_o);
+            } else {
+                holder.iconView.setText(R.string.fa_check_square_o);
+            }
+
+            holder.itemView.setOnClickListener(v -> {
+                lesson.complete = !lesson.complete;
+                if (!lesson.complete) {
+                    holder.iconView.setText(R.string.fa_square_o);
+                } else {
+                    holder.iconView.setText(R.string.fa_check_square_o);
+                }
+                lesson.save();
+            });
         }));
 
         LessonExtrasAdapter adapter = new LessonExtrasAdapter(rowList);
+
+        if (FileHelpers.hasDownloadedFiles(getContext(), lesson)) {
+            LessonExtrasAdapter.ActionRow row = new LessonExtrasAdapter.ActionRow(holder -> {
+                holder.titleView.setText("Delete files");
+                holder.iconView.setTypeface(iconFont);
+                holder.iconView.setText(R.string.fa_trash_o);
+
+                holder.itemView.setOnClickListener(v -> {
+                    if (FileHelpers.deleteAllFiles(getContext(), lesson)) {
+                        Snackbar snackbar = Snackbar.make(view, R.string.files_deleted, BaseTransientBottomBar.LENGTH_SHORT);
+                        snackbar.show();
+                        lesson.save();
+                    } else {
+                        Snackbar snackbar = Snackbar.make(view, R.string.files_deleted_failed, BaseTransientBottomBar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                });
+            });
+            rowList.add(row);
+        }
 
         recyclerView.setAdapter(adapter);
 
@@ -265,8 +316,6 @@ public class LessonExtrasFragment extends DialogFragment {
             LessonResourceManager.getInstance().download(lesson, type, callback);
         });
     }
-
-
 
     @Override
     public void onDestroyView() {

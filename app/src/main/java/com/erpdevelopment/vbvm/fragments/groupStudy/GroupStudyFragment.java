@@ -155,7 +155,6 @@ public class GroupStudyFragment extends AbstractListFragment implements VideoSel
                             Uri data = Uri.parse(file.getLink());
                             intent.setDataAndType(data, "video/mp4");
                             startActivity(intent);
-
                         }
                     }
                 }

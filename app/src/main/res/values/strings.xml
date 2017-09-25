@@ -25,6 +25,12 @@
 
   <string name="empty">No results</string>
 
+  <string name="files_deleted">Files deleted successfully</string>
+  <string name="files_deleted_failed">Failed to delete files</string>
+
+  <string name="mark_complete">Mark as complete</string>
+  <string name="mark_incomplete">Mark as incomplete</string>
+
   <string name="html_container"><![CDATA[<head>
 <style>
 body {

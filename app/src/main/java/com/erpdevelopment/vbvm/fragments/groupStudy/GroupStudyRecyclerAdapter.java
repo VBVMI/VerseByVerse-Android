@@ -3,6 +3,7 @@ package com.erpdevelopment.vbvm.fragments.groupStudy;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,8 +78,22 @@ public class GroupStudyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
             vh.titleView.setText(StringHelpers.fromHtmlString(video.title));
             Glide.with(context).load(video.thumbnailSource).into(vh.imageView);
 
+            vh.progressBar.setVisibility(View.INVISIBLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                vh.imageView.setImageAlpha(255);
+            } else {
+                vh.imageView.setAlpha(255);
+            }
             vh.itemView.setOnClickListener(v -> {
                 if (videoSelectionListener != null) {
+                    vh.progressBar.setVisibility(View.VISIBLE);
+                    vh.progressBar.animate();
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        vh.imageView.setImageAlpha(100);
+                    } else {
+                        vh.imageView.setAlpha(100);
+                    }
                     videoSelectionListener.videoTapped(video);
                 }
             });

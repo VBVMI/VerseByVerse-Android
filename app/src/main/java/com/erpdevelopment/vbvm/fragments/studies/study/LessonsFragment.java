@@ -51,10 +51,12 @@ public class LessonsFragment extends AbstractFragment {
 
     private static final String TAG = "LESSONS_FRAGMENT";
     private static final String ARG_STUDY_ID = "ARG_STUDY_ID";
+    private static final String ARG_SHOW_COMPLETED = "ARG_SHOW_COMPLETED";
 
     private OnLessonFragmentInteractionListener mListener;
 
     private String studyId;
+    private boolean showCompleted;
 
     @BindView(R.id.list)
     RecyclerView recyclerView;
@@ -71,10 +73,11 @@ public class LessonsFragment extends AbstractFragment {
     public LessonsFragment() {
     }
 
-    public static LessonsFragment newInstance(String studyId) {
+    public static LessonsFragment newInstance(String studyId, boolean showCompleted) {
         LessonsFragment fragment = new LessonsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_STUDY_ID, studyId);
+        args.putBoolean(ARG_SHOW_COMPLETED, showCompleted);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +90,7 @@ public class LessonsFragment extends AbstractFragment {
 
         if (getArguments() != null) {
             studyId = getArguments().getString(ARG_STUDY_ID);
+            showCompleted = getArguments().getBoolean(ARG_SHOW_COMPLETED, false);
         }
     }
 
@@ -136,11 +140,10 @@ public class LessonsFragment extends AbstractFragment {
 
         mLoader = new SugarLoader<List<Lesson>>("LessonsLoader" + studyId)
                 .background(() ->
-                        SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).orderBy(Lesson_Table.index, true).queryList()
+                        SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).and(Lesson_Table.complete.eq(showCompleted)).orderBy(Lesson_Table.index, true).queryList()
                 ).onSuccess(lessons -> {
                     LessonRecyclerViewAdapter adapter = (LessonRecyclerViewAdapter)recyclerView.getAdapter();
                     adapter.setLessons(lessons);
-
                     toggleLoading();
                 });
 

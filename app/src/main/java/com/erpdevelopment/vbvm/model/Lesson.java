@@ -93,6 +93,9 @@ public class Lesson extends BaseModel implements Mergable<Lesson> {
     @Column
     public double progress = 0;
 
+    @Column
+    public boolean complete = false;
+
     @Override
     public String identifier() {
         return id;

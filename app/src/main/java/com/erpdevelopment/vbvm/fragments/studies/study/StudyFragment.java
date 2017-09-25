@@ -126,7 +126,7 @@ public class StudyFragment extends AbstractFragment {
 
         configureView();
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager(), new SECTION[]{SECTION.LESSONS, SECTION.INFO});
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager(), new SECTION[]{SECTION.LESSONS, SECTION.COMPLETED, SECTION.INFO});
         mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(mViewPager);
 
@@ -191,9 +191,9 @@ public class StudyFragment extends AbstractFragment {
             SECTION section = sections[position];
             switch (section) {
                 case LESSONS:
-                    return LessonsFragment.newInstance(study.id);
+                    return LessonsFragment.newInstance(study.id, false);
                 case COMPLETED:
-                    return null;
+                    return LessonsFragment.newInstance(study.id, true);
                 case INFO:
                     return StudyInfoFragment.newInstance(study.id);
                 default:

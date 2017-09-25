@@ -6,6 +6,8 @@ import android.net.Uri;
 import com.erpdevelopment.vbvm.model.Lesson;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by thomascarey on 12/08/17.
@@ -82,4 +84,30 @@ public class FileHelpers {
     public static File getAudioFileForLesson(Context context, Lesson lesson) {
         return fileForType(context, lesson, FILE_AUDIO);
     }
+
+    public static boolean hasDownloadedFiles(Context context, Lesson lesson) {
+
+        String[] types = new String[]{FILE_AUDIO, FILE_HANDOUT, FILE_SLIDES, FILE_TRANSCRIPT};
+        for (String type : types) {
+            File file = fileForType(context, lesson, type);
+            if (file.exists()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean deleteAllFiles(Context context, Lesson lesson) {
+        String[] types = new String[]{FILE_AUDIO, FILE_HANDOUT, FILE_SLIDES, FILE_TRANSCRIPT};
+        boolean success = true;
+        for (String type : types) {
+            File file = fileForType(context, lesson, type);
+            if (file.exists()) {
+                success = success & file.delete();
+            }
+        }
+        return success;
+    }
+
 }

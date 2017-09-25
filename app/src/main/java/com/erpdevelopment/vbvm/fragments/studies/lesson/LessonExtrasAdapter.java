@@ -115,6 +115,14 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
         extrasRows = rows;
     }
 
+    public void removeRow(Row row) {
+        int index = extrasRows.indexOf(row);
+        if (index > 0) {
+            extrasRows.remove(row);
+            notifyItemRemoved(index);
+        }
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 

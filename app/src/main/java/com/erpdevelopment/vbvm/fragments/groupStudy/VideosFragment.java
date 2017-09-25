@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,10 @@ import com.erpdevelopment.vbvm.model.Channel;
 import com.erpdevelopment.vbvm.model.Channel_Table;
 import com.erpdevelopment.vbvm.model.Video;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.vimeo.networking.VimeoClient;
+import com.vimeo.networking.callbacks.ModelCallback;
+import com.vimeo.networking.model.VideoFile;
+import com.vimeo.networking.model.error.VimeoError;
 
 import org.algi.sugarloader.SugarLoader;
 
@@ -134,7 +139,35 @@ public class VideosFragment extends AbstractListFragment implements VideoSelecti
 
     @Override
     public void videoTapped(Video video) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(video.videoSource));
-        getContext().startActivity(browserIntent);
+
+        if (video.service.equals("vimeo")) {
+
+            String uri = "videos/" + video.serviceVideoId;
+            VimeoClient.getInstance().fetchNetworkContent(uri, new ModelCallback<com.vimeo.networking.model.Video>(com.vimeo.networking.model.Video.class) {
+                @Override
+                public void success(com.vimeo.networking.model.Video video) {
+
+                    for (VideoFile file : video.files) {
+                        if (file.getQuality().equals(VideoFile.VideoQuality.HLS)) {
+
+                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+                            Uri data = Uri.parse(file.getLink());
+                            intent.setDataAndType(data, "video/mp4");
+                            startActivity(intent);
+                        }
+                    }
+                }
+
+                @Override
+                public void failure(VimeoError error) {
+                    Log.e(TAG, "Error loading video " + error.toString());
+                }
+            });
+
+        } else {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(video.videoSource));
+            getContext().startActivity(browserIntent);
+        }
+
     }
 }

@@ -3,6 +3,7 @@ package com.erpdevelopment.vbvm.fragments.groupStudy;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.erpdevelopment.vbvm.R;
@@ -26,6 +27,9 @@ public class VideoViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.date_view)
     TextView dateView;
+
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     public VideoViewHolder(View itemView) {
         super(itemView);

@@ -122,7 +122,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mAudioManager.abandonAudioFocus(afChangeListener);
 
-        lesson.progress = 1;
+        lesson.progress = 0;
+        lesson.complete = true;
         lesson.save();
 
         stopRepeatingTask();
