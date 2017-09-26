@@ -28,8 +28,10 @@ import android.widget.TextView;
 
 
 import com.crashlytics.android.Crashlytics;
+import com.erpdevelopment.vbvm.BottomNavigationViewHelper;
 import com.erpdevelopment.vbvm.api.DatabaseManager;
 import com.erpdevelopment.vbvm.fragments.media.MediaKey;
+import com.erpdevelopment.vbvm.fragments.more.MoreKey;
 import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.fragments.studies.StudiesKey;
 import com.erpdevelopment.vbvm.model.Answer;
@@ -51,6 +53,7 @@ import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.MEDIA;
+import static com.erpdevelopment.vbvm.application.MainActivity.StackType.MORE;
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.STUDIES;
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.TOPICS;
 
@@ -61,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
     public enum StackType {
         STUDIES,
         TOPICS,
-        MEDIA
+        MEDIA,
+        MORE
     }
 
     private AudioService audioService;
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         multistack.add(STUDIES.name(), new BackstackDelegate(null));
         multistack.add(TOPICS.name(), new BackstackDelegate(null));
         multistack.add(MEDIA.name(), new BackstackDelegate(null));
+        multistack.add(MORE.name(), new BackstackDelegate(null));
 
         Multistack.NonConfigurationInstance nonConfigurationInstance = (Multistack.NonConfigurationInstance) getLastCustomNonConfigurationInstance();
 
@@ -112,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         multistack.onCreate(STUDIES.name(), savedInstanceState, nonConfigurationInstance, StudiesKey.create());
         multistack.onCreate(TOPICS.name(), savedInstanceState, nonConfigurationInstance, TopicsKey.create());
         multistack.onCreate(MEDIA.name(), savedInstanceState, nonConfigurationInstance, MediaKey.create());
+        multistack.onCreate(MORE.name(), savedInstanceState, nonConfigurationInstance, MoreKey.create());
 
         super.onCreate(savedInstanceState);
 
@@ -120,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        BottomNavigationViewHelper.disableShiftMode(bottomNavigation);
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -133,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
                         break;
                     case R.id.navigation_videos:
                         newStack = MEDIA.name();
+                        break;
+                    case R.id.navigation_more:
+                        newStack = MORE.name();
                         break;
                 }
 

@@ -11,4 +11,9 @@
   <string name="fa_square_o">&#xf096;</string>
   <string name="fa_download">&#xf019;</string>
   <string name="fa_newspaper_o">&#xf1ea;</string>
+  <string name="fa_calendar">&#xf073;</string>
+  <string name="fa_calendar_o">&#xf133;</string>
+  <string name="fa_commenting_o">&#xf27b;</string>
+  <string name="fa_envelope_o">&#xf003;</string>
+  <string name="fa_info">&#xf129;</string>
 </resources>
