@@ -181,6 +181,8 @@ public class LessonsFragment extends AbstractFragment {
     }
 
     public void reloadData() {
+        if (isDetached())
+            return;
         mLoader.restart(this);
     }
 

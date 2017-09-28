@@ -46,6 +46,7 @@ import java.util.Set;
 
 public class DatabaseManager {
     private static final DatabaseManager ourInstance = new DatabaseManager();
+    private static final String TAG = "DatabaseManager";
 
     public static DatabaseManager getInstance() {
         return ourInstance;
@@ -263,18 +264,19 @@ public class DatabaseManager {
                 unconsumedIds.add(entry.identifier());
         }
 
-        if (apiEntries == null) {
-            Log.d("EWF", "mergeAPIData: ");
-        }
-        for (T apiEntry : apiEntries) {
-            unconsumedIds.remove(apiEntry.identifier());
+        if (apiEntries != null) {
+            for (T apiEntry : apiEntries) {
+                unconsumedIds.remove(apiEntry.identifier());
 
-            T persistedVersion = mergedMap.get(apiEntry.identifier());
-            if (persistedVersion != null) {
-                persistedVersion.mergeAPIAttributes(apiEntry);
-            } else {
-                mergedMap.put(apiEntry.identifier(), apiEntry);
+                T persistedVersion = mergedMap.get(apiEntry.identifier());
+                if (persistedVersion != null) {
+                    persistedVersion.mergeAPIAttributes(apiEntry);
+                } else {
+                    mergedMap.put(apiEntry.identifier(), apiEntry);
+                }
             }
+        } else {
+            Log.d(TAG, "apiEntries was null");
         }
 
         Collection<T> entriesToDelete = new ArrayList<>();

@@ -1,14 +1,20 @@
 package com.erpdevelopment.vbvm.fragments.more;
 
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.erpdevelopment.vbvm.FontManager;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
@@ -54,6 +60,8 @@ public class MoreFragment extends AbstractFragment {
         items.add(new Item("Contact", R.string.fa_commenting_o, "https://www.versebyverseministry.org/contact"));
         items.add(new Item("Donate", R.string.fa_envelope_o, "https://www.versebyverseministry.org/about/financial_support"));
 
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
         MoreRecyclerAdapter adapter = new MoreRecyclerAdapter(items);
         recyclerView.setAdapter(adapter);
 
@@ -80,19 +88,33 @@ public class MoreFragment extends AbstractFragment {
     class MoreRecyclerAdapter extends RecyclerView.Adapter<MoreItemViewHolder> {
 
         List<Item> items;
+        private Typeface iconFont;
 
         MoreRecyclerAdapter(List<Item> items) {
             this.items = items;
+            iconFont = FontManager.getTypeface(getContext(), FontManager.FONTAWESOME);
         }
 
         @Override
         public MoreItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return null;
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_more_item, parent, false);
+            return new MoreItemViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(MoreItemViewHolder holder, int position) {
+            Item item = items.get(position);
 
+            holder.iconView.setTypeface(iconFont);
+            holder.iconView.setText(item.icon);
+
+            holder.nameView.setText(item.name);
+
+            holder.background.setOnClickListener(v -> {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(item.link));
+                startActivity(i);
+            });
         }
 
         @Override
@@ -103,8 +125,18 @@ public class MoreFragment extends AbstractFragment {
 
     class MoreItemViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.icon_view)
+        TextView iconView;
+
+        @BindView(R.id.name_view)
+        TextView nameView;
+
+        @BindView(R.id.background)
+        View background;
+
         public MoreItemViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 

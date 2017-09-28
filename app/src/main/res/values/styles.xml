@@ -78,6 +78,9 @@
     <item name="android:textSize">12sp</item>
   </style>
 
+  <style name="AppTheme.Text.More">
+    <item name="android:textSize">16sp</item>
+  </style>
 
   <style name="AppTheme.Tag">
     <item name="android:textColor">@color/colorDownload</item>
