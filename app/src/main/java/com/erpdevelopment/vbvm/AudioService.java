@@ -152,7 +152,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     public void onPrepared(MediaPlayer mp) {
         AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         int result = mAudioManager.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-
+        lesson.complete = false;
+        lesson.save();
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             Log.d(TAG, "Focus granted");
         }

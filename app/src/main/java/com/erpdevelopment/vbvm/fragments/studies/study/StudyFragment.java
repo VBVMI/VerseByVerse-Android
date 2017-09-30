@@ -47,8 +47,6 @@ public class StudyFragment extends AbstractFragment {
 
     private Study study;
 
-    private List<Lesson> lessons;
-
     private FlowContentObserver observer;
 
     private FlowContentObserver.OnModelStateChangedListener modelStateChangedListener;
@@ -114,6 +112,7 @@ public class StudyFragment extends AbstractFragment {
                         @Override
                         public void run() {
                             configureView();
+                            mSectionsPagerAdapter.notifyDataSetChanged();
                         }
                     });
                 }
@@ -126,9 +125,10 @@ public class StudyFragment extends AbstractFragment {
 
         configureView();
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager(), new SECTION[]{SECTION.LESSONS, SECTION.COMPLETED, SECTION.INFO});
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager(), new SECTION[]{SECTION.INFO, SECTION.LESSONS, SECTION.COMPLETED}, study);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setCurrentItem(1);
 
         MainActivity.get(getContext()).setSupportActionBar(toolbar);
         MainActivity.get(getContext()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -139,6 +139,8 @@ public class StudyFragment extends AbstractFragment {
                 MainActivity.get(getContext()).getMultistack().onBackPressed();
             }
         });
+
+
 
         return v;
     }
@@ -160,7 +162,6 @@ public class StudyFragment extends AbstractFragment {
     private void configureView() {
         String studyId = getArguments().getString(ARG_STUDY_ID);
         study = SQLite.select().from(Study.class).where(Study_Table.id.eq(studyId)).querySingle();
-        lessons = SQLite.select().from(Lesson.class).where(Lesson_Table.studyId.eq(studyId)).queryList();
 
         if (toolbar != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -180,10 +181,12 @@ public class StudyFragment extends AbstractFragment {
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SECTION[] sections;
+        private Study study;
 
-        public SectionsPagerAdapter(FragmentManager fm, SECTION[] sections) {
+        public SectionsPagerAdapter(FragmentManager fm, SECTION[] sections, Study study) {
             super(fm);
             this.sections = sections;
+            this.study = study;
         }
 
         @Override
@@ -211,9 +214,9 @@ public class StudyFragment extends AbstractFragment {
             SECTION section = sections[position];
             switch (section) {
                 case LESSONS:
-                    return "Lessons";
+                    return "Lessons (" + SQLite.selectCountOf().from(Lesson.class).where(Lesson_Table.studyId.eq(study.id)).and(Lesson_Table.complete.eq(false)).count() + ")";
                 case COMPLETED:
-                    return "Completed";
+                    return "Completed (" + SQLite.selectCountOf().from(Lesson.class).where(Lesson_Table.studyId.eq(study.id)).and(Lesson_Table.complete.eq(true)).count() + ")";
                 case INFO:
                     return "Info";
                 default:

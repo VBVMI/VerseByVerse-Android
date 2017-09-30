@@ -1,16 +1,22 @@
 package com.erpdevelopment.vbvm.fragments.studies.lesson;
 
+import android.app.DownloadManager;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.erpdevelopment.vbvm.FileHelpers;
+import com.erpdevelopment.vbvm.FontManager;
+import com.erpdevelopment.vbvm.LessonResourceManager;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.fragments.studies.study.LessonsFragment.OnLessonFragmentInteractionListener;
 import com.erpdevelopment.vbvm.model.Lesson;
@@ -31,6 +37,7 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
     private final OnLessonFragmentInteractionListener mListener;
 
     private final Context context;
+    private Typeface iconFont;
 
     public void setLessons(List<Lesson> newLessons) {
         mValues = newLessons;
@@ -41,6 +48,7 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
         mValues = items;
         mListener = listener;
         this.context = context;
+        iconFont = FontManager.getTypeface(context, FontManager.FONTAWESOME);
     }
 
     @Override
@@ -63,24 +71,47 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
 
         holder.timeTextView.setText(lesson.audioLength);
 
-        if (audioFile.exists()) {
-            holder.audioFileImage.setColorFilter(ContextCompat.getColor(context, R.color.tableCellText));
+        holder.audioFileImage.setTypeface(iconFont);
+
+        AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.3f);
+
+        fadeOut.setDuration(500);
+        fadeOut.setRepeatMode(Animation.REVERSE);
+        fadeOut.setRepeatCount(Animation.INFINITE);
+        holder.audioFileImage.clearAnimation();
+        if (LessonResourceManager.getInstance().isDownloadingResource(lesson.id, FileHelpers.FILE_AUDIO)){
+            holder.audioFileImage.setText(R.string.fa_download);
+            holder.audioFileImage.setTextColor(ContextCompat.getColor(context, R.color.tableCellText));
+            holder.audioFileImage.startAnimation(fadeOut);
+            holder.audioFileImage.setOnClickListener(null);
         } else {
-            holder.audioFileImage.setColorFilter(ContextCompat.getColor(context, R.color.dimGrey));
+            holder.audioFileImage.setText(R.string.fa_play);
+            LessonRecyclerViewAdapter adapter = this;
+            holder.audioFileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (null != mListener) {
+                        // Notify the active callbacks interface (the activity, if the
+                        // fragment is attached to one) that an item has been selected.
+                        mListener.onListFragmentInteraction(holder.mItem);
+                        adapter.notifyItemChanged(position);
+                    }
+                }
+            });
         }
 
-        holder.audioFileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+        if (audioFile.exists()) {
+            holder.audioFileImage.setTextColor(ContextCompat.getColor(context, R.color.tableCellText));
+
+        } else {
+            holder.audioFileImage.setTextColor(ContextCompat.getColor(context, R.color.dimGrey));
+        }
 
         holder.moreButton.setOnClickListener(v -> {
+            showMore(lesson);
+        });
+
+        holder.mView.setOnClickListener(v ->{
             showMore(lesson);
         });
     }
@@ -106,7 +137,7 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
         public TextView mContentView;
 
         @BindView(R.id.audioFileImage)
-        public ImageView audioFileImage;
+        public TextView audioFileImage;
 
         @BindView(R.id.moreButton)
         ImageButton moreButton;
