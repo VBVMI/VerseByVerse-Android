@@ -21,6 +21,8 @@
 
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
+-keepattributes Signature
+-keepattributes Exceptions
 
 -keep public class * extends java.lang.Exception
 
