@@ -29,6 +29,8 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.erpdevelopment.vbvm.BottomNavigationViewHelper;
+import com.erpdevelopment.vbvm.FileHelpers;
+import com.erpdevelopment.vbvm.LessonResourceManager;
 import com.erpdevelopment.vbvm.api.DatabaseManager;
 import com.erpdevelopment.vbvm.fragments.media.MediaKey;
 import com.erpdevelopment.vbvm.fragments.more.MoreKey;
@@ -38,7 +40,10 @@ import com.erpdevelopment.vbvm.model.Answer;
 import com.erpdevelopment.vbvm.model.Article;
 import com.erpdevelopment.vbvm.model.Channel;
 import com.erpdevelopment.vbvm.model.GroupStudy;
+import com.erpdevelopment.vbvm.model.Lesson_Table;
+import com.erpdevelopment.vbvm.model.MetaData;
 import com.erpdevelopment.vbvm.util.Multistack;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.zhuinden.simplestack.BackstackDelegate;
 import com.zhuinden.simplestack.StateChange;
 import com.zhuinden.simplestack.StateChanger;
@@ -47,6 +52,8 @@ import com.erpdevelopment.vbvm.AudioService;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity;
 import com.erpdevelopment.vbvm.model.Lesson;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -185,6 +192,26 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
                 updatePausePlay();
             }
         });
+
+
+        MetaData appData = SQLite.select().from(MetaData.class).querySingle();
+        if (appData == null) {
+            appData = new MetaData();
+            appData.id = "VBVMI_application_data";
+            appData.save();
+        }
+
+        if (appData.currentLessonId != null) {
+            Lesson lesson = SQLite.select().from(Lesson.class).where(Lesson_Table.id.eq(appData.currentLessonId)).querySingle();
+            if (lesson != null) {
+                File audio = FileHelpers.fileForType(this, lesson, FileHelpers.FILE_AUDIO);
+                if (audio.exists()) {
+                    Intent intent = new Intent(this, LessonAudioActivity.class);
+                    intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, appData.currentLessonId);
+                    startActivity(intent);
+                }
+            }
+        }
     }
 
 

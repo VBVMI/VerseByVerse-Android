@@ -148,6 +148,8 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
         seekBar.setOnSeekBarChangeListener(mSeekListener);
         seekBar.setMax(100);
 
+        seekBar.setProgress((int)(100L * lesson.progress));
+
         LocalBroadcastManager.getInstance(this).registerReceiver(audioDidStartReciever, new IntentFilter(AudioService.DID_START));
     }
 
@@ -174,6 +176,8 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
                 audioService.setLesson(lesson);
                 if (startAudioOnBind) {
                     audioService.playAudio();
+                } else {
+                    audioService.prepare();
                 }
             }
 
@@ -290,7 +294,7 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
         }
         int position = getCurrentPosition();
         int duration = getDuration();
-        if (seekBar != null) {
+        if (seekBar != null && isPlaying()) {
             if (duration > 0) {
                 // use long to avoid overflow
                 long pos = 100L * position / duration;
@@ -333,8 +337,10 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
     @Override
     public void start() {
-        audioService.start();
+        audioService.playAudio();
+        //audioService.start();
         playPauseButton.post(mShowProgress);
+
     }
 
     @Override

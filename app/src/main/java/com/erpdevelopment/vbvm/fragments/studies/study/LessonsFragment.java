@@ -208,6 +208,9 @@ public class LessonsFragment extends AbstractFragment {
     }
 
     public void playAudio(Lesson lesson) {
+        if (getContext() == null || isDetached()) {
+            return;
+        }
         Intent intent = new Intent(getContext(), LessonAudioActivity.class);
         intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
         intent.putExtra(LessonAudioActivity.ARG_START_AUDIO, true);

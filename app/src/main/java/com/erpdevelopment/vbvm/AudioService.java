@@ -20,6 +20,8 @@ import android.util.Log;
 
 import com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity;
 import com.erpdevelopment.vbvm.model.Lesson;
+import com.erpdevelopment.vbvm.model.MetaData;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.concurrent.TimeUnit;
 
@@ -56,12 +58,13 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     public void initMusicPlayer() {
         player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        player.setOnCompletionListener(this);
         player.setOnPreparedListener(this);
         player.setOnErrorListener(this);
+        player.setOnCompletionListener(this);
     }
 
     public void setLesson(Lesson lesson) {
+
         this.lesson = lesson;
         this.lessonFilePath = FileHelpers.audioFilePathForLesson(this, lesson).getPath();
     }
@@ -98,8 +101,27 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
-    public void playAudio() {
+    private boolean playOnPrepare = false;
+
+    private boolean dontCompleteLesson = false;
+
+    public void prepare() {
+        dontCompleteLesson = true;
         player.reset();
+        playOnPrepare = false;
+        Uri audioUri = Uri.parse(lessonFilePath);
+        try {
+            player.setDataSource(getApplicationContext(), audioUri);
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting data source", e);
+        }
+        player.prepareAsync();
+    }
+
+    public void playAudio() {
+        dontCompleteLesson = true;
+        player.reset();
+        playOnPrepare = true;
 
         Uri audioUri = Uri.parse(lessonFilePath);
         try {
@@ -122,9 +144,18 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mAudioManager.abandonAudioFocus(afChangeListener);
 
-        lesson.progress = 0;
-        lesson.complete = true;
-        lesson.save();
+        if (!dontCompleteLesson) {
+            lesson.progress = 0;
+            lesson.complete = true;
+            lesson.save();
+
+            MetaData metaData = SQLite.select().from(MetaData.class).querySingle();
+            if (metaData != null) {
+                metaData.currentLessonId = null;
+                metaData.save();
+            }
+        }
+        dontCompleteLesson = false;
 
         stopRepeatingTask();
 
@@ -154,6 +185,15 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         int result = mAudioManager.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         lesson.complete = false;
         lesson.save();
+
+
+
+        MetaData metaData = SQLite.select().from(MetaData.class).querySingle();
+        if (metaData != null) {
+            metaData.currentLessonId = lesson.id;
+            metaData.save();
+        }
+
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             Log.d(TAG, "Focus granted");
         }
@@ -163,14 +203,16 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             seekTo((int)(progress * (double)getDuration()));
         }
 
-        mp.start();
+        if (playOnPrepare) {
+            mp.start();
 
-        startRepeatingTask();
+            startRepeatingTask();
 
-        setupNotification();
+            setupNotification();
 
-        Intent intent = new Intent(DID_START);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            Intent intent = new Intent(DID_START);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
     }
 
 
