@@ -16,34 +16,34 @@ buildscript {
 
 apply plugin: 'com.android.application'
 
-apply plugin: 'io.fabric'
-
-
-
 repositories {
     jcenter()
     maven { url 'https://maven.fabric.io/public' }
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId 'com.erpdevelopment.vbvm'
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 43
-        versionName "4.0"
+        versionCode 45
+        versionName "4.0.1"
+
+        multiDexEnabled true
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         manifestPlaceholders = getKeys()
         jackOptions {
             enabled true
         }
+
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -51,7 +51,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    productFlavors {
+    }
 }
+
+apply plugin: 'io.fabric'
 
 def getKeys(){
     def Properties props = new Properties()
@@ -59,22 +63,20 @@ def getKeys(){
     return [FabricApiKey: props['FABRIC_API_KEY']]
 }
 
-def dbflow_version = "4.0.3"
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:4.0.3"
+    compile 'com.github.Raizlabs.DBFlow:dbflow-core:4.0.3'
+    compile 'com.github.Raizlabs.DBFlow:dbflow:4.0.3'
     //compile 'com.github.alexgianq:sugarloader:0.2'
+
     //testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'com.android.support:design:25.4.0'
-    compile 'com.android.support:support-vector-drawable:25.4.0'
+    compile 'com.android.support:appcompat-v7:26.0.1'
+    compile 'com.android.support:design:26.0.1'
+    compile 'com.android.support:support-vector-drawable:26.0.1'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
@@ -82,12 +84,12 @@ dependencies {
     compile 'org.parceler:parceler-api:1.1.8'
     compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.android.support:support-v4:25.4.0'
-    compile 'com.android.support:support-annotations:25.4.0'
+    compile 'com.android.support:support-v4:26.0.1'
+    compile 'com.android.support:support-annotations:26.0.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.jakewharton:butterknife:8.5.1'
     compile 'com.github.Zhuinden:simple-stack:1.7.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:recyclerview-v7:26.0.1'
     compile 'com.github.volders:RxDownloadManager:923dbc0a03'
     compile 'com.github.alexgianq:sugarloader:0.2'
     annotationProcessor 'com.google.auto.value:auto-value:1.2'
@@ -96,7 +98,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     provided 'com.google.auto.value:auto-value:1.2'
     compile 'com.vimeo.networking:vimeo-networking:1.1.0'
-
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;
     }
