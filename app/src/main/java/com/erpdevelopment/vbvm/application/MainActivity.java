@@ -17,6 +17,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
+import android.support.v7.widget.AppCompatImageButton;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -96,10 +98,10 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
     RelativeLayout audioBarLayout;
 
     @BindView(R.id.audio_title)
-    TextView audioTitle;
+    AppCompatTextView audioTitle;
 
     @BindView(R.id.audio_play_pause_button)
-    ImageButton playPauseButton;
+    AppCompatImageButton playPauseButton;
 
     @BindView(R.id.audio_progress_bar)
     ProgressBar audioProgressBar;

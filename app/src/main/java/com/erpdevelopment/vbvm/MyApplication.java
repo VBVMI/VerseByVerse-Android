@@ -24,7 +24,7 @@ import com.vimeo.networking.VimeoClient;
 public class MyApplication extends Application {
 
     private static final String TAG = "MyApplication";
-    private static final boolean IS_DEBUG_BUILD = true;
+    private static final boolean IS_DEBUG_BUILD = false;
 
     @Override
     public void onCreate() {
