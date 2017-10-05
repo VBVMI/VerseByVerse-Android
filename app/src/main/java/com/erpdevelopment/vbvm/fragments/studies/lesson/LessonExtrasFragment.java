@@ -2,6 +2,7 @@ package com.erpdevelopment.vbvm.fragments.studies.lesson;
 
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Toast;
 
 import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.model.Video;
@@ -253,7 +255,14 @@ public class LessonExtrasFragment extends DialogFragment {
         Uri fileUrl = GenericFileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".com.erpdevelopment.vbvm.GenericFileProvider", file);
         intent.setDataAndType(fileUrl, "application/pdf");
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivity(intent);
+
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Log.d(TAG, "openFile: Couldn't open file");
+            Toast.makeText(getActivity(), "Couldn't open pdf. Install a PDF viewer", Toast.LENGTH_LONG);
+        }
+
     }
 
     private int iconIdForType(String type) {

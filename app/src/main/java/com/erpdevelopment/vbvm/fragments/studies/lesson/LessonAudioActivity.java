@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -79,13 +80,13 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
     TextView descriptionView;
 
     @BindView(R.id.rew)
-    ImageButton jumpBackButton;
+    AppCompatImageButton jumpBackButton;
 
     @BindView(R.id.pause)
-    ImageButton playPauseButton;
+    AppCompatImageButton playPauseButton;
 
     @BindView(R.id.ffwd)
-    ImageButton jumpForwardButton;
+    AppCompatImageButton jumpForwardButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

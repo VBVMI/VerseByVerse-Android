@@ -112,15 +112,15 @@
         android:orientation="horizontal"
         android:paddingTop="4dip">
 
-      <ImageButton
+      <android.support.v7.widget.AppCompatImageButton
           android:id="@+id/rew"
           style="@style/MediaButton.Rew"/>
 
-      <ImageButton
+      <android.support.v7.widget.AppCompatImageButton
           android:id="@+id/pause"
           style="@style/MediaButton.Play"/>
 
-      <ImageButton
+      <android.support.v7.widget.AppCompatImageButton
           android:id="@+id/ffwd"
           style="@style/MediaButton.Ffwd"/>
     </LinearLayout>
