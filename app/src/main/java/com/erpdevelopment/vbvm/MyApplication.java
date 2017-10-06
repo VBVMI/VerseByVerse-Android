@@ -17,11 +17,13 @@ import com.vimeo.networking.Configuration;
 import com.vimeo.networking.Vimeo;
 import com.vimeo.networking.VimeoClient;
 
+import android.support.multidex.MultiDexApplication;
+
 /**
  * Created by thomascarey on 28/06/17.
  */
 
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
     private static final String TAG = "MyApplication";
     private static final boolean IS_DEBUG_BUILD = true;
