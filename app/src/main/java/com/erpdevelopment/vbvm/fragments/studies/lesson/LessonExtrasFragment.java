@@ -187,6 +187,9 @@ public class LessonExtrasFragment extends DialogFragment {
             rowList.add(new LessonExtrasAdapter.ActionRow(holder -> {
                 holder.titleView.setText("Play audio");
                 configureHolderIcon(holder, FileHelpers.FILE_AUDIO, () -> {
+                    if (isDetached() || !isAdded()) {
+                        return;
+                    }
                     Intent intent = new Intent(getContext(), LessonAudioActivity.class);
                     intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lessonId);
                     intent.putExtra(LessonAudioActivity.ARG_START_AUDIO, true);

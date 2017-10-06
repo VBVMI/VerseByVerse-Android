@@ -73,7 +73,11 @@ public class FileHelpers {
     }
 
     public static File fileForType(Context context, Lesson lesson, String type) {
-        File file = new File(filePathForType(context, lesson, type).getPath());
+        Uri path = filePathForType(context, lesson, type);
+        if (path == null) {
+            return null;
+        }
+        File file = new File(path.getPath());
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }

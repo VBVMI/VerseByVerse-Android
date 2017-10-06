@@ -18,6 +18,7 @@
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
+-dontpreverify
 
 -keepattributes *Annotation*
 -keepattributes SourceFile
@@ -32,15 +33,30 @@
 -keepattributes Exceptions
 
 -keep public class * extends java.lang.Exception
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+
+-keep public class * extends android.view.View {
+      public <init>(android.content.Context);
+      public <init>(android.content.Context, android.util.AttributeSet);
+      public <init>(android.content.Context, android.util.AttributeSet, int);
+      public void set*(...);
+}
 
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
 
+-dontwarn javax.annotation.**
 -dontwarn okio.**
+
+-dontwarn rx.internal.util.**
 
 -keep class * extends com.raizlabs.android.dbflow.config.DatabaseHolder { *; }
 
--dontpreverify
+
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
@@ -75,8 +91,10 @@
   **[] $VALUES;
   public *;
 }
--keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 
 ##############
 # Retrolambda
 -dontwarn java.lang.invoke.*
+
+-dontwarn android.support.**
