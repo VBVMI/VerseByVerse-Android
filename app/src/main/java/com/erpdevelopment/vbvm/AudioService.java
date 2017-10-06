@@ -144,7 +144,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mAudioManager.abandonAudioFocus(afChangeListener);
 
-        if (!dontCompleteLesson) {
+        if (!dontCompleteLesson && lesson != null) {
             lesson.progress = 0;
             lesson.complete = true;
             lesson.save();
@@ -183,10 +183,10 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     public void onPrepared(MediaPlayer mp) {
         AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         int result = mAudioManager.requestAudioFocus(afChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        lesson.complete = false;
-        lesson.save();
-
-
+        if (lesson != null) {
+            lesson.complete = false;
+            lesson.save();
+        }
 
         MetaData metaData = SQLite.select().from(MetaData.class).querySingle();
         if (metaData != null) {
@@ -198,9 +198,11 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             Log.d(TAG, "Focus granted");
         }
 
-        double progress = lesson.progress;
-        if(progress != 0 && progress != 1) {
-            seekTo((int)(progress * (double)getDuration()));
+        if (lesson != null) {
+            double progress = lesson.progress;
+            if(progress != 0 && progress != 1) {
+                seekTo((int)(progress * (double)getDuration()));
+            }
         }
 
         if (playOnPrepare) {
