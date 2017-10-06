@@ -260,7 +260,8 @@ public class LessonExtrasFragment extends DialogFragment {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Log.d(TAG, "openFile: Couldn't open file");
-            Toast.makeText(getActivity(), "Couldn't open pdf. Install a PDF viewer", Toast.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(getView(), R.string.no_pdf_reader, BaseTransientBottomBar.LENGTH_LONG);
+            snackbar.show();
         }
 
     }
