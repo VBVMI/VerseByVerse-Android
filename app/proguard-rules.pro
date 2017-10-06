@@ -25,6 +25,9 @@
 -keepattributes LineNumberTable
 -keepattributes InnerClasses,EnclosingMethod
 # Platform calls Class.forName on types which do not exist on Android to determine platform.
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+
 -dontnote retrofit2.Platform
 # Platform used when running on Java 8 VMs. Will not be used at runtime.
 -dontwarn retrofit2.Platform$Java8
@@ -50,6 +53,8 @@
 -dontwarn com.crashlytics.**
 
 -dontwarn javax.annotation.**
+-dontwarn javax.inject.**
+-dontwarn sun.misc.Unsafe
 -dontwarn okio.**
 
 -dontwarn rx.internal.util.**
@@ -92,6 +97,18 @@
   public *;
 }
 #-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.vimeo.networking.** { *; }
+-keepclassmembers enum * { *; }
+
+## END GSON
+
 
 ##############
 # Retrolambda
