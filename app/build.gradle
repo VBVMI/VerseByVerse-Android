@@ -32,7 +32,7 @@ android {
         applicationId 'com.erpdevelopment.vbvm'
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 45
+        versionCode 46
         versionName "4.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
