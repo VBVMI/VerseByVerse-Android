@@ -80,13 +80,13 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
     TextView descriptionView;
 
     @BindView(R.id.rew)
-    AppCompatImageButton jumpBackButton;
+    ImageButton jumpBackButton;
 
     @BindView(R.id.pause)
-    AppCompatImageButton playPauseButton;
+    ImageButton playPauseButton;
 
     @BindView(R.id.ffwd)
-    AppCompatImageButton jumpForwardButton;
+    ImageButton jumpForwardButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,10 +250,10 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
             return;
 
         if (isPlaying()) {
-            playPauseButton.setImageResource(R.drawable.ic_pause_button_40dp);
+            playPauseButton.setImageResource(R.drawable.ic_pause_black_48dp);
             playPauseButton.setContentDescription("Pause");
         } else {
-            playPauseButton.setImageResource(R.drawable.ic_play_button_40dp);
+            playPauseButton.setImageResource(R.drawable.ic_play_arrow_black_48dp);
             playPauseButton.setContentDescription("Play");
         }
 
