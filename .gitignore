@@ -136,3 +136,4 @@ google-services.json
 /app/secrets.properties
 /keystore_android
 /app/src/main/res/values/secrets.xml
+/app/release/output.json
