@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -249,10 +250,10 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
             return;
 
         if (isPlaying()) {
-            playPauseButton.setImageResource(R.drawable.ic_pause_button_40dp);
+            playPauseButton.setImageResource(R.drawable.ic_pause_black_48dp);
             playPauseButton.setContentDescription("Pause");
         } else {
-            playPauseButton.setImageResource(R.drawable.ic_play_button_40dp);
+            playPauseButton.setImageResource(R.drawable.ic_play_arrow_black_48dp);
             playPauseButton.setContentDescription("Play");
         }
 

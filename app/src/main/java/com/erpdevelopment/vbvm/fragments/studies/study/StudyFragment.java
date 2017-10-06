@@ -107,7 +107,7 @@ public class StudyFragment extends AbstractFragment {
             @Override
             public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
                 Log.d("LESSON", "table changed " + action.name() + " on Table " + tableChanged);
-                if(tableChanged.toString().contains("Lesson")) {
+                if(tableChanged != null && tableChanged.toString().contains("Lesson")) {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {

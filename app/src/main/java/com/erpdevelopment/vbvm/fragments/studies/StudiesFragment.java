@@ -286,7 +286,7 @@ public class StudiesFragment extends AbstractFragment {
             tableChangedListener = new OnTableChangedListener() {
                 @Override
                 public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
-                    if(tableChanged.toString().contains("Study")) {
+                    if(tableChanged != null && tableChanged.toString().contains("Study")) {
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {

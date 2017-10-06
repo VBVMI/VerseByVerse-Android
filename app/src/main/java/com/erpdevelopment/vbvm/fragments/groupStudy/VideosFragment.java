@@ -1,9 +1,12 @@
 package com.erpdevelopment.vbvm.fragments.groupStudy;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -153,7 +156,13 @@ public class VideosFragment extends AbstractListFragment implements VideoSelecti
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
                             Uri data = Uri.parse(file.getLink());
                             intent.setDataAndType(data, "video/mp4");
-                            startActivity(intent);
+                            try {
+                                startActivity(intent);
+                            } catch (ActivityNotFoundException e) {
+                                Log.d(TAG, "openFile: Couldn't open file");
+                                Snackbar snackbar = Snackbar.make(getView(), R.string.no_video_player, BaseTransientBottomBar.LENGTH_LONG);
+                                snackbar.show();
+                            }
                         }
                     }
                 }

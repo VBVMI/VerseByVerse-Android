@@ -156,8 +156,9 @@ public class LessonsFragment extends AbstractFragment {
         tableChangedListener = new OnTableChangedListener() {
             @Override
             public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
-                Log.d(TAG, "Table Changed: " + tableChanged.toString());
-                if(tableChanged.toString().contains("Lesson")) {
+                if (tableChanged != null)
+                    Log.d(TAG, "Table Changed: " + tableChanged.toString());
+                if(tableChanged != null && tableChanged.toString().contains("Lesson")) {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {

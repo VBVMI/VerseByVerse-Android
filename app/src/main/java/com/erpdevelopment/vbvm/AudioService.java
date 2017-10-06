@@ -225,7 +225,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
         builder.setContentIntent(pendingIntent)
-                .setSmallIcon(com.erpdevelopment.vbvm.R.drawable.ic_bible_studies_black_24dp)
+                .setSmallIcon(R.drawable.ic_book_notification)
                 .setTicker(lesson.description)
                 .setOngoing(true)
                 .setContentTitle(lesson.title)

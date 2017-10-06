@@ -2,6 +2,7 @@ package com.erpdevelopment.vbvm.fragments.studies.lesson;
 
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Toast;
 
 import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.model.Video;
@@ -185,6 +187,9 @@ public class LessonExtrasFragment extends DialogFragment {
             rowList.add(new LessonExtrasAdapter.ActionRow(holder -> {
                 holder.titleView.setText("Play audio");
                 configureHolderIcon(holder, FileHelpers.FILE_AUDIO, () -> {
+                    if (isDetached() || !isAdded()) {
+                        return;
+                    }
                     Intent intent = new Intent(getContext(), LessonAudioActivity.class);
                     intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lessonId);
                     intent.putExtra(LessonAudioActivity.ARG_START_AUDIO, true);
@@ -253,7 +258,15 @@ public class LessonExtrasFragment extends DialogFragment {
         Uri fileUrl = GenericFileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".com.erpdevelopment.vbvm.GenericFileProvider", file);
         intent.setDataAndType(fileUrl, "application/pdf");
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivity(intent);
+
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Log.d(TAG, "openFile: Couldn't open file");
+            Snackbar snackbar = Snackbar.make(getView(), R.string.no_pdf_reader, BaseTransientBottomBar.LENGTH_LONG);
+            snackbar.show();
+        }
+
     }
 
     private int iconIdForType(String type) {

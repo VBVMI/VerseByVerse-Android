@@ -65,12 +65,23 @@ public class FileHelpers {
 
     public static Uri filePathForType(Context context, Lesson lesson, String type) {
         File directory = context.getExternalFilesDir("Documents");
+        if (directory == null) {
+            return null;
+        }
         Uri basePath = Uri.fromFile(directory);
         return Uri.withAppendedPath(basePath, relativePath(lesson, type));
     }
 
     public static File fileForType(Context context, Lesson lesson, String type) {
-        return new File(filePathForType(context, lesson, type).getPath());
+        Uri path = filePathForType(context, lesson, type);
+        if (path == null) {
+            return null;
+        }
+        File file = new File(path.getPath());
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+        return file;
     }
 
     public static String relativeAudioPath(Lesson lesson) {
