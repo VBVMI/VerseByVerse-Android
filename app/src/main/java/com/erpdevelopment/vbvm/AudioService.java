@@ -329,8 +329,10 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     private void updateProgress() {
         double progress = getProgress();
-        lesson.progress = progress;
-        lesson.save();
+        if (lesson != null) {
+            lesson.progress = progress;
+            lesson.save();
+        }
     }
 
     Runnable progressChecker = new Runnable() {
