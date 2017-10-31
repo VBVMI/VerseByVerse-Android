@@ -172,15 +172,17 @@ public class DatabaseManager {
                     topic.delete();
                 }
 
-                for(Topic t: instance.topics) {
-                    t.id = StringHelpers.toSlug(t.id);
-                    t.topic = StringHelpers.changeStringCase(t.topic);
-                    t.save();
+                if (instance.topics != null) {
+                    for(Topic t: instance.topics) {
+                        t.id = StringHelpers.toSlug(t.id);
+                        t.topic = StringHelpers.changeStringCase(t.topic);
+                        t.save();
 
-                    Answer_Topic topic = new Answer_Topic();
-                    topic.setAnswer(instance);
-                    topic.setTopic(t);
-                    topic.save();
+                        Answer_Topic topic = new Answer_Topic();
+                        topic.setAnswer(instance);
+                        topic.setTopic(t);
+                        topic.save();
+                    }
                 }
             }
 

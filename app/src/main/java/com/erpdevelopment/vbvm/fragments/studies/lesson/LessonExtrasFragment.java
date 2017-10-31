@@ -47,6 +47,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -194,6 +195,9 @@ public class LessonExtrasFragment extends DialogFragment {
                     intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lessonId);
                     intent.putExtra(LessonAudioActivity.ARG_START_AUDIO, true);
                     getContext().startActivity(intent);
+                    if (isStateSaved()) {
+                        return;
+                    }
                     dismiss();
                 });
             }));
@@ -253,6 +257,9 @@ public class LessonExtrasFragment extends DialogFragment {
     }
 
     private void openFile(String type) {
+        if (getContext() == null) {
+            return;
+        }
         File file = FileHelpers.fileForType(getContext(), lesson, type);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Uri fileUrl = GenericFileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".com.erpdevelopment.vbvm.GenericFileProvider", file);

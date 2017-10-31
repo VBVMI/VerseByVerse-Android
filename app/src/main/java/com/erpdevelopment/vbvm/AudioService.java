@@ -18,12 +18,15 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity;
 import com.erpdevelopment.vbvm.model.Lesson;
 import com.erpdevelopment.vbvm.model.MetaData;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.concurrent.TimeUnit;
+
+import io.fabric.sdk.android.Fabric;
 
 public class AudioService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
     private static final String TAG = "PlayAudio";
@@ -126,10 +129,11 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         Uri audioUri = Uri.parse(lessonFilePath);
         try {
             player.setDataSource(getApplicationContext(), audioUri);
+            player.prepareAsync();
         } catch (Exception e) {
-            Log.e(TAG, "Error setting data source", e);
+            Fabric.getLogger().e(TAG, "Error setting data source", e);
+            Crashlytics.logException(e);
         }
-        player.prepareAsync();
     }
 
     @Override

@@ -163,6 +163,9 @@ public class AnswersListFragment extends AbstractListFragment implements AnswerS
 
     @Override
     protected void reloadData() {
+        if (!isAdded() || isDetached()) {
+            return;
+        }
         mLoader.restart(this);
     }
 

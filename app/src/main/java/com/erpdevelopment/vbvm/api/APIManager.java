@@ -74,6 +74,12 @@ public class APIManager {
                     @Override
                     public void run() {
                         Studies studies = response.body();
+                        if(studies == null || studies.getStudies() == null) {
+                            mainHandler.post(() -> {
+                                callback.didComplete(false);
+                            });
+                            return;
+                        }
                         List<Study> studyList = studies.getStudies();
                         DatabaseManager.getInstance().saveStudies(studyList);
                         mainHandler.post(() -> {
@@ -107,6 +113,12 @@ public class APIManager {
                     @Override
                     public void run() {
                         List<Category> categories = response.body();
+                        if(categories == null) {
+                            mainHandler.post(() -> {
+                                callback.didComplete(false);
+                            });
+                            return;
+                        }
                         DatabaseManager.getInstance().saveCategories(categories);
                         mainHandler.post(() -> {
                             callback.didComplete(true);
@@ -137,6 +149,12 @@ public class APIManager {
                     @Override
                     public void run() {
                         Lessons lessons = response.body();
+                        if(lessons == null || lessons.getLessons() == null) {
+                            mainHandler.post(() -> {
+                                callback.didComplete(false);
+                            });
+                            return;
+                        }
                         List<Lesson> lessonList = lessons.getLessons();
                         DatabaseManager.getInstance().saveLessons(lessonList, studyId);
                         mainHandler.post(() -> {
@@ -167,6 +185,12 @@ public class APIManager {
             public void onResponse(Call<Articles> call, Response<Articles> response) {
                 AsyncTask.execute(() -> {
                     Articles articles = response.body();
+                    if(articles == null || articles.getArticles() == null) {
+                        mainHandler.post(() -> {
+                            callback.didComplete(false);
+                        });
+                        return;
+                    }
                     DatabaseManager.getInstance().saveArticles(articles.getArticles(), fullDownload);
                     mainHandler.post(() -> {
                         callback.didComplete(true);
@@ -195,6 +219,12 @@ public class APIManager {
             public void onResponse(Call<Answers> call, Response<Answers> response) {
                 AsyncTask.execute(() -> {
                     Answers answers = response.body();
+                    if(answers == null || answers.getAnswers() == null) {
+                        mainHandler.post(() -> {
+                            callback.didComplete(false);
+                        });
+                        return;
+                    }
                     DatabaseManager.getInstance().saveAnswers(answers.getAnswers(), fullDownload);
                     mainHandler.post(() -> {
                         callback.didComplete(true);
@@ -221,6 +251,12 @@ public class APIManager {
             public void onResponse(Call<Channels> call, Response<Channels> response) {
                 AsyncTask.execute(() -> {
                     Channels channels = response.body();
+                    if(channels == null || channels.getChannels() == null) {
+                        mainHandler.post(() -> {
+                            callback.didComplete(false);
+                        });
+                        return;
+                    }
                     DatabaseManager.getInstance().saveChannels(channels.getChannels());
                     if(callback != null) {
                         mainHandler.post(() -> {

@@ -175,6 +175,11 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         audioBarLayout.setOnClickListener(v -> {
             Log.d(TAG, "Tapped bar");
             Lesson lesson = audioService.getCurrentLesson();
+            if (lesson == null) {
+                // Then the audio bar should not even have been showing.
+                Crashlytics.logException(new Exception("Tapped audio bar but the lesson is null. audioBound == " + audioBound));
+                return;
+            }
             Intent intent = new Intent(this, LessonAudioActivity.class);
             intent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
             startActivity(intent);

@@ -92,7 +92,9 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson_audio);
-
+        if (getIntent().getExtras() == null) {
+            return;
+        }
         String lessonId = getIntent().getExtras().getString(ARG_LESSON_ID);
 
         startAudioOnBind = getIntent().getBooleanExtra(ARG_START_AUDIO, false);
@@ -356,11 +358,17 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
     @Override
     public int getCurrentPosition() {
+        if (audioService == null) {
+            return 0;
+        }
         return audioService.getPosition();
     }
 
     @Override
     public void seekTo(int pos) {
+        if (audioService == null) {
+            return;
+        }
         audioService.seekTo(pos);
     }
 

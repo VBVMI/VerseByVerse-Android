@@ -64,6 +64,9 @@ public class FileHelpers {
     }
 
     public static Uri filePathForType(Context context, Lesson lesson, String type) {
+        if (context == null) {
+            return null;
+        }
         File directory = context.getExternalFilesDir("Documents");
         if (directory == null) {
             return null;
