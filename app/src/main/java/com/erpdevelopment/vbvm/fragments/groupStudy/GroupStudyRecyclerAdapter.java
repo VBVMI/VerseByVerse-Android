@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,10 +69,21 @@ public class GroupStudyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
         if(holder instanceof HeaderViewHolder) {
             Glide.with(context).load(groupStudy.coverImage).into(((HeaderViewHolder) holder).imageView);
             ((HeaderViewHolder) holder).titleView.setText(StringHelpers.fromHtmlString(groupStudy.title));
-            ((HeaderViewHolder) holder).downloadButton.setOnClickListener(v -> {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(groupStudy.pdf));
-                context.startActivity(browserIntent);
-            });
+            if (groupStudy.pdf == null) {
+                ((HeaderViewHolder) holder).downloadButton.setVisibility(View.GONE);
+            } else {
+                ((HeaderViewHolder) holder).downloadButton.setVisibility(View.VISIBLE);
+                ((HeaderViewHolder) holder).downloadButton.setOnClickListener(v -> {
+                    if (groupStudy == null || groupStudy.pdf == null) {
+                        Snackbar snackbar = Snackbar.make(holder.itemView, R.string.download_pdf_error, BaseTransientBottomBar.LENGTH_SHORT);
+                        snackbar.show();
+                        return;
+                    }
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(groupStudy.pdf));
+                    context.startActivity(browserIntent);
+                });
+            }
+
         } else {
             Video video = groupStudy.videos.get(position - 1);
             VideoViewHolder vh = (VideoViewHolder)holder;

@@ -175,7 +175,9 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
 
     @Override
     protected void reloadData() {
-        mLoader.restart(this);
+        if (this.isAdded() && !this.isDetached()) {
+            mLoader.restart(this);
+        }
     }
 
     private void setArticles(List<Article> articles, Map<String, List<QueryTopic>> mappedTopics) {

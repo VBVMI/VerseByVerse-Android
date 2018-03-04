@@ -32,6 +32,7 @@
   <string name="no_video_player">Couldn\'t open video. Install a Video Player.</string>
   <string name="mark_complete">Mark as complete</string>
   <string name="mark_incomplete">Mark as incomplete</string>
+  <string name="download_pdf_error">Failed to download pdf</string>
 
   <string name="html_container"><![CDATA[<head>
 <style>

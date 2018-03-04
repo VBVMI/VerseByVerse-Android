@@ -224,6 +224,9 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     private void setupNotification() {
         Intent notificationIntent = new Intent(this, LessonAudioActivity.class);
+        if (lesson == null || lesson.id == null) {
+            return;
+        }
         notificationIntent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
