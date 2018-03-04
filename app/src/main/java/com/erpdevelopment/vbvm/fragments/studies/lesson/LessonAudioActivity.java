@@ -329,17 +329,23 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 //    }
 
     private void jumpBack() {
+        if (audioService == null)
+            return;
         audioService.jumpBack();
         setProgress();
     }
 
     private void jumpForward() {
+        if (audioService == null)
+            return;
         audioService.jumpForward();
         setProgress();
     }
 
     @Override
     public void start() {
+        if (audioService == null)
+            return;
         audioService.playAudio();
         //audioService.start();
         playPauseButton.post(mShowProgress);
@@ -348,11 +354,16 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
 
     @Override
     public void pause() {
+        if (audioService == null)
+            return;
         audioService.pausePlayer();
     }
 
     @Override
     public int getDuration() {
+        if (audioService == null) {
+            return 0;
+        }
         return audioService.getDuration();
     }
 
