@@ -56,7 +56,7 @@ public class DatabaseManager {
 
     }
 
-    public static FlowContentObserver observer = new FlowContentObserver();
+    public static FlowContentObserver observer = new FlowContentObserver("com.erpdevelopment.vbvm");
 
     void saveStudies(List<Study> studies) {
         // In order to save these studies we must first fetch all the existing ones and create merge and delete lists

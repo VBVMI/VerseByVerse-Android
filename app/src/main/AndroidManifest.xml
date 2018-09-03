@@ -44,7 +44,11 @@
         android:name="com.erpdevelopment.vbvm.services.DownloadService"
         android:exported="false">
     </service>
-    
+
+    <provider
+        android:name="com.raizlabs.android.dbflow.runtime.StubContentProvider"
+        android:authorities="com.erpdevelopment.vbvm"/>
+
     <provider
         android:authorities="${applicationId}.com.erpdevelopment.vbvm.GenericFileProvider"
         android:name="com.erpdevelopment.vbvm.GenericFileProvider"
