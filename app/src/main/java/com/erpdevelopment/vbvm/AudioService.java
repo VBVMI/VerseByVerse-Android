@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -16,6 +18,9 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -45,6 +50,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     private Handler periodicHandler = new Handler();
 
+    private MediaMetadataCompat metadataCompat;
 
     public AudioService() {
     }
@@ -101,6 +107,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(NOTIFY_ID);
             //stopSelf();
+            mediaSession.release(); // DONT NOT CALL THIS
         }
     }
 
@@ -168,6 +175,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
         stopHandle.postDelayed(stopRunnable, 1000 * 20);
+        mediaSession.release(); // DONT NOT CALL THIS
     }
 
     @Override
@@ -200,6 +208,23 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             Log.d(TAG, "Focus granted");
+
+            RemoteController remoteController = new RemoteController();
+            ComponentName mediaButtonReceiver = new ComponentName(getApplicationContext(), RemoteControlReceiver.class);
+            MediaSessionCompat mediaSession = new MediaSessionCompat(getApplicationContext(), "🔥 Audio", mediaButtonReceiver, null);
+
+            mediaSession.setFlags(
+                    MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
+            );
+            mediaSession.setCallback(remoteController);
+            mediaSession.setActive(true);
+
+            metadataCompat = new MediaMetadataCompat.Builder().putText(MediaMetadataCompat.METADATA_KEY_ARTIST, "Verse by Verse Ministry International")
+                    .putText(MediaMetadataCompat.METADATA_KEY_TITLE, lesson.title)
+                    .putText(MediaMetadataCompat.METADATA_KEY_ALBUM, lesson.title).build();
+            mediaSession.setMetadata(metadataCompat);
+
+
         }
 
         if (lesson != null) {

@@ -40,6 +40,13 @@
         android:enabled="true"
         android:exported="true">
     </service>
+
+    <receiver android:name=".RemoteControlReceiver">
+      <intent-filter>
+        <action android:name="android.intent.action.MEDIA_BUTTON" />
+      </intent-filter>
+    </receiver>
+
     <service
         android:name="com.erpdevelopment.vbvm.services.DownloadService"
         android:exported="false">
