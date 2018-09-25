@@ -27,12 +27,12 @@ repositories {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId 'com.erpdevelopment.vbvm'
         minSdkVersion 19
-        targetSdkVersion 25
-        versionCode 52
+        targetSdkVersion 26
+        versionCode 53
         versionName "4.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
