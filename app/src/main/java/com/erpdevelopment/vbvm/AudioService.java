@@ -428,6 +428,10 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             return;
         }
 
+        Intent notificationIntent = new Intent(this, LessonAudioActivity.class);
+        notificationIntent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_pause, "Pause", MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY_PAUSE)));
         builder.setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
@@ -435,8 +439,9 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
                 .setMediaSession(mMediaSessionCompat.getSessionToken())
                 .setShowCancelButton(true)
                 .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(getApplicationContext(), PlaybackStateCompat.ACTION_STOP)));
+        builder.setContentIntent(pendingIntent);
 
-        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setSmallIcon(R.drawable.ic_book_notification);
         NotificationManagerCompat.from(AudioService.this).notify(NOTIFY_ID, builder.build());
     }
 
@@ -446,14 +451,22 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             return;
         }
 
+        Intent notificationIntent = new Intent(this, LessonAudioActivity.class);
+        notificationIntent.putExtra(LessonAudioActivity.ARG_LESSON_ID, lesson.id);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         builder.addAction(new NotificationCompat.Action(android.R.drawable.ic_media_play, "Play", MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_PLAY_PAUSE)));
         builder.setStyle(new android.support.v4.media.app.NotificationCompat.MediaStyle()
                 .setShowActionsInCompactView(0)
                 .setMediaSession(mMediaSessionCompat.getSessionToken())
                 .setShowCancelButton(true)
                 .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(getApplicationContext(), PlaybackStateCompat.ACTION_STOP)));
+        builder.setContentIntent(pendingIntent);
 
-        builder.setSmallIcon(R.mipmap.ic_launcher);
+
+
+        builder.setSmallIcon(R.drawable.ic_book_notification);
         NotificationManagerCompat.from(this).notify(NOTIFY_ID, builder.build());
     }
 
