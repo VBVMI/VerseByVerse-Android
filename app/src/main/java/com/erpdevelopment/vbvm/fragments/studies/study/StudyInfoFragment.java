@@ -1,9 +1,12 @@
 package com.erpdevelopment.vbvm.fragments.studies.study;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatTextView;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +37,7 @@ public class StudyInfoFragment extends AbstractFragment {
     private Study study;
 
     @BindView(R.id.webView)
-    WebView webView;
+    AppCompatTextView webView;
 
     @BindView(R.id.imageView)
     ImageView imageView;
@@ -66,6 +69,7 @@ public class StudyInfoFragment extends AbstractFragment {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,21 +90,12 @@ public class StudyInfoFragment extends AbstractFragment {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<head>\n");
-        sb.append("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js\"></script>\n");
-        sb.append("<script type=\"text/javascript\">\n");
-        sb.append("function codeAddress() {\n");
-        sb.append("$(\"body a\").removeAttr(\"href\");\n");
-        sb.append("}\n");
-        sb.append("window.onload = codeAddress;\n");
-        sb.append("</script>\n");
-        sb.append("</head>\n");
+
         sb.append("<body>\n");
         sb.append(study.description);
         sb.append("</body>\n");
 
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadData(sb.toString(), "text/html", "UTF-8");
+        webView.setText(Html.fromHtml(sb.toString()));
 
         return view;
     }
