@@ -3,6 +3,7 @@ package com.erpdevelopment.vbvm.fragments.studies.study;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatTextView;
@@ -95,7 +96,12 @@ public class StudyInfoFragment extends AbstractFragment {
         sb.append(study.description);
         sb.append("</body>\n");
 
-        webView.setText(Html.fromHtml(sb.toString()));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            webView.setText(Html.fromHtml(sb.toString(), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            webView.setText(Html.fromHtml(sb.toString()));
+        }
+
 
         return view;
     }
