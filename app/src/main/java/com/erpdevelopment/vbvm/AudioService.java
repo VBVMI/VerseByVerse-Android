@@ -160,6 +160,11 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
                 if (null != theBitmap) {
                     // The full bitmap should be available here
                     initMediaSessionMetadata();
+                    if (mMediaPlayer.isPlaying()) {
+                        showPlayingNotification();
+                    } else {
+                        showPausedNotification();
+                    }
                     Log.d(TAG, "Image loaded");
                 };
             }
