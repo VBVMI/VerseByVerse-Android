@@ -446,7 +446,9 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         builder.setContentIntent(pendingIntent);
 
         builder.setSmallIcon(R.drawable.ic_book_notification);
-        NotificationManagerCompat.from(AudioService.this).notify(NOTIFY_ID, builder.build());
+        Notification notification = builder.build();
+        NotificationManagerCompat.from(AudioService.this).notify(NOTIFY_ID, notification);
+        startForeground(NOTIFY_ID, notification);
     }
 
     private void showPausedNotification() {
@@ -468,10 +470,11 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
                 .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(getApplicationContext(), PlaybackStateCompat.ACTION_STOP)));
         builder.setContentIntent(pendingIntent);
 
-
-
         builder.setSmallIcon(R.drawable.ic_book_notification);
-        NotificationManagerCompat.from(this).notify(NOTIFY_ID, builder.build());
+
+        Notification notification = builder.build();
+        NotificationManagerCompat.from(AudioService.this).notify(NOTIFY_ID, notification);
+        startForeground(NOTIFY_ID, notification);
     }
 
     private void setMediaPlaybackState(int state) {
