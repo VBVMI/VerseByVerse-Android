@@ -32,8 +32,8 @@ android {
         applicationId 'com.erpdevelopment.vbvm'
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 53
-        versionName "4.1"
+        versionCode 54
+        versionName "4.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         manifestPlaceholders = getKeys()
