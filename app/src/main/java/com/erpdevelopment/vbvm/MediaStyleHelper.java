@@ -27,18 +27,23 @@ public class MediaStyleHelper {
         MediaControllerCompat controller = mediaSession.getController();
         MediaMetadataCompat mediaMetadata = controller.getMetadata();
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-
-        if (mediaMetadata != null) {
-            MediaDescriptionCompat description = mediaMetadata.getDescription();
-            builder
-                    .setContentTitle(description.getTitle())
-                    .setContentText(description.getSubtitle())
-                    .setSubText(description.getDescription())
-                    .setLargeIcon(description.getIconBitmap());
+        if (mediaMetadata == null) {
+            return null;
         }
 
-        builder.setContentIntent(controller.getSessionActivity())
+        MediaDescriptionCompat description = mediaMetadata.getDescription();
+        if (description == null) {
+            return null;
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+
+        builder
+                .setContentTitle(description.getTitle())
+                .setContentText(description.getSubtitle())
+                .setSubText(description.getDescription())
+                .setLargeIcon(description.getIconBitmap())
+                .setContentIntent(controller.getSessionActivity())
                 .setDeleteIntent(
                         MediaButtonReceiver.buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
