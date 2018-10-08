@@ -141,7 +141,6 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Looper.prepare();
                 try {
                     theBitmap = Glide.
                             with(getApplicationContext()).
