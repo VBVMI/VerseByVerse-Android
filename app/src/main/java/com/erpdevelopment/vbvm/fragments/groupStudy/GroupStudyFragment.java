@@ -153,7 +153,7 @@ public class GroupStudyFragment extends AbstractListFragment implements VideoSel
                 public void success(com.vimeo.networking.model.Video video) {
 
                     for (VideoFile file : video.files) {
-                        if (file.getQuality().equals(VideoFile.VideoQuality.HLS)) {
+                        if (file.getQuality().equals(VideoFile.VideoQuality.HD)) {
 
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
                             Uri data = Uri.parse(file.getLink());
