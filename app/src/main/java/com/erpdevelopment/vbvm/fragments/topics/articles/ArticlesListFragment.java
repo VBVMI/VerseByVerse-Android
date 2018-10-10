@@ -142,7 +142,7 @@ public class ArticlesListFragment extends AbstractListFragment implements Articl
 
     @Override
     protected String tableName() {
-        return "Article";
+        return Article.updated();
     }
 
     @Override

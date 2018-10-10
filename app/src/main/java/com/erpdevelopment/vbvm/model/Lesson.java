@@ -1,5 +1,7 @@
 package com.erpdevelopment.vbvm.model;
 
+import android.content.Intent;
+
 import com.erpdevelopment.vbvm.api.Mergable;
 import com.erpdevelopment.vbvm.database.AppDatabase;
 import com.google.gson.annotations.Expose;
@@ -119,5 +121,9 @@ public class Lesson extends BaseModel implements Mergable<Lesson> {
         this.topics = apiVersion.topics;
         this.studyId = apiVersion.studyId;
         this.index = apiVersion.index;
+    }
+
+    public static String updated() {
+        return "UPDATED-Lesson";
     }
 }

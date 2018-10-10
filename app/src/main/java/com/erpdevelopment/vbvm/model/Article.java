@@ -103,4 +103,8 @@ public class Article extends BaseModel implements Mergable<Article> {
         this.body = apiVersion.body;
         this.summary = apiVersion.summary;
     }
+
+    public static String updated() {
+        return "UPDATED-Article";
+    }
 }

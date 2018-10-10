@@ -48,4 +48,8 @@ public class Category extends BaseModel implements Mergable<Category> {
         this.name = apiVersion.name;
         this.order = apiVersion.order;
     }
+
+    public static String updated() {
+        return "UPDATED-Category";
+    }
 }

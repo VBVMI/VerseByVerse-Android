@@ -101,4 +101,8 @@ public class Video extends BaseModel implements Mergable<Video> {
         this.channelId = apiVersion.channelId;
         this.groupStudyId = apiVersion.groupStudyId;
     }
+
+    public static String updated() {
+        return "UPDATED-Video";
+    }
 }

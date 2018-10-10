@@ -89,4 +89,8 @@ public class GroupStudy extends BaseModel implements Mergable<GroupStudy> {
         this.url = apiVersion.url;
         this.videoCount = apiVersion.videoCount;
     }
+
+    public static String updated() {
+        return "UPDATED-GroupStudy";
+    }
 }

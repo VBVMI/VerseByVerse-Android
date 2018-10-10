@@ -149,4 +149,8 @@ public class Study extends BaseModel implements Mergable<Study> {
         this.image1100 = apiVersion.image1100;
         this.image1400 = apiVersion.image1400;
     }
+
+    public static String updated() {
+        return "UPDATED-Study";
+    }
 }

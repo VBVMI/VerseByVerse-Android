@@ -89,7 +89,7 @@ public class GroupStudyFragment extends AbstractListFragment implements VideoSel
 
     @Override
     protected String tableName() {
-        return "Video";
+        return Video.updated();
     }
 
     @Override

@@ -67,11 +67,6 @@
           android:resource="@xml/provider_paths"/>
     </provider>
 
-    <provider
-        android:name="com.raizlabs.android.dbflow.runtime.StubContentProvider"
-        android:authorities="com.erpdevelopment.vbvm"
-        />
-
     <meta-data
         android:name="io.fabric.ApiKey"
         android:value="${FabricApiKey}"

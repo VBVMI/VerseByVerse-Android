@@ -28,4 +28,7 @@ public class Topic extends BaseModel {
     @Expose
     public String topic;
 
+    public static String updated() {
+        return "UPDATED-Topic";
+    }
 }

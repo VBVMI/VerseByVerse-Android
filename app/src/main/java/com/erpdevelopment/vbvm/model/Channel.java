@@ -81,4 +81,8 @@ public class Channel extends BaseModel implements Mergable<Channel> {
         this.url = apiVersion.url;
         this.videoCount = apiVersion.videoCount;
     }
+
+    public static String updated() {
+        return "UPDATED-Channel";
+    }
 }

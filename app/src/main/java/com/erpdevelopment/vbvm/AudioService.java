@@ -307,10 +307,13 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             lesson.complete = true;
             lesson.save();
 
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(Lesson.updated()));
+
             MetaData metaData = SQLite.select().from(MetaData.class).querySingle();
             if (metaData != null) {
                 metaData.currentLessonId = null;
                 metaData.save();
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(MetaData.updated()));
             }
         }
         dontCompleteLesson = false;
@@ -372,6 +375,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         if (lesson != null) {
             lesson.complete = false;
             lesson.save();
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(Lesson.updated()));
         }
 
         MetaData metaData = SQLite.select().from(MetaData.class).querySingle();

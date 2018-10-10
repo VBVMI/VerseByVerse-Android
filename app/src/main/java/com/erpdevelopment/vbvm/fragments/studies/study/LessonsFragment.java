@@ -1,7 +1,9 @@
 package com.erpdevelopment.vbvm.fragments.studies.study;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -9,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -105,6 +108,7 @@ public class LessonsFragment extends AbstractFragment {
     }
 
     OnTableChangedListener tableChangedListener;
+    private BroadcastReceiver lessonsChangedReceiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -153,24 +157,19 @@ public class LessonsFragment extends AbstractFragment {
 
         final Handler mainHandler = new Handler(getContext().getMainLooper());
 
-        tableChangedListener = new OnTableChangedListener() {
+        lessonsChangedReceiver = new BroadcastReceiver() {
             @Override
-            public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
-                if (tableChanged != null)
-                    Log.d(TAG, "Table Changed: " + tableChanged.toString());
-                if(tableChanged != null && tableChanged.toString().contains("Lesson")) {
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            reloadData();
-                        }
-                    });
-                }
+            public void onReceive(Context context, Intent intent) {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        reloadData();
+                    }
+                });
             }
         };
 
-        DatabaseManager.observer.addOnTableChangedListener(tableChangedListener);
-
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(lessonsChangedReceiver, new IntentFilter(Lesson.updated()));
 
         return view;
     }
@@ -202,9 +201,13 @@ public class LessonsFragment extends AbstractFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        DatabaseManager.observer.removeTableChangedListener(tableChangedListener);
-        Log.d("LESSONFRAGMENT", "removed table change listener");
-        tableChangedListener = null;
+        //DatabaseManager.observer.removeTableChangedListener(tableChangedListener);
+        if (lessonsChangedReceiver != null) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(lessonsChangedReceiver);
+        }
+
+        lessonsChangedReceiver = null;
+
         mListener = null;
     }
 

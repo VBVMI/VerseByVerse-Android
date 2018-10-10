@@ -57,7 +57,7 @@ public class GroupStudiesFragment extends AbstractListFragment implements  Group
 
     @Override
     protected String tableName() {
-        return "GroupStudy";
+        return GroupStudy.updated();
     }
 
     @Override

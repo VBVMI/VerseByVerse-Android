@@ -145,7 +145,7 @@ public class AnswersListFragment extends AbstractListFragment implements AnswerS
 
     @Override
     protected String tableName() {
-        return "Answer";
+        return Answer.updated();
     }
 
     @Override

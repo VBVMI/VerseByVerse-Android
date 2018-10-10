@@ -1,10 +1,15 @@
 package com.erpdevelopment.vbvm.fragments.topics;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,16 +51,7 @@ public abstract class AbstractListFragment extends Fragment {
     }
     protected abstract String tableName();
 
-    OnTableChangedListener tableChangedListener = new OnTableChangedListener() {
-        @Override
-        public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
-            if (tableChanged.toString().contains(tableName()) && getMainHandler() != null) {
-                getMainHandler().post(() -> {
-                   reloadData();
-                });
-            }
-        }
-    };
+    private BroadcastReceiver modelUpdatedReceiver;
 
     protected abstract void configureRecyclerView(RecyclerView recyclerView);
 
@@ -101,8 +97,15 @@ public abstract class AbstractListFragment extends Fragment {
 
         configureRecyclerView(recyclerView);
 
-        DatabaseManager.observer.addOnTableChangedListener(tableChangedListener);
-
+        modelUpdatedReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mainHandler.post(() -> {
+                    reloadData();
+                });
+            }
+        };
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(modelUpdatedReceiver, new IntentFilter(tableName()));
         return view;
     }
 
@@ -117,8 +120,11 @@ public abstract class AbstractListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        DatabaseManager.observer.removeTableChangedListener(tableChangedListener);
-        tableChangedListener = null;
+        //DatabaseManager.observer.removeTableChangedListener(tableChangedListener);
+        if (modelUpdatedReceiver != null) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(modelUpdatedReceiver);
+            modelUpdatedReceiver = null;
+        }
     }
 
     public void setSearchText(String searchText) {

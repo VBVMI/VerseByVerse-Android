@@ -71,7 +71,7 @@ public class VideosFragment extends AbstractListFragment implements VideoSelecti
 
     @Override
     protected String tableName() {
-        return "Video";
+        return Video.updated();
     }
 
     @Override

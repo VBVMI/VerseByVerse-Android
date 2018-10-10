@@ -24,4 +24,7 @@ public class MetaData extends BaseModel {
     @Nullable
     public String currentLessonId;
 
+    public static String updated() {
+        return "UPDATED-MetaData";
+    }
 }

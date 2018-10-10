@@ -12,6 +12,7 @@ import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
@@ -222,6 +223,8 @@ public class LessonExtrasFragment extends DialogFragment {
                     holder.iconView.setText(R.string.fa_check_square_o);
                 }
                 lesson.save();
+
+                LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Lesson.updated()));
             });
         }));
 
@@ -238,6 +241,7 @@ public class LessonExtrasFragment extends DialogFragment {
                         Snackbar snackbar = Snackbar.make(view, R.string.files_deleted, BaseTransientBottomBar.LENGTH_SHORT);
                         snackbar.show();
                         lesson.save();
+                        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Lesson.updated()));
                     } else {
                         Snackbar snackbar = Snackbar.make(view, R.string.files_deleted_failed, BaseTransientBottomBar.LENGTH_SHORT);
                         snackbar.show();

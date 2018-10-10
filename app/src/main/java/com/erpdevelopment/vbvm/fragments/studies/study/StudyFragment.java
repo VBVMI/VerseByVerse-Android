@@ -1,6 +1,10 @@
 package com.erpdevelopment.vbvm.fragments.studies.study;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +14,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -47,11 +52,11 @@ public class StudyFragment extends AbstractFragment {
 
     private Study study;
 
-    private FlowContentObserver observer;
+//    private FlowContentObserver observer;
 
     private FlowContentObserver.OnModelStateChangedListener modelStateChangedListener;
 
-    private OnTableChangedListener tableChangedListener;
+    private BroadcastReceiver lessonsChangedReceiver;
 
     public StudyFragment() {
         // Required empty public constructor
@@ -103,25 +108,23 @@ public class StudyFragment extends AbstractFragment {
 
         final Handler mainHandler = new Handler(getContext().getMainLooper());
 
-        tableChangedListener = new OnTableChangedListener() {
+        lessonsChangedReceiver = new BroadcastReceiver() {
             @Override
-            public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
-                Log.d("LESSON", "table changed " + action.name() + " on Table " + tableChanged);
-                if(tableChanged != null && tableChanged.toString().contains("Lesson")) {
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            configureView();
-                            mSectionsPagerAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
+            public void onReceive(Context context, Intent intent) {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        configureView();
+                        mSectionsPagerAdapter.notifyDataSetChanged();
+                    }
+                });
             }
         };
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(lessonsChangedReceiver, new IntentFilter(Lesson.updated()));
 
-        observer = DatabaseManager.observer;
-        observer.setNotifyAllUris(false);
-        observer.addOnTableChangedListener(tableChangedListener);
+//        observer = DatabaseManager.observer;
+//        observer.setNotifyAllUris(false);
+//        observer.addOnTableChangedListener(tableChangedListener);
 
         configureView();
 
@@ -154,8 +157,11 @@ public class StudyFragment extends AbstractFragment {
     @Override
     public void onDestroy() {
         Log.d("LESSON", "onDestroy: Lessons");
-        observer.removeTableChangedListener(tableChangedListener);
-
+        //observer.removeTableChangedListener(tableChangedListener);
+        if (lessonsChangedReceiver != null) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(lessonsChangedReceiver);
+            lessonsChangedReceiver = null;
+        }
         super.onDestroy();
     }
 

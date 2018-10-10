@@ -1,5 +1,9 @@
 package com.erpdevelopment.vbvm.api;
 
+import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.erpdevelopment.vbvm.BuildConfig;
@@ -12,6 +16,7 @@ import com.erpdevelopment.vbvm.model.Article_Topic;
 import com.erpdevelopment.vbvm.model.Channel;
 import com.erpdevelopment.vbvm.model.GroupStudy;
 import com.erpdevelopment.vbvm.model.Study;
+import com.erpdevelopment.vbvm.model.Study_Table;
 import com.erpdevelopment.vbvm.model.Study_Topic;
 import com.erpdevelopment.vbvm.model.Video;
 import com.erpdevelopment.vbvm.model.Video_Table;
@@ -57,7 +62,7 @@ public class DatabaseManager {
 
     }
 
-    public static FlowContentObserver observer = new FlowContentObserver(BuildConfig.APPLICATION_ID);
+    public Context context;
 
     void saveStudies(List<Study> studies) {
         // In order to save these studies we must first fetch all the existing ones and create merge and delete lists
@@ -92,6 +97,8 @@ public class DatabaseManager {
                 SQLite.delete().from(Study_Topic.class).where(Study_Topic_Table.study_id.eq(instance.id)).execute();
             }
         });
+
+        notifyTableChange(Study.updated());
     }
 
     void saveLessons(List<Lesson> lessons, String studyId) {
@@ -130,6 +137,8 @@ public class DatabaseManager {
                 SQLite.delete().from(Lesson_Topic.class).where(Lesson_Topic_Table.lesson_id.eq(instance.id)).execute();
             }
         });
+
+        notifyTableChange(Lesson.updated());
     }
 
     void saveArticles(List<Article> articles, boolean cleanOutMissingArticles) {
@@ -164,6 +173,8 @@ public class DatabaseManager {
                 SQLite.delete().from(Article_Topic.class).where(Article_Topic_Table.article_id.eq(instance.id)).execute();
             }
         });
+
+        notifyTableChange(Article.updated());
     }
 
     void saveAnswers(List<Answer> articles, boolean cleanOutMissingAnswers) {
@@ -198,11 +209,14 @@ public class DatabaseManager {
                 SQLite.delete().from(Answer_Topic.class).where(Answer_Topic_Table.answer_id.eq(instance.id)).execute();
             }
         });
+
+        notifyTableChange(Answer.updated());
     }
 
     void saveCategories(List<Category> categories) {
         List<Category> persistedCategories = SQLite.select().from(Category.class).queryList();
         mergeAPIData(persistedCategories, categories);
+        notifyTableChange(Category.updated());
     }
 
     void saveChannels(List<Channel> channels) {
@@ -213,6 +227,7 @@ public class DatabaseManager {
 
         List<Channel> persistedChannels = SQLite.select().from(Channel.class).queryList();
         mergeAPIData(persistedChannels, channels);
+        notifyTableChange(Channel.updated());
     }
 
     void saveChannelVideos(List<Video> videos, String channelId) {
@@ -222,6 +237,7 @@ public class DatabaseManager {
 
         List<Video> persistedVideos = SQLite.select().from(Video.class).where(Video_Table.channelId.eq(channelId)).queryList();
         mergeAPIData(persistedVideos, videos);
+        notifyTableChange(Video.updated());
     }
 
     void saveGroupStudies(List<GroupStudy> studies) {
@@ -232,6 +248,7 @@ public class DatabaseManager {
 
         List<GroupStudy> persisted = SQLite.select().from(GroupStudy.class).queryList();
         mergeAPIData(persisted, studies);
+        notifyTableChange(GroupStudy.updated());
     }
 
     void saveGroupStudyVideos(List<Video> videos, String groupStudyId) {
@@ -240,8 +257,16 @@ public class DatabaseManager {
         }
         List<Video> persistedVideos = SQLite.select().from(Video.class).where(Video_Table.groupStudyId.eq(groupStudyId)).queryList();
         mergeAPIData(persistedVideos, videos);
+        notifyTableChange(Video.updated());
     }
 
+    private void notifyTableChange(String tableName) {
+        if (context == null) {
+            return;
+        }
+        Intent intent = new Intent(tableName);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
 
     private static class MergePair<T> {
         public final Collection<T> entriesSaved;
@@ -302,10 +327,6 @@ public class DatabaseManager {
 
         DatabaseDefinition database = FlowManager.getDatabase(AppDatabase.class);
 
-        observer.beginTransaction();
-
-        //observer.setNotifyAllUris(false);
-
         database.executeTransaction(new ProcessModelTransaction.Builder<>(
                 new ProcessModelTransaction.ProcessModel<T>() {
                     public void processModel(T instance, DatabaseWrapper wrapper) {
@@ -330,8 +351,6 @@ public class DatabaseManager {
                     }
             ).addAll(entriesToDelete).build());
         }
-
-        observer.endTransactionAndNotify();
 
         return new MergePair<T>(saveList, entriesToDelete);
     }

@@ -170,19 +170,8 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
         multistack.setStateChanger(this);
 
-        DatabaseManager.observer.registerForContentChanges(this, Lesson.class);
-        DatabaseManager.observer.registerForContentChanges(this, Article.class);
-        DatabaseManager.observer.registerForContentChanges(this, Answer.class);
-        DatabaseManager.observer.registerForContentChanges(this, Channel.class);
-        DatabaseManager.observer.registerForContentChanges(this, GroupStudy.class);
-        DatabaseManager.observer.registerForContentChanges(this, Category.class);
-        DatabaseManager.observer.registerForContentChanges(this, Study.class);
+        DatabaseManager.getInstance().context = this;
 
-//        DatabaseManager.observer.registerForContentChanges(this, Study_Topic.class);
-//        DatabaseManager.observer.registerForContentChanges(this, Topic.class);
-//        DatabaseManager.observer.registerForContentChanges(this, Lesson_Topic.class);
-//        DatabaseManager.observer.registerForContentChanges(this, Article_Topic.class);
-//        DatabaseManager.observer.registerForContentChanges(this, Answer_Topic.class);
         audioBarLayout.setOnClickListener(v -> {
             Log.d(TAG, "Tapped bar");
             Lesson lesson = audioService.getCurrentLesson();
@@ -405,7 +394,6 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
     @Override
     protected void onDestroy() {
-        DatabaseManager.observer.unregisterForContentChanges(this);
         multistack.onDestroy();
         Log.d(TAG, "onDestroy");
         super.onDestroy();

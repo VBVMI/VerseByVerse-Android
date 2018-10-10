@@ -57,7 +57,7 @@ public class VideoSeriesFragment extends AbstractListFragment implements VideoSe
 
     @Override
     protected String tableName() {
-        return "Channel";
+        return Channel.updated();
     }
 
     @Override

@@ -94,4 +94,8 @@ public class Answer extends BaseModel implements Mergable<Answer> {
         this.url = apiVersion.url;
         this.body = apiVersion.body;
     }
+
+    public static String updated() {
+        return "UPDATED-Answer";
+    }
 }

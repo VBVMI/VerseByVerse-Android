@@ -1,6 +1,9 @@
 package com.erpdevelopment.vbvm.fragments.studies;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -9,6 +12,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -221,7 +225,7 @@ public class StudiesFragment extends AbstractFragment {
 
         private RecyclerView view;
 
-        OnTableChangedListener tableChangedListener;
+        BroadcastReceiver studiesReceiver;
 
         public StudiesListFragment() {
         }
@@ -283,21 +287,16 @@ public class StudiesFragment extends AbstractFragment {
 
             final Handler mainHandler = new Handler(getContext().getMainLooper());
 
-            tableChangedListener = new OnTableChangedListener() {
+            studiesReceiver = new BroadcastReceiver() {
                 @Override
-                public void onTableChanged(@Nullable Class<?> tableChanged, @NonNull BaseModel.Action action) {
-                    if(tableChanged != null && tableChanged.toString().contains("Study")) {
-                        mainHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                reloadData();
-                            }
-                        });
-                    }
+                public void onReceive(Context context, Intent intent) {
+                    mainHandler.post(() -> reloadData());
                 }
             };
 
-            DatabaseManager.observer.addOnTableChangedListener(tableChangedListener);
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(studiesReceiver, new IntentFilter(Study.updated()));
+
+            //DatabaseManager.observer.addOnTableChangedListener(tableChangedListener);
             return rootView;
         }
 
@@ -310,9 +309,12 @@ public class StudiesFragment extends AbstractFragment {
         @Override
         public void onDetach() {
             super.onDetach();
-            DatabaseManager.observer.removeTableChangedListener(tableChangedListener);
+            //DatabaseManager.observer.removeTableChangedListener(tableChangedListener);
             Log.d("STUDIESFRAGMENT", "removed table change listener");
-            tableChangedListener = null;
+            if (studiesReceiver != null) {
+                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(studiesReceiver);
+                studiesReceiver = null;
+            }
         }
     }
 
