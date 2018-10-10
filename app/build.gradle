@@ -32,7 +32,7 @@ android {
         applicationId 'com.erpdevelopment.vbvm'
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 54
+        versionCode 55
         versionName "4.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -57,7 +57,7 @@ def getKeys(){
     return [FabricApiKey: props['FABRIC_API_KEY']]
 }
 
-def dbflow_version = "4.1.1"
+def dbflow_version = "4.2.4"
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')

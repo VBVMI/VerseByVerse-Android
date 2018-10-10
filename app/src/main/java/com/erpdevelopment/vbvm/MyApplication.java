@@ -1,6 +1,7 @@
 package com.erpdevelopment.vbvm;
 
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -9,10 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.erpdevelopment.vbvm.database.AppDatabase;
+import com.raizlabs.android.dbflow.config.DatabaseConfig;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import com.erpdevelopment.vbvm.api.APIManager;
+import com.raizlabs.android.dbflow.runtime.ContentResolverNotifier;
 import com.vimeo.networking.Configuration;
 import com.vimeo.networking.Vimeo;
 import com.vimeo.networking.VimeoClient;
@@ -32,7 +36,12 @@ public class MyApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
-        FlowManager.init(new FlowConfig.Builder(this).build());
+        FlowManager.init(new FlowConfig.Builder(this)
+                .addDatabaseConfig(new DatabaseConfig.Builder(AppDatabase.class)
+                        .databaseName("AppDatabase")
+                        .modelNotifier(new ContentResolverNotifier(BuildConfig.APPLICATION_ID))
+                        .build())
+                .build());
         LessonResourceManager.getInstance().setup(this);
         APIManager.configureAPIManager(this);
 

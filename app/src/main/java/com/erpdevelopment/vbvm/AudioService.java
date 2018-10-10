@@ -220,12 +220,15 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     private void testShutdown() {
+        Log.d(TAG, "testShutdown: Beginning test Shutdown");
         if (!isPlaying()) {
+            Log.d(TAG, "testShutdown: Confirmed");
             AudioManager mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
             mAudioManager.abandonAudioFocus(afChangeListener);
 
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(NOTIFY_ID);
+            stopForeground(true);
             //stopSelf();
             if (mMediaSessionCompat != null) {
                 Log.d(TAG, "Releasing Media Session");
@@ -236,6 +239,8 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
                 unregisterReceiver(mNoisyReceiver);
                 noisyReceiverRegistered = false;
             }
+        } else {
+            Log.d(TAG, "testShutdown: Averted");
         }
     }
 
@@ -535,7 +540,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
         stopHandle.removeCallbacks(stopRunnable);
         stopHandle.postDelayed(stopRunnable, 1000 * 20);
-
+        Log.d(TAG, "pausePlayer: Added stop runnable");
         if (mNoisyReceiver != null && noisyReceiverRegistered){
             unregisterReceiver(mNoisyReceiver);
             noisyReceiverRegistered = false;

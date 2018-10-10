@@ -37,11 +37,18 @@ import com.erpdevelopment.vbvm.fragments.more.MoreKey;
 import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.fragments.studies.StudiesKey;
 import com.erpdevelopment.vbvm.model.Answer;
+import com.erpdevelopment.vbvm.model.Answer_Topic;
 import com.erpdevelopment.vbvm.model.Article;
+import com.erpdevelopment.vbvm.model.Article_Topic;
+import com.erpdevelopment.vbvm.model.Category;
 import com.erpdevelopment.vbvm.model.Channel;
 import com.erpdevelopment.vbvm.model.GroupStudy;
 import com.erpdevelopment.vbvm.model.Lesson_Table;
+import com.erpdevelopment.vbvm.model.Lesson_Topic;
 import com.erpdevelopment.vbvm.model.MetaData;
+import com.erpdevelopment.vbvm.model.Study;
+import com.erpdevelopment.vbvm.model.Study_Topic;
+import com.erpdevelopment.vbvm.model.Topic;
 import com.erpdevelopment.vbvm.util.Multistack;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.zhuinden.simplestack.BackstackDelegate;
@@ -163,15 +170,19 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
         multistack.setStateChanger(this);
 
-
         DatabaseManager.observer.registerForContentChanges(this, Lesson.class);
         DatabaseManager.observer.registerForContentChanges(this, Article.class);
         DatabaseManager.observer.registerForContentChanges(this, Answer.class);
         DatabaseManager.observer.registerForContentChanges(this, Channel.class);
         DatabaseManager.observer.registerForContentChanges(this, GroupStudy.class);
-//        DatabaseManager.observer.registerForContentChanges(this, Category.class);
-//        DatabaseManager.observer.registerForContentChanges(this, Study.class);
+        DatabaseManager.observer.registerForContentChanges(this, Category.class);
+        DatabaseManager.observer.registerForContentChanges(this, Study.class);
 
+//        DatabaseManager.observer.registerForContentChanges(this, Study_Topic.class);
+//        DatabaseManager.observer.registerForContentChanges(this, Topic.class);
+//        DatabaseManager.observer.registerForContentChanges(this, Lesson_Topic.class);
+//        DatabaseManager.observer.registerForContentChanges(this, Article_Topic.class);
+//        DatabaseManager.observer.registerForContentChanges(this, Answer_Topic.class);
         audioBarLayout.setOnClickListener(v -> {
             Log.d(TAG, "Tapped bar");
             Lesson lesson = audioService.getCurrentLesson();

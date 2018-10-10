@@ -2,6 +2,7 @@ package com.erpdevelopment.vbvm.api;
 
 import android.util.Log;
 
+import com.erpdevelopment.vbvm.BuildConfig;
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.database.AppDatabase;
 import com.erpdevelopment.vbvm.model.Answer;
@@ -56,7 +57,7 @@ public class DatabaseManager {
 
     }
 
-    public static FlowContentObserver observer = new FlowContentObserver();
+    public static FlowContentObserver observer = new FlowContentObserver(BuildConfig.APPLICATION_ID);
 
     void saveStudies(List<Study> studies) {
         // In order to save these studies we must first fetch all the existing ones and create merge and delete lists
@@ -303,7 +304,7 @@ public class DatabaseManager {
 
         observer.beginTransaction();
 
-        observer.setNotifyAllUris(false);
+        //observer.setNotifyAllUris(false);
 
         database.executeTransaction(new ProcessModelTransaction.Builder<>(
                 new ProcessModelTransaction.ProcessModel<T>() {
