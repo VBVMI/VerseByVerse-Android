@@ -370,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         if (audioBound) {
             unbindService(audioConnection);
             playIntent = null;
+            audioBound = false;
         }
         super.onPause();
     }
@@ -396,6 +397,10 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
     protected void onDestroy() {
         multistack.onDestroy();
         Log.d(TAG, "onDestroy");
+        if (audioBound) {
+            unbindService(audioConnection);
+            audioBound = false;
+        }
         super.onDestroy();
     }
 
