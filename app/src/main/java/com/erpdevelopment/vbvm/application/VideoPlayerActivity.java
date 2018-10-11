@@ -1,268 +1,173 @@
 package com.erpdevelopment.vbvm.application;
 
-import android.app.Activity;
-import android.app.AlertDialog;
+import android.annotation.SuppressLint;
 import android.net.Uri;
-import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.util.Pair;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.erpdevelopment.vbvm.R;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.hls.DefaultHlsDataSourceFactory;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.TrackSelectionView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.TransferListener;
-import com.google.android.exoplayer2.util.Util;
+import com.halilibo.bettervideoplayer.BetterVideoPlayer;
 
-public class VideoPlayerActivity extends AppCompatActivity implements View.OnClickListener {
+public class VideoPlayerActivity extends AppCompatActivity {
 
     public static final String EXTRA_VIDEO_URL = "video_url";
-    private static final String KEY_PLAY_WHEN_READY = "play_when_ready";
-    private static final String KEY_WINDOW = "window";
-    private static final String KEY_POSITION = "position";
+    public static final String EXTRA_VIDEO_TITLE = "video_title";
+    /**
+     * Whether or not the system UI should be auto-hidden after
+     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
+     */
+    private static final boolean AUTO_HIDE = true;
 
-    private PlayerView playerView;
-    private SimpleExoPlayer player;
+    /**
+     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
+     * user interaction before hiding the system UI.
+     */
+    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
-    private Timeline.Window window;
-    private DataSource.Factory mediaDataSourceFactory;
-    private DefaultTrackSelector trackSelector;
-    private TrackGroupArray lastSeenTrackGroupArray;
-    private boolean shouldAutoPlay;
-    private BandwidthMeter bandwidthMeter;
+    /**
+     * Some older devices needs a small delay between UI widget updates
+     * and a change of the status and navigation bar.
+     */
+    private static final int UI_ANIMATION_DELAY = 300;
+    private final Handler mHideHandler = new Handler();
+    private BetterVideoPlayer mBetterVideoPlayer;
+    private final Runnable mHidePart2Runnable = new Runnable() {
+        @SuppressLint("InlinedApi")
+        @Override
+        public void run() {
+            // Delayed removal of status and navigation bar
 
-    private ProgressBar progressBar;
-    private ImageView ivHideControllerButton;
-    private ImageView ivSettings;
-    private boolean playWhenReady;
-    private int currentWindow;
-    private long playbackPosition;
-
-    private String videoURL;
+            // Note that some of these constants are new as of API 16 (Jelly Bean)
+            // and API 19 (KitKat). It is safe to use them, as they are inlined
+            // at compile-time and do nothing on earlier devices.
+            mBetterVideoPlayer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    };
+    private final Runnable mShowPart2Runnable = new Runnable() {
+        @Override
+        public void run() {
+            // Delayed display of UI elements
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.show();
+            }
+        }
+    };
+    private boolean mVisible;
+    private final Runnable mHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
+    /**
+     * Touch listener to use for in-layout UI controls to delay hiding the
+     * system UI. This is to prevent the jarring behavior of controls going away
+     * while interacting with activity UI.
+     */
+    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            }
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_video_player);
 
-        if (savedInstanceState == null) {
-            playWhenReady = true;
-            currentWindow = 0;
-            playbackPosition = 0;
-        } else {
-            playWhenReady = savedInstanceState.getBoolean(KEY_PLAY_WHEN_READY);
-            currentWindow = savedInstanceState.getInt(KEY_WINDOW);
-            playbackPosition = savedInstanceState.getLong(KEY_POSITION);
-        }
+        String path = getIntent().getExtras().getString(EXTRA_VIDEO_URL);
+        mVisible = true;
+        mBetterVideoPlayer = (BetterVideoPlayer) findViewById(R.id.bvp);
+        mBetterVideoPlayer.setSource(Uri.parse(path));
 
-        videoURL = getIntent().getExtras().getString(EXTRA_VIDEO_URL);
-        shouldAutoPlay = true;
-        mediaDataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, "verseByVerse"));
-        window = new Timeline.Window();
-        ivHideControllerButton = findViewById(R.id.exo_controller);
-        ivSettings = findViewById(R.id.settings);
-        progressBar = findViewById(R.id.progress_bar);
-    }
-
-    private void initializePlayer() {
-
-        playerView = findViewById(R.id.player_view);
-        playerView.requestFocus();
-
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-
-        trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-        lastSeenTrackGroupArray = null;
-
-        player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
-
-        playerView.setPlayer(player);
-
-        player.addListener(new PlayerEventListener());
-        player.setPlayWhenReady(shouldAutoPlay);
-
-        HlsMediaSource hlsMediaSource = new HlsMediaSource.Factory(mediaDataSourceFactory).createMediaSource(Uri.parse(videoURL));
-        // Use Hls, Dash or other smooth streaming media source if you want to test the track quality selection.
-        MediaSource mediaSource = hlsMediaSource;
-
-
-//        MediaSource mediaSource = new ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(Uri.parse(videoURL));
-
-        boolean haveStartPosition = currentWindow != C.INDEX_UNSET;
-        if (haveStartPosition) {
-            player.seekTo(currentWindow, playbackPosition);
-        }
-
-        player.prepare(mediaSource, !haveStartPosition, false);
-        updateButtonVisibilities();
-
-        ivHideControllerButton.setOnClickListener(new View.OnClickListener() {
+        mBetterVideoPlayer.getToolbar().setTitle(getIntent().getExtras().getString(EXTRA_VIDEO_TITLE, ""));
+        mBetterVideoPlayer.getToolbar()
+                .setNavigationIcon(R.drawable.ic_movie);
+        mBetterVideoPlayer.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playerView.hideController();
+                onBackPressed();
             }
         });
-    }
 
-    private void releasePlayer() {
-        if (player != null) {
-            updateStartPosition();
-            shouldAutoPlay = player.getPlayWhenReady();
-            player.release();
-            player = null;
-            trackSelector = null;
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if ((Util.SDK_INT <= 23 || player == null)) {
-            initializePlayer();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (Util.SDK_INT <= 23) {
-            releasePlayer();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (Util.SDK_INT > 23) {
-            releasePlayer();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        updateStartPosition();
-
-        outState.putBoolean(KEY_PLAY_WHEN_READY, playWhenReady);
-        outState.putInt(KEY_WINDOW, currentWindow);
-        outState.putLong(KEY_POSITION, playbackPosition);
-        super.onSaveInstanceState(outState);
-    }
-
-    private void updateStartPosition() {
-        playbackPosition = player.getCurrentPosition();
-        currentWindow = player.getCurrentWindowIndex();
-        playWhenReady = player.getPlayWhenReady();
-    }
-
-    private void updateButtonVisibilities() {
-        ivSettings.setVisibility(View.GONE);
-        if (player == null) {
-            return;
-        }
-
-        MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-        if (mappedTrackInfo == null) {
-            return;
-        }
-
-        for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
-            TrackGroupArray trackGroups = mappedTrackInfo.getTrackGroups(i);
-            if (trackGroups.length != 0) {
-                if (player.getRendererType(i) == C.TRACK_TYPE_VIDEO) {
-                    ivSettings.setVisibility(View.VISIBLE);
-                    ivSettings.setOnClickListener(this);
-                    ivSettings.setTag(i);
-                }
+        // Set up the user interaction to manually show or hide the system UI.
+        mBetterVideoPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggle();
             }
-        }
+        });
+
+        // Upon interacting with UI controls, delay any scheduled hide()
+        // operations to prevent the jarring behavior of controls going away
+        // while interacting with the UI.
+        //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
     }
 
     @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.settings) {
-            MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-            if (mappedTrackInfo != null) {
-                CharSequence title = "Video String";
-                int rendererIndex = (int) ivSettings.getTag();
-                Pair<AlertDialog, TrackSelectionView> dialogPair =
-                        TrackSelectionView.getDialog(this, title, trackSelector, rendererIndex);
-                dialogPair.second.setShowDisableOption(false);
-                dialogPair.second.setAllowAdaptiveSelections(true);
-                dialogPair.first.show();
-            }
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        // Trigger the initial hide() shortly after the activity has been
+        // created, to briefly hint to the user that UI controls
+        // are available.
+        delayedHide(100);
+    }
+
+    private void toggle() {
+        if (mVisible) {
+            hide();
+        } else {
+            show();
         }
     }
 
-    private class PlayerEventListener extends Player.DefaultEventListener{
-
-        @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            switch (playbackState) {
-                case Player.STATE_IDLE:       // The player does not have any media to play yet.
-                    progressBar.setVisibility(View.VISIBLE);
-                    break;
-                case Player.STATE_BUFFERING:  // The player is buffering (loading the content)
-                    progressBar.setVisibility(View.VISIBLE);
-                    break;
-                case Player.STATE_READY:      // The player is able to immediately play
-                    progressBar.setVisibility(View.GONE);
-                    break;
-                case Player.STATE_ENDED:      // The player has finished playing the media
-                    progressBar.setVisibility(View.GONE);
-                    break;
-            }
-            updateButtonVisibilities();
+    private void hide() {
+        // Hide UI first
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
         }
+        mVisible = false;
 
-        @Override
-        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-            updateButtonVisibilities();
-            // The video tracks are no supported in this device.
-            if (trackGroups != lastSeenTrackGroupArray) {
-                MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-                if (mappedTrackInfo != null) {
-                    if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO)
-                            == MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-                        Toast.makeText(VideoPlayerActivity.this, "Error unsupported track", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                lastSeenTrackGroupArray = trackGroups;
-            }
-        }
+        // Schedule a runnable to remove the status and navigation bar after a delay
+        mHideHandler.removeCallbacks(mShowPart2Runnable);
+        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
+    }
+
+    @SuppressLint("InlinedApi")
+    private void show() {
+        // Show the system bar
+        mBetterVideoPlayer.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        mVisible = true;
+
+        // Schedule a runnable to display UI elements after a delay
+        mHideHandler.removeCallbacks(mHidePart2Runnable);
+        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
+    }
+
+    /**
+     * Schedules a call to hide() in [delay] milliseconds, canceling any
+     * previously scheduled calls.
+     */
+    private void delayedHide(int delayMillis) {
+        mHideHandler.removeCallbacks(mHideRunnable);
+        mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 }

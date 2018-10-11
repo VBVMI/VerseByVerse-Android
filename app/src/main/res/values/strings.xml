@@ -83,7 +83,7 @@ img.profile {
   </div>]]></string>
     <string name="download_study_book">Download Study Book</string>
 
-    <string name="title_activity_video_player">VideoPlayerActivity</string>
+    <string name="title_activity_video_player">Video Player</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
