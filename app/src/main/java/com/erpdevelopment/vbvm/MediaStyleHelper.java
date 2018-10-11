@@ -9,7 +9,7 @@ import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 
 /**
  * Helper APIs for constructing MediaStyle notifications
@@ -23,7 +23,7 @@ public class MediaStyleHelper {
      * @return A pre-built notification with information from the given media session.
      */
     public static NotificationCompat.Builder from(
-            Context context, MediaSessionCompat mediaSession) {
+            Context context, MediaSessionCompat mediaSession, String channelId) {
         MediaControllerCompat controller = mediaSession.getController();
         MediaMetadataCompat mediaMetadata = controller.getMetadata();
 
@@ -36,7 +36,7 @@ public class MediaStyleHelper {
             return null;
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId);
 
         builder
                 .setContentTitle(description.getTitle())

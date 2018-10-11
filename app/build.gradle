@@ -26,12 +26,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId 'com.erpdevelopment.vbvm'
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 56
         versionName "4.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -51,13 +51,15 @@ android {
     }
 }
 
-def getKeys(){
+def getKeys() {
     def Properties props = new Properties()
     props.load(new FileInputStream(new File('app/secrets.properties')))
     return [FabricApiKey: props['FABRIC_API_KEY']]
 }
 
 def dbflow_version = "4.2.4"
+def android_version = "27.1.1"
+def exo_version = "2.9.0"
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -73,23 +75,27 @@ dependencies {
 //    compile 'org.glassfish:javax.annotation:10.0-b28'
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support:support-vector-drawable:26.1.0'
+    implementation "com.android.support:appcompat-v7:${android_version}"
+    implementation "com.android.support:design:${android_version}"
+    implementation "com.android.support:support-v4:${android_version}"
+    implementation "com.android.support:support-annotations:${android_version}"
+    implementation "com.android.support:support-vector-drawable:${android_version}"
+    implementation "com.android.support:recyclerview-v7:${android_version}"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     implementation 'org.parceler:parceler-api:1.1.8'
     implementation 'com.github.bumptech.glide:okhttp3-integration:1.5.0@aar'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
-    implementation 'com.android.support:support-v4:26.1.0'
-    implementation 'com.android.support:support-annotations:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
+
     implementation 'com.jakewharton:butterknife:8.6.0'
     implementation 'com.github.Zhuinden:simple-stack:1.7.1'
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
-//    compile 'com.github.volders:RxDownloadManager:923dbc0a03'
+
+
     implementation 'com.github.alexgianq:sugarloader:0.2'
 
     annotationProcessor 'com.google.auto.value:auto-value:1.2'
@@ -97,10 +103,15 @@ dependencies {
     annotationProcessor 'org.parceler:parceler:1.1.8'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
 
-
+//    implementation 'com.github.halilozercan:BetterVideoPlayer:1.2.alpha1'
     compileOnly 'com.google.auto.value:auto-value:1.2'
 
     implementation 'com.vimeo.networking:vimeo-networking:1.1.2'
+
+    implementation "com.google.android.exoplayer:exoplayer-core:${exo_version}"
+    implementation "com.google.android.exoplayer:exoplayer-hls:${exo_version}"
+    implementation "com.google.android.exoplayer:exoplayer-ui:${exo_version}"
+    implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:${exo_version}"
 
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;

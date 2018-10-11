@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimary">#1565C0</color>
-  <color name="colorPrimaryDark">#003C8F</color>
-  <color name="colorAccent">#5e92f3</color>
-  <color name="colorPrimaryLight">#5E92F3</color>
-  <color name="colorDimWhite">#EEEEEE</color>
+    <color name="colorPrimary">#1565C0</color>
+    <color name="colorPrimaryDark">#003C8F</color>
+    <color name="colorAccent">#5e92f3</color>
+    <color name="colorPrimaryLight">#5E92F3</color>
+    <color name="colorDimWhite">#EEEEEE</color>
 
-  <color name="colorDownload">#f9a825</color>
+    <color name="colorDownload">#f9a825</color>
 
-  <color name="colorUnselectedText">#616161</color>
-  <color name="colorGridBackground">#e0e0e0</color>
-  <color name="tableCellText">#434343</color>
-  <color name="dimGrey">#bdbdbd</color>
-  <color name="white">#FFFFFF</color>
+    <color name="colorUnselectedText">#616161</color>
+    <color name="colorGridBackground">#e0e0e0</color>
+    <color name="tableCellText">#434343</color>
+    <color name="dimGrey">#bdbdbd</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.erpdevelopment.vbvm;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,16 +11,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -435,8 +439,19 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         mMediaSessionCompat.setPlaybackState(playbackState);
     }
 
+    private String getChannelId() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (channelId == null) {
+                channelId = createNotificationChannel("verseByVerseAudioService", "VBVMI Background Service");
+            }
+        } else {
+            channelId = "";
+        }
+        return channelId;
+    }
+
     private void showPlayingNotification() {
-        NotificationCompat.Builder builder = MediaStyleHelper.from(AudioService.this, mMediaSessionCompat);
+        NotificationCompat.Builder builder = MediaStyleHelper.from(AudioService.this, mMediaSessionCompat, getChannelId());
         if( builder == null ) {
             return;
         }
@@ -461,7 +476,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     private void showPausedNotification() {
-        NotificationCompat.Builder builder = MediaStyleHelper.from(this, mMediaSessionCompat);
+        NotificationCompat.Builder builder = MediaStyleHelper.from(this, mMediaSessionCompat, getChannelId());
         if( builder == null ) {
             return;
         }
@@ -484,6 +499,21 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
         Notification notification = builder.build();
         NotificationManagerCompat.from(AudioService.this).notify(NOTIFY_ID, notification);
         startForeground(NOTIFY_ID, notification);
+    }
+
+    private String channelId;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private String createNotificationChannel(String channelId, String channelName) {
+        NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE);
+        channel.setLightColor(Color.BLUE);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        channel.setSound(null, null);
+        NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (service != null) {
+            service.createNotificationChannel(channel);
+        }
+        return channelId;
     }
 
     private void setMediaPlaybackState(int state) {

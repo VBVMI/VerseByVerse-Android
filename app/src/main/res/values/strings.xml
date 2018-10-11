@@ -1,40 +1,40 @@
 <resources>
-  <string name="app_name">Verse by Verse</string>
-  <string name="title_studies">Studies</string>
-  <string name="title_topics">Topics</string>
-  <string name="title_media">Videos</string>
-  <string name="title_more">More</string>
-  <string name="title_notifications">Notifications</string>
+    <string name="app_name">Verse by Verse</string>
+    <string name="title_studies">Studies</string>
+    <string name="title_topics">Topics</string>
+    <string name="title_media">Videos</string>
+    <string name="title_more">More</string>
+    <string name="title_notifications">Notifications</string>
 
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
-  <string name="title_activity_studies">StudiesActivity</string>
-  <string name="action_settings">Settings</string>
-  <string name="section_format">Hello World from section: %1$d</string>
-  <string name="mainContentTag">mainContentTag</string>
-  <string name="title_activity_scrolling">ScrollingActivity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_studies">StudiesActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="mainContentTag">mainContentTag</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
 
-  <string name="lockscreen_transport_pause_description">Pause</string>
-  <!-- Shown on transport control of lockscreen. Pressing button pauses playback -->
-  <string name="lockscreen_transport_play_description">Play</string>
-  <!-- Shown on transport control of lockscreen. Pressing button pauses playback -->
-  <string name="lockscreen_transport_stop_description">Stop</string>
-  <!-- Shown on transport control screens. Pressing button rewinds playback [CHAR LIMIT=NONE]-->
-  <string name="lockscreen_transport_rew_description">Rewind 30 seconds</string>
-  <!-- Shown on transport control screens. Pressing button fast forwards playback [CHAR LIMIT=NONE]-->
-  <string name="lockscreen_transport_ffw_description">Fast forward</string>
+    <string name="lockscreen_transport_pause_description">Pause</string>
+    <!-- Shown on transport control of lockscreen. Pressing button pauses playback -->
+    <string name="lockscreen_transport_play_description">Play</string>
+    <!-- Shown on transport control of lockscreen. Pressing button pauses playback -->
+    <string name="lockscreen_transport_stop_description">Stop</string>
+    <!-- Shown on transport control screens. Pressing button rewinds playback [CHAR LIMIT=NONE]-->
+    <string name="lockscreen_transport_rew_description">Rewind 30 seconds</string>
+    <!-- Shown on transport control screens. Pressing button fast forwards playback [CHAR LIMIT=NONE]-->
+    <string name="lockscreen_transport_ffw_description">Fast forward</string>
 
-  <string name="empty">No results</string>
+    <string name="empty">No results</string>
 
-  <string name="files_deleted">Files deleted successfully</string>
-  <string name="files_deleted_failed">Failed to delete files</string>
-  <string name="no_pdf_reader">Couldn\'t open pdf. Install a PDF Viewer.</string>
-  <string name="no_video_player">Couldn\'t open video. Install a Video Player.</string>
-  <string name="mark_complete">Mark as complete</string>
-  <string name="mark_incomplete">Mark as incomplete</string>
-  <string name="download_pdf_error">Failed to download pdf</string>
+    <string name="files_deleted">Files deleted successfully</string>
+    <string name="files_deleted_failed">Failed to delete files</string>
+    <string name="no_pdf_reader">Couldn\'t open pdf. Install a PDF Viewer.</string>
+    <string name="no_video_player">Couldn\'t open video. Install a Video Player.</string>
+    <string name="mark_complete">Mark as complete</string>
+    <string name="mark_incomplete">Mark as incomplete</string>
+    <string name="download_pdf_error">Failed to download pdf</string>
 
-  <string name="html_container"><![CDATA[<head>
+    <string name="html_container"><![CDATA[<head>
 <style>
 body {
   -webkit-font-smoothing: antialiased;
@@ -71,16 +71,20 @@ img.profile {
   {{content}}
 </body>]]></string>
 
-  <string name="article_html"><![CDATA[
+    <string name="article_html"><![CDATA[
   <img class="profile" src="{{image_source}}" alt="{{image_alt}}"/>
   <div class="container">
     {{content}}
   </div>]]></string>
 
-  <string name="answer_html"><![CDATA[
+    <string name="answer_html"><![CDATA[
   <div class="container">
     {{content}}
   </div>]]></string>
-  <string name="download_study_book">Download Study Book</string>
+    <string name="download_study_book">Download Study Book</string>
+
+    <string name="title_activity_video_player">VideoPlayerActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
