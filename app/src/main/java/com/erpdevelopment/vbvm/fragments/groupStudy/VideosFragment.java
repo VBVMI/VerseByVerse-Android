@@ -151,11 +151,11 @@ public class VideosFragment extends AbstractListFragment implements VideoSelecti
                 public void success(com.vimeo.networking.model.Video video) {
 
                     for (VideoFile file : video.files) {
-                        if (file.getQuality().equals(VideoFile.VideoQuality.HD)) {
+                        if (file.getQuality().equals(VideoFile.VideoQuality.HLS)) {
 
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
                             Uri data = Uri.parse(file.getLink());
-                            intent.setDataAndType(data, "video/mp4");
+                            intent.setData(data);
                             try {
                                 startActivity(intent);
                             } catch (ActivityNotFoundException e) {

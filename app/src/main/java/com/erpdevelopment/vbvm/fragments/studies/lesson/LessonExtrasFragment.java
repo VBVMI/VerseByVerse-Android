@@ -24,7 +24,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Toast;
 
-import com.erpdevelopment.vbvm.application.VideoPlayerActivity;
 import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.model.Video;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -172,14 +171,10 @@ public class LessonExtrasFragment extends DialogFragment {
                 holder.iconView.setText(R.string.fa_youtube_play);
                 holder.itemView.setOnClickListener(v -> {
                     if (lesson.videoSource.contains("vimeo")) {
-                        Intent intent = new Intent(getContext(), VideoPlayerActivity.class);
-                        intent.putExtra(VideoPlayerActivity.EXTRA_VIDEO_URL, lesson.videoSource);
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+                        Uri data = Uri.parse(lesson.videoSource);
+                        intent.setData(data);
                         startActivity(intent);
-
-//                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-//                        Uri data = Uri.parse(lesson.videoSource);
-//                        intent.setDataAndType(data, "video/mp4");
-//                        startActivity(intent);
                     } else {
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(lesson.videoSource));
