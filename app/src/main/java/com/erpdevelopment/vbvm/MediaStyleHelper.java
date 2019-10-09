@@ -3,6 +3,7 @@ package com.erpdevelopment.vbvm;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaButtonReceiver;
@@ -31,10 +32,16 @@ public class MediaStyleHelper {
             return null;
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && (channelId == null || channelId.equals(""))) {
+            return null;
+        }
+
         MediaDescriptionCompat description = mediaMetadata.getDescription();
         if (description == null) {
             return null;
         }
+
+
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId);
 

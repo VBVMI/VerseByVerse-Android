@@ -441,7 +441,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
 
     private String getChannelId() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (channelId == null) {
+            if (channelId == null || channelId.equals("")) {
                 channelId = createNotificationChannel("verseByVerseAudioService", "VBVMI Background Service");
             }
         } else {

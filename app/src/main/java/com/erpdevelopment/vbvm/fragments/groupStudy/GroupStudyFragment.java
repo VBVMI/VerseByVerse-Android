@@ -151,7 +151,9 @@ public class GroupStudyFragment extends AbstractListFragment implements VideoSel
             VimeoClient.getInstance().fetchNetworkContent(uri, new ModelCallback<com.vimeo.networking.model.Video>(com.vimeo.networking.model.Video.class) {
                 @Override
                 public void success(com.vimeo.networking.model.Video video) {
-
+                    if (!isAdded()) {
+                        return;
+                    }
                     for (VideoFile file : video.files) {
                         if (file.getQuality().equals(VideoFile.VideoQuality.HLS)) {
 

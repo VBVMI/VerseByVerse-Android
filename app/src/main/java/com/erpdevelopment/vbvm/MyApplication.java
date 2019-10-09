@@ -34,14 +34,15 @@ public class MyApplication extends MultiDexApplication {
 
     @Override
     public void onCreate() {
-        super.onCreate();
-
         FlowManager.init(new FlowConfig.Builder(this)
                 .addDatabaseConfig(new DatabaseConfig.Builder(AppDatabase.class)
                         .databaseName("AppDatabase")
                         .modelNotifier(new ContentResolverNotifier(BuildConfig.APPLICATION_ID))
                         .build())
                 .build());
+
+        super.onCreate();
+
         LessonResourceManager.getInstance().setup(this);
         APIManager.configureAPIManager(this);
 
