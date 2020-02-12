@@ -30,8 +30,6 @@ import com.vimeo.networking.model.error.VimeoError;
 
 import org.algi.sugarloader.SugarLoader;
 
-import butterknife.BindView;
-
 /**
  * Created by thomascarey on 23/09/17.
  */
@@ -43,7 +41,6 @@ public class VideosFragment extends AbstractListFragment implements VideoSelecti
 
     private String channelId;
 
-    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     private VideoRecyclerAdapter adapter;
@@ -99,6 +96,7 @@ public class VideosFragment extends AbstractListFragment implements VideoSelecti
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        toolbar = view.findViewById(R.id.toolbar);
         MainActivity.get(getContext()).setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         MainActivity.get(getContext()).getSupportActionBar().setTitle("");

@@ -20,25 +20,16 @@ import com.erpdevelopment.vbvm.views.EmptyView;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.views.LoadingView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 /**
  * Created by thomascarey on 27/08/17.
  */
 
 public abstract class AbstractListFragment extends Fragment {
 
-    protected Unbinder unbinder;
-
-    @BindView(R.id.recycler_view)
     protected RecyclerView recyclerView;
 
-    @BindView(R.id.loading_view)
     protected LoadingView loadingView;
 
-    @BindView(R.id.empty_view)
     protected EmptyView emptyView;
 
     private Handler mainHandler;
@@ -89,7 +80,10 @@ public abstract class AbstractListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(layoutId(), container, false);
-        unbinder = ButterKnife.bind(this, view);
+        recyclerView = view.findViewById(R.id.recycler_view);
+        loadingView = view.findViewById(R.id.loading_view);
+        emptyView = view.findViewById(R.id.empty_view);
+
         mainHandler = new Handler(getContext().getMainLooper());
 
         configureRecyclerView(recyclerView);
@@ -104,14 +98,6 @@ public abstract class AbstractListFragment extends Fragment {
         };
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(modelUpdatedReceiver, new IntentFilter(tableName()));
         return view;
-    }
-
-    @Override public void onDestroyView() {
-        super.onDestroyView();
-
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
     }
 
     @Override

@@ -20,9 +20,6 @@ import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.model.GroupStudy;
 import com.erpdevelopment.vbvm.model.Video;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by thomascarey on 11/09/17.
  */
@@ -132,18 +129,15 @@ public class GroupStudyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.image_view)
         ImageView imageView;
-
-        @BindView(R.id.title_view)
         TextView titleView;
-
-        @BindView(R.id.download_button)
         Button downloadButton;
 
         HeaderViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            imageView = itemView.findViewById(R.id.image_view);
+            titleView = itemView.findViewById(R.id.title_view);
+            downloadButton = itemView.findViewById(R.id.download_button);
         }
     }
 }

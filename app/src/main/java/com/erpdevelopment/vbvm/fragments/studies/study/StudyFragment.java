@@ -34,9 +34,6 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.model.Lesson;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link StudyFragment#newInstance} factory method to
@@ -59,14 +56,9 @@ public class StudyFragment extends AbstractFragment {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-    @BindView(R.id.container)
-    ViewPager mViewPager;
-
-    @BindView(R.id.tabs)
-    TabLayout tabLayout;
+    private Toolbar toolbar;
+    private ViewPager mViewPager;
+    private TabLayout tabLayout;
 
     @Override
     public boolean shouldBitmapUI() {
@@ -99,7 +91,9 @@ public class StudyFragment extends AbstractFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_study, container, false);
-        unbinder = ButterKnife.bind(this, v);
+        toolbar = v.findViewById(R.id.toolbar);
+        mViewPager = v.findViewById(R.id.container);
+        tabLayout = v.findViewById(R.id.tabs);
 
         final Handler mainHandler = new Handler(getContext().getMainLooper());
 

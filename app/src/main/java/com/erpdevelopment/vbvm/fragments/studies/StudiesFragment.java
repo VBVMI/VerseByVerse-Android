@@ -35,7 +35,6 @@ import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 import com.erpdevelopment.vbvm.fragments.studies.study.StudyKey;
 import com.erpdevelopment.vbvm.model.Category;
-import com.erpdevelopment.vbvm.model.Category$$Parcelable;
 import com.erpdevelopment.vbvm.model.Category_Table;
 import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.model.Study_Table;
@@ -75,17 +74,8 @@ public class StudiesFragment extends AbstractFragment {
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-//    @BindView(R.id.studiesContainer)
-//    ViewPager mViewPager;
-//
-//    @BindView(R.id.studiesToolar)
-//    Toolbar toolbar;
-//
-//    @BindView(R.id.studiesTabs)
-//    TabLayout tabLayout;
-//
-//    @BindView(R.id.loading_view)
-//    LoadingView loadingView;
+    private ViewPager mViewPager;
+    private LoadingView loadingView;
 
     public StudiesFragment() {
         // Required empty public constructor
@@ -137,6 +127,11 @@ public class StudiesFragment extends AbstractFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_studies_root, container, false);
+        Toolbar toolbar = view.findViewById(R.id.studiesToolar);
+        TabLayout tabLayout = view.findViewById(R.id.studiesTabs);
+        loadingView = view.findViewById(R.id.loading_view);
+        mViewPager = view.findViewById(R.id.studiesContainer);
+
 
         toolbar.setTitle(R.string.title_studies);
 

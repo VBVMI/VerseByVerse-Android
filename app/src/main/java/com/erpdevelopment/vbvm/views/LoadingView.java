@@ -9,8 +9,6 @@ import android.widget.ProgressBar;
 
 import com.erpdevelopment.vbvm.R;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by thomascarey on 26/08/17.
  */
@@ -25,7 +23,7 @@ public class LoadingView extends ConstraintLayout {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.view_loading, this, true);
 
-        progressBar = ButterKnife.findById(view, R.id.loading_progress);
+        progressBar = view.findViewById(R.id.loading_progress);
     }
 
     @Override

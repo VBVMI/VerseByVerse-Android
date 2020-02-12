@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 import com.erpdevelopment.vbvm.R;
 
-import butterknife.ButterKnife;
-
 /**
  * Created by thomascarey on 2/09/17.
  */
@@ -25,6 +23,9 @@ public class EmptyView extends CoordinatorLayout {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.view_empty, this, true);
 
-        textView = ButterKnife.findById(view, R.id.empty_text_view);
+        if (view != null) {
+            textView = view.findViewById(R.id.empty_text_view);
+        }
+
     }
 }

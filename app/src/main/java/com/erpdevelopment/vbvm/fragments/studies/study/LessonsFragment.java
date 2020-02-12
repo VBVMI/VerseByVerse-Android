@@ -39,9 +39,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -59,11 +56,8 @@ public class LessonsFragment extends AbstractFragment {
     private String studyId;
     private boolean showCompleted;
 
-    @BindView(R.id.list)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.loading_view)
-    LoadingView loadingView;
+    private RecyclerView recyclerView;
+    private LoadingView loadingView;
 
     private SugarLoader<List<Lesson>> mLoader;
 
@@ -112,8 +106,8 @@ public class LessonsFragment extends AbstractFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
-
-        unbinder = ButterKnife.bind(this, view);
+        recyclerView = view.findViewById(R.id.list);
+        loadingView = view.findViewById(R.id.loading_view);
 
         toggleLoading();
 

@@ -23,9 +23,6 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 import com.erpdevelopment.vbvm.model.Study_Table;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link StudyInfoFragment#newInstance} factory method to
@@ -36,11 +33,8 @@ public class StudyInfoFragment extends AbstractFragment {
 
     private Study study;
 
-    @BindView(R.id.webView)
-    AppCompatTextView webView;
-
-    @BindView(R.id.imageView)
-    ImageView imageView;
+    private AppCompatTextView webView;
+    private ImageView imageView;
 
     public StudyInfoFragment() {
         // Required empty public constructor
@@ -75,8 +69,8 @@ public class StudyInfoFragment extends AbstractFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_study_info, container, false);
-        unbinder = ButterKnife.bind(this, view);
-
+        webView = view.findViewById(R.id.webView);
+        imageView = view.findViewById(R.id.imageView);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displayMetrics);

@@ -30,9 +30,6 @@ import com.vimeo.networking.model.error.VimeoError;
 
 import org.algi.sugarloader.SugarLoader;
 
-import butterknife.BindView;
-
-
 /**
  * Created by thomascarey on 11/09/17.
  */
@@ -43,7 +40,6 @@ public class GroupStudyFragment extends AbstractListFragment implements VideoSel
 
     private String groupStudyId;
 
-    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     private GroupStudyRecyclerAdapter adapter;
@@ -97,6 +93,7 @@ public class GroupStudyFragment extends AbstractListFragment implements VideoSel
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        toolbar = view.findViewById(R.id.toolbar);
         MainActivity.get(getContext()).setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         MainActivity.get(getContext()).getSupportActionBar().setTitle("");

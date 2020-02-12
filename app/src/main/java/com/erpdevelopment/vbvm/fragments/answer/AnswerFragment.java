@@ -21,9 +21,6 @@ import org.algi.sugarloader.SugarLoader;
 
 import java.io.UnsupportedEncodingException;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by thomascarey on 2/09/17.
  */
@@ -42,11 +39,8 @@ public class AnswerFragment extends AbstractFragment {
                 reloadContent();
             });
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-    @BindView(R.id.webView)
-    WebView webView;
+    private Toolbar toolbar;
+    private WebView webView;
 
     public AnswerFragment() {
 
@@ -56,8 +50,8 @@ public class AnswerFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_article, container, false);
-        unbinder = ButterKnife.bind(this, view);
-
+        toolbar = view.findViewById(R.id.toolbar);
+        webView = view.findViewById(R.id.webView);
         toolbar.setTitle("");
 
         reloadContent();
