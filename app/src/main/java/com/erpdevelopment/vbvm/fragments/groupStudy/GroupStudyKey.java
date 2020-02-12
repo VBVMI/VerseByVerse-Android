@@ -1,6 +1,6 @@
 package com.erpdevelopment.vbvm.fragments.groupStudy;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.erpdevelopment.vbvm.application.Key;
 import com.erpdevelopment.vbvm.application.MainActivity;

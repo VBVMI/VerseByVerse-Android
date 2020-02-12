@@ -2,7 +2,7 @@ package com.erpdevelopment.vbvm.application;
 
 import android.content.Context;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.erpdevelopment.vbvm.util.ServiceLocator;
 import com.zhuinden.simplestack.BackstackDelegate;

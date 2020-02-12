@@ -3,10 +3,8 @@ package com.erpdevelopment.vbvm.fragments.shared;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.view.View;
-
-import butterknife.Unbinder;
 
 /**
  * Created by thomascarey on 12/07/17.
@@ -14,7 +12,6 @@ import butterknife.Unbinder;
 
 public abstract class AbstractFragment extends Fragment {
 
-    protected Unbinder unbinder;
     private Bitmap b = null;
 
     public boolean shouldBitmapUI() {
@@ -29,13 +26,9 @@ public abstract class AbstractFragment extends Fragment {
         }
 
         super.onDestroyView();
-
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
     }
 
-    public static Bitmap loadBitmapFromView(View v) {
+    private static Bitmap loadBitmapFromView(View v) {
         if (v.getWidth() <= 0 || v.getHeight() <= 0) {
             return null;
         }

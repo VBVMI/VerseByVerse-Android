@@ -1,9 +1,9 @@
 package com.erpdevelopment.vbvm.fragments.topics.answers;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.answer.AnswerKey;
@@ -18,13 +18,9 @@ import com.erpdevelopment.vbvm.model.Answer_Topic_Table;
 import com.erpdevelopment.vbvm.model.Topic;
 import com.erpdevelopment.vbvm.model.Topic_Table;
 import com.erpdevelopment.vbvm.util.ServiceLocator;
-import com.raizlabs.android.dbflow.sql.language.BaseModelQueriable;
-import com.raizlabs.android.dbflow.sql.language.BaseTransformable;
-import com.raizlabs.android.dbflow.sql.language.From;
 import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.NameAlias;
 import com.raizlabs.android.dbflow.sql.language.OperatorGroup;
-import com.raizlabs.android.dbflow.sql.language.SQLOperator;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
 import com.raizlabs.android.dbflow.structure.database.FlowCursor;

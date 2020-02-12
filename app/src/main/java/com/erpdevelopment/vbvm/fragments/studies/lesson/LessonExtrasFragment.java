@@ -7,25 +7,23 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SnapHelper;
+import androidx.annotation.NonNull;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Toast;
 
 import com.erpdevelopment.vbvm.model.Study;
-import com.erpdevelopment.vbvm.model.Video;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import com.erpdevelopment.vbvm.FileHelpers;
@@ -36,10 +34,6 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.model.Lesson;
 import com.erpdevelopment.vbvm.model.Lesson_Table;
 import com.erpdevelopment.vbvm.model.Study_Table;
-import com.vimeo.networking.VimeoClient;
-import com.vimeo.networking.callbacks.ModelCallback;
-import com.vimeo.networking.model.VideoFile;
-import com.vimeo.networking.model.error.VimeoError;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,7 +42,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.fabric.sdk.android.Fabric;
 
 /**
  * A simple {@link Fragment} subclass.

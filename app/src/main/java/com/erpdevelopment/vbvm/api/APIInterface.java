@@ -1,6 +1,6 @@
 package com.erpdevelopment.vbvm.api;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.erpdevelopment.vbvm.model.Category;
 import com.erpdevelopment.vbvm.model.pojo.Answers;

@@ -4,17 +4,16 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
@@ -28,11 +27,8 @@ import com.vimeo.networking.VimeoClient;
 import com.vimeo.networking.callbacks.ModelCallback;
 import com.vimeo.networking.model.VideoFile;
 import com.vimeo.networking.model.error.VimeoError;
-import com.vimeo.networking.model.playback.Play;
 
 import org.algi.sugarloader.SugarLoader;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 

@@ -1,12 +1,10 @@
 package com.erpdevelopment.vbvm.api;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.erpdevelopment.vbvm.BuildConfig;
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.database.AppDatabase;
 import com.erpdevelopment.vbvm.model.Answer;
@@ -16,13 +14,11 @@ import com.erpdevelopment.vbvm.model.Article_Topic;
 import com.erpdevelopment.vbvm.model.Channel;
 import com.erpdevelopment.vbvm.model.GroupStudy;
 import com.erpdevelopment.vbvm.model.Study;
-import com.erpdevelopment.vbvm.model.Study_Table;
 import com.erpdevelopment.vbvm.model.Study_Topic;
 import com.erpdevelopment.vbvm.model.Video;
 import com.erpdevelopment.vbvm.model.Video_Table;
 import com.raizlabs.android.dbflow.config.DatabaseDefinition;
 import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;

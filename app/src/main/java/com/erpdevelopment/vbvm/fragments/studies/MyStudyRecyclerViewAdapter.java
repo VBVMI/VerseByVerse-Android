@@ -1,7 +1,7 @@
 package com.erpdevelopment.vbvm.fragments.studies;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;

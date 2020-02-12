@@ -59,7 +59,7 @@
       style="@style/AppTheme.Text.Summary"
       tools:text="This is some supplementary text to help describe the contents of the article. It might be about a paragraph long though so make sure that it fits."/>
 
-  <android.support.v7.widget.RecyclerView
+  <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/tag_recycler_view"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"

@@ -1,6 +1,6 @@
 package com.erpdevelopment.vbvm.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.erpdevelopment.vbvm.database.AppDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;

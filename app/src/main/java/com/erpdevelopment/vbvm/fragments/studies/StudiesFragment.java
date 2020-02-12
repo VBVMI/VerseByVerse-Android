@@ -6,17 +6,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,14 +26,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.raizlabs.android.dbflow.runtime.OnTableChangedListener;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.zhuinden.simplestack.BackstackDelegate;
 
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.api.APIManager;
-import com.erpdevelopment.vbvm.api.DatabaseManager;
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 import com.erpdevelopment.vbvm.fragments.studies.study.StudyKey;
@@ -48,9 +47,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * A simple {@link Fragment} subclass.
  * to handle interaction events.
@@ -61,12 +57,12 @@ public class StudiesFragment extends AbstractFragment {
 
     private static final String TAG = "StudiesFragment";
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -79,17 +75,17 @@ public class StudiesFragment extends AbstractFragment {
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    @BindView(R.id.studiesContainer)
-    ViewPager mViewPager;
-
-    @BindView(R.id.studiesToolar)
-    Toolbar toolbar;
-
-    @BindView(R.id.studiesTabs)
-    TabLayout tabLayout;
-
-    @BindView(R.id.loading_view)
-    LoadingView loadingView;
+//    @BindView(R.id.studiesContainer)
+//    ViewPager mViewPager;
+//
+//    @BindView(R.id.studiesToolar)
+//    Toolbar toolbar;
+//
+//    @BindView(R.id.studiesTabs)
+//    TabLayout tabLayout;
+//
+//    @BindView(R.id.loading_view)
+//    LoadingView loadingView;
 
     public StudiesFragment() {
         // Required empty public constructor
@@ -141,7 +137,6 @@ public class StudiesFragment extends AbstractFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_studies_root, container, false);
-        unbinder = ButterKnife.bind(this, view);
 
         toolbar.setTitle(R.string.title_studies);
 

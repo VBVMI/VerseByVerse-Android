@@ -1,14 +1,9 @@
 package com.erpdevelopment.vbvm;
 
-import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 
 import com.erpdevelopment.vbvm.database.AppDatabase;
 import com.raizlabs.android.dbflow.config.DatabaseConfig;
@@ -21,7 +16,7 @@ import com.vimeo.networking.Configuration;
 import com.vimeo.networking.Vimeo;
 import com.vimeo.networking.VimeoClient;
 
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 
 /**
  * Created by thomascarey on 28/06/17.

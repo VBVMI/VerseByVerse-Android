@@ -1,11 +1,10 @@
 package com.erpdevelopment.vbvm.fragments.media.videos;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.groupStudy.VideoKey;
-import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 import com.erpdevelopment.vbvm.fragments.topics.AbstractListFragment;
 import com.erpdevelopment.vbvm.model.Channel;
 import com.erpdevelopment.vbvm.util.ServiceLocator;
