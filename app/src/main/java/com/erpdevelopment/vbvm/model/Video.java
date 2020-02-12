@@ -10,14 +10,12 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import org.parceler.Parcel;
 
 /**
  * Created by thomascarey on 9/09/17.
  */
 
 @Table(database = AppDatabase.class)
-@Parcel(analyze = {Video.class})
 public class Video extends BaseModel implements Mergable<Video> {
 
     @PrimaryKey

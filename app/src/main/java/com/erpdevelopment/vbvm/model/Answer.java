@@ -10,8 +10,6 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import org.parceler.Parcel;
-
 import java.util.List;
 
 /**
@@ -20,7 +18,6 @@ import java.util.List;
 
 @Table(database = AppDatabase.class)
 @ManyToMany(referencedTable = Topic.class)
-@Parcel(analyze = {Answer.class})
 public class Answer extends BaseModel implements Mergable<Answer> {
     @PrimaryKey
     @SerializedName("ID")

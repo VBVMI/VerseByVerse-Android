@@ -8,7 +8,6 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import org.parceler.Parcel;
 import com.erpdevelopment.vbvm.api.Mergable;
 
 /**
@@ -16,7 +15,6 @@ import com.erpdevelopment.vbvm.api.Mergable;
  */
 
 @Table(database = AppDatabase.class)
-@Parcel(analyze = {Category.class})
 public class Category extends BaseModel implements Mergable<Category> {
 
     @Column

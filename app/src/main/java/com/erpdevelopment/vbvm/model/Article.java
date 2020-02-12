@@ -11,7 +11,6 @@ import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import org.parceler.Parcel;
 import com.erpdevelopment.vbvm.api.Mergable;
 
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.List;
 
 @Table(database = AppDatabase.class)
 @ManyToMany(referencedTable = Topic.class)
-@Parcel(analyze = {Article.class})
 public class Article extends BaseModel implements Mergable<Article> {
 
     @PrimaryKey

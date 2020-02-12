@@ -11,8 +11,6 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import org.parceler.Parcel;
-
 import java.util.List;
 
 /**
@@ -20,7 +18,6 @@ import java.util.List;
  */
 
 @Table(database = AppDatabase.class)
-@Parcel(analyze = {Channel.class})
 public class Channel extends BaseModel implements Mergable<Channel> {
 
     @PrimaryKey
