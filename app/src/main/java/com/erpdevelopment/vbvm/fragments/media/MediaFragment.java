@@ -25,24 +25,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by thomascarey on 9/09/17.
  */
 
 public class MediaFragment extends AbstractFragment {
     private static final String TAG = "MediaFragment";
-
-    @BindView(R.id.studiesContainer)
-    ViewPager mViewPager;
-
-    @BindView(R.id.studiesToolar)
-    Toolbar toolbar;
-
-    @BindView(R.id.studiesTabs)
-    TabLayout tabLayout;
 
     private static Date lastRequestDate = null;
 
@@ -51,16 +39,17 @@ public class MediaFragment extends AbstractFragment {
     }
 
     public static MediaFragment newInstance() {
-        MediaFragment fragment = new MediaFragment();
-
-        return fragment;
+        return new MediaFragment();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_media, container, false);
-        unbinder = ButterKnife.bind(this, view);
+
+        ViewPager mViewPager = view.findViewById(R.id.studiesContainer);
+        Toolbar toolbar = view.findViewById(R.id.studiesToolar);
+        TabLayout tabLayout = view.findViewById(R.id.studiesTabs);
 
         MainActivity.get(getContext()).setSupportActionBar(toolbar);
         MainActivity.get(getContext()).getSupportActionBar().setTitle(R.string.title_media);
@@ -92,7 +81,7 @@ public class MediaFragment extends AbstractFragment {
 
         private List<Media> mediaList = Arrays.asList(Media.STUDIES, Media.VIDEOS);
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 

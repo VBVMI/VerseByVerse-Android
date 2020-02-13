@@ -22,9 +22,6 @@ import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by thomascarey on 26/09/17.
  */
@@ -40,19 +37,18 @@ public class MoreFragment extends AbstractFragment {
         return new MoreFragment();
     }
 
-    @BindView(R.id.studiesToolar)
-    Toolbar toolbar;
-
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    private Toolbar toolbar;
+    private RecyclerView recyclerView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_more, container, false);
-        unbinder = ButterKnife.bind(this, view);
         MainActivity.get(getContext()).setSupportActionBar(toolbar);
         MainActivity.get(getContext()).getSupportActionBar().setTitle(R.string.title_more);
+
+        toolbar = view.findViewById(R.id.studiesToolar);
+        recyclerView = view.findViewById(R.id.recycler_view);
 
         List<Item> items = new ArrayList<>();
         items.add(new Item("About", R.string.fa_info, "https://www.versebyverseministry.org/about"));
@@ -76,7 +72,7 @@ public class MoreFragment extends AbstractFragment {
     static class Item {
         public String name;
         @StringRes
-        public int icon;
+        int icon;
         public String link;
 
         Item(String name, int icon, String link) {
@@ -125,18 +121,15 @@ public class MoreFragment extends AbstractFragment {
 
     class MoreItemViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.icon_view)
         TextView iconView;
-
-        @BindView(R.id.name_view)
         TextView nameView;
-
-        @BindView(R.id.background)
         View background;
 
-        public MoreItemViewHolder(View itemView) {
+        MoreItemViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            iconView = itemView.findViewById(R.id.icon_view);
+            nameView = itemView.findViewById(R.id.name_view);
+            background = itemView.findViewById(R.id.background);
         }
     }
 

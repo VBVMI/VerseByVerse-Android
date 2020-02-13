@@ -1,5 +1,6 @@
 package com.erpdevelopment.vbvm.fragments.topics;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,9 +10,6 @@ import android.view.ViewGroup;
 import com.erpdevelopment.vbvm.R;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by thomascarey on 28/08/17.
@@ -32,6 +30,7 @@ public class QueryTopicRecyclerViewAdapter extends RecyclerView.Adapter<QueryTop
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public QueryTopicViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tag, parent, false);
@@ -39,7 +38,7 @@ public class QueryTopicRecyclerViewAdapter extends RecyclerView.Adapter<QueryTop
     }
 
     @Override
-    public void onBindViewHolder(QueryTopicViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull QueryTopicViewHolder holder, int position) {
         if (topics == null) {
             return;
         }
@@ -62,14 +61,13 @@ public class QueryTopicRecyclerViewAdapter extends RecyclerView.Adapter<QueryTop
         return 0;
     }
 
-    public class QueryTopicViewHolder extends RecyclerView.ViewHolder {
+    class QueryTopicViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tag_text)
         AppCompatTextView tagTextView;
 
-        public QueryTopicViewHolder(View itemView) {
+        QueryTopicViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            tagTextView = itemView.findViewById(R.id.tag_text);
         }
     }
 }

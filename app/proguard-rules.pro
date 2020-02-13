@@ -84,10 +84,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keepclassmembers class android.support.design.internal.BottomNavigationMenuView {
-    boolean mShiftingMode;
-}
-
 #############
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule

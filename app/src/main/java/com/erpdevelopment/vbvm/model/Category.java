@@ -10,11 +10,14 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import com.erpdevelopment.vbvm.api.Mergable;
 
+import org.parceler.Parcel;
+
 /**
  * Created by thomascarey on 2/07/17.
  */
 
 @Table(database = AppDatabase.class)
+@Parcel(analyze = {Category.class})
 public class Category extends BaseModel implements Mergable<Category> {
 
     @Column

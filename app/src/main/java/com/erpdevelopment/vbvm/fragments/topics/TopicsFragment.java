@@ -34,9 +34,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link TopicsFragment#newInstance} factory method to
@@ -49,16 +46,11 @@ public class TopicsFragment extends AbstractFragment implements SearchView.OnQue
     private String topicId;
     private Topic topic;
 
-    @BindView(R.id.studiesContainer)
-    ViewPager mViewPager;
+    private ViewPager mViewPager;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
 
-    @BindView(R.id.studiesToolar)
-    Toolbar toolbar;
-
-    @BindView(R.id.studiesTabs)
-    TabLayout tabLayout;
-
-    SearchView searchView;
+    private SearchView searchView;
 
     private SugarLoader<Topic> mLoader = new SugarLoader<Topic>(TAG)
             .background(() -> SQLite.select().from(Topic.class).where(Topic_Table.id.eq(topicId)).querySingle())
@@ -102,7 +94,9 @@ public class TopicsFragment extends AbstractFragment implements SearchView.OnQue
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_topics, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        mViewPager = view.findViewById(R.id.studiesContainer);
+        toolbar = view.findViewById(R.id.studiesToolar);
+        tabLayout = view.findViewById(R.id.studiesTabs);
 
         MainActivity.get(getContext()).setSupportActionBar(toolbar);
         if (topicId != null) {

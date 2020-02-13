@@ -1,6 +1,8 @@
 package com.erpdevelopment.vbvm.fragments.studies;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.util.DisplayMetrics;
@@ -17,9 +19,6 @@ import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.views.SquareImageView;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by thomascarey on 23/07/17.
@@ -41,12 +40,13 @@ public class MyStudyRecyclerViewAdapter extends RecyclerView.Adapter<MyStudyRecy
         this.notifyDataSetChanged();
     }
 
-    public MyStudyRecyclerViewAdapter(List<Study> studies, int numberOfColumns, OnStudyInteractionListener listener) {
+    MyStudyRecyclerViewAdapter(List<Study> studies, int numberOfColumns, OnStudyInteractionListener listener) {
         this.studies = studies;
         this.listener = listener;
         this.numberOfColumns = numberOfColumns;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bible_study, parent, false);
@@ -88,23 +88,20 @@ public class MyStudyRecyclerViewAdapter extends RecyclerView.Adapter<MyStudyRecy
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public View mView;
+        View mView;
 
-        @BindView(R.id.textView)
-        public TextView textView;
+        TextView textView;
+        private SquareImageView imageView;
+        View topImageView;
 
-        @BindView(R.id.bible_study_image_view)
-        public SquareImageView imageView;
-
-        @BindView(R.id.topImageView)
-        public View topImageView;
-
-        public Study study;
+        private Study study;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            ButterKnife.bind(this, itemView);
+            textView = itemView.findViewById(R.id.textView);
+            imageView = itemView.findViewById(R.id.bible_study_image_view);
+            topImageView = itemView.findViewById(R.id.topImageView);
         }
     }
 }

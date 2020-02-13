@@ -20,9 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by thomascarey on 10/09/17.
  */
@@ -80,24 +77,19 @@ public class GroupStudiesRecyclerAdapter extends RecyclerView.Adapter<GroupStudi
 
     class GroupStudyViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.background)
         View background;
-
-        @BindView(R.id.title_view)
         TextView titleView;
-
-        @BindView(R.id.poster_image_view)
         ImageView imageView;
-
-        @BindView(R.id.count_text_view)
         TextView countTextView;
-
-        @BindView(R.id.date_view)
         TextView dateView;
 
-        public GroupStudyViewHolder(View itemView) {
+        GroupStudyViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            background = itemView.findViewById(R.id.background);
+            titleView = itemView.findViewById(R.id.title_view);
+            imageView = itemView.findViewById(R.id.poster_image_view);
+            countTextView = itemView.findViewById(R.id.count_text_view);
+            dateView = itemView.findViewById(R.id.date_view);
         }
     }
 

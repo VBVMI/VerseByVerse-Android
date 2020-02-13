@@ -8,6 +8,8 @@ import com.google.auto.value.AutoValue;
 import com.erpdevelopment.vbvm.application.Key;
 import com.erpdevelopment.vbvm.application.MainActivity;
 
+import org.parceler.Parcel;
+
 /**
  * Created by thomascarey on 12/07/17.
  */

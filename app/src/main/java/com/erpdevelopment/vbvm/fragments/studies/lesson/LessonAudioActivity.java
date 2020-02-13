@@ -37,9 +37,6 @@ import com.erpdevelopment.vbvm.model.Lesson;
 import java.util.Formatter;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class LessonAudioActivity extends AppCompatActivity implements MediaController.MediaPlayerControl {
 
     private static String TAG = "LessonAudioActivity";
@@ -61,31 +58,14 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
     private boolean startAudioOnBind = false;
     private WindowManager mWindowManager;
 
-    @BindView(R.id.imageView)
     ImageView imageView;
-
-    @BindView(R.id.time_current)
     TextView timeCurrentTextView;
-
-    @BindView(R.id.timeRemaining)
     TextView timeRemainingTextView;
-
-    @BindView(R.id.mediacontroller_progress)
     SeekBar seekBar;
-
-    @BindView(R.id.titleView)
     TextView titleView;
-
-    @BindView(R.id.descriptionView)
     TextView descriptionView;
-
-    @BindView(R.id.rew)
     ImageButton jumpBackButton;
-
-    @BindView(R.id.pause)
     ImageButton playPauseButton;
-
-    @BindView(R.id.ffwd)
     ImageButton jumpForwardButton;
 
     @Override
@@ -102,7 +82,15 @@ public class LessonAudioActivity extends AppCompatActivity implements MediaContr
         lesson = SQLite.select().from(Lesson.class).where(Lesson_Table.id.eq(lessonId)).querySingle();
         study = SQLite.select().from(Study.class).where(Study_Table.id.eq(lesson.studyId)).querySingle();
 
-        ButterKnife.bind(this);
+        imageView = findViewById(R.id.imageView);
+        timeCurrentTextView = findViewById(R.id.time_current);
+        timeRemainingTextView = findViewById(R.id.timeRemaining);
+        seekBar = findViewById(R.id.mediacontroller_progress);
+        titleView = findViewById(R.id.titleView);
+        descriptionView = findViewById(R.id.descriptionView);
+        jumpBackButton = findViewById(R.id.rew);
+        playPauseButton = findViewById(R.id.pause);
+        jumpForwardButton = findViewById(R.id.ffwd);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         mWindowManager = (WindowManager)this.getSystemService(Context.WINDOW_SERVICE);

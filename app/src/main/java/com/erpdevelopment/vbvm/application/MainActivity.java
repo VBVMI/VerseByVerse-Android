@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 
 import com.crashlytics.android.Crashlytics;
-import com.erpdevelopment.vbvm.BottomNavigationViewHelper;
 import com.erpdevelopment.vbvm.FileHelpers;
 import com.erpdevelopment.vbvm.api.DatabaseManager;
 import com.erpdevelopment.vbvm.fragments.media.MediaKey;
@@ -50,8 +49,6 @@ import com.erpdevelopment.vbvm.model.Lesson;
 
 import java.io.File;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.MEDIA;
@@ -74,29 +71,13 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
     private boolean audioBound = false;
     private Intent playIntent;
 
-    @BindView(R.id.root)
     RelativeLayout root;
-
-    @BindView(R.id.coordinator_root)
     CoordinatorLayout coordinatorLayout;
-
-    @BindView(R.id.bottom_navigation)
     BottomNavigationView bottomNavigation;
-
-
-    @BindView(R.id.currently_playing_layout_background)
     RelativeLayout audioBarLayoutBackground;
-
-    @BindView(R.id.currently_playing_layout)
     RelativeLayout audioBarLayout;
-
-    @BindView(R.id.audio_title)
     TextView audioTitle;
-
-    @BindView(R.id.audio_play_pause_button)
     ImageButton playPauseButton;
-
-    @BindView(R.id.audio_progress_bar)
     ProgressBar audioProgressBar;
 
     Multistack multistack;
@@ -126,9 +107,17 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
         Fabric.with(this, new Crashlytics());
 
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
 
-        BottomNavigationViewHelper.disableShiftMode(bottomNavigation);
+        audioProgressBar = findViewById(R.id.audio_progress_bar);
+        playPauseButton = findViewById(R.id.audio_play_pause_button);
+        root = findViewById(R.id.root);
+        coordinatorLayout = findViewById(R.id.coordinator_root);
+        bottomNavigation = findViewById(R.id.bottom_navigation);
+        audioBarLayout = findViewById(R.id.currently_playing_layout);
+        audioBarLayoutBackground = findViewById(R.id.currently_playing_layout_background);
+
+        audioTitle = findViewById(R.id.audio_title);
+
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

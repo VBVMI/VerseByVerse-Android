@@ -22,6 +22,8 @@
         android:layout_gravity="bottom"
         android:background="?android:attr/windowBackground"
         android:theme="@style/AppTheme.BottomBar"
+        app:labelVisibilityMode="labeled"
+        app:itemHorizontalTranslationEnabled="false"
         app:menu="@menu/navigation"/>
 
     <RelativeLayout

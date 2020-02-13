@@ -39,10 +39,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link LessonExtrasFragment#newInstance} factory method to
@@ -54,15 +50,11 @@ public class LessonExtrasFragment extends DialogFragment {
     private static String ARG_LESSON_ID = "ARG_LESSON_ID";
     private static String ARG_STUDY_ID = "ARG_STUDY_ID";
 
-    private String studyId;
     private String lessonId;
 
     private Lesson lesson;
     private Study study;
 
-    private Unbinder unbinder;
-
-    @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
 
 
@@ -92,7 +84,7 @@ public class LessonExtrasFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            studyId = getArguments().getString(ARG_STUDY_ID);
+            String studyId = getArguments().getString(ARG_STUDY_ID);
             lessonId = getArguments().getString(ARG_LESSON_ID);
 
             study = SQLite.select().from(Study.class).where(Study_Table.id.eq(studyId)).querySingle();
@@ -115,7 +107,7 @@ public class LessonExtrasFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_lesson_extras, container, false);
 
-        unbinder = ButterKnife.bind(this, view);
+        recyclerView = view.findViewById(R.id.recycler_view);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
@@ -334,11 +326,4 @@ public class LessonExtrasFragment extends DialogFragment {
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
-        super.onDestroyView();
-    }
 }

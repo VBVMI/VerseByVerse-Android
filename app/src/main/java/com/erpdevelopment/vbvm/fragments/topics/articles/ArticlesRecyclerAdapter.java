@@ -1,5 +1,6 @@
 package com.erpdevelopment.vbvm.fragments.topics.articles;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
@@ -23,9 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by thomascarey on 27/08/17
@@ -51,6 +49,7 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
         this.topicSelectionListener = topicSelectionListener;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_article, parent, false);
@@ -100,26 +99,21 @@ public class ArticlesRecyclerAdapter extends RecyclerView.Adapter<ArticlesRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.title_view)
         TextView titleView;
-
-        @BindView(R.id.author_view)
         TextView authorView;
-
-        @BindView(R.id.date_view)
         TextView dateView;
-
-        @BindView(R.id.tag_recycler_view)
         RecyclerView tagRecyclerView;
-
-        @BindView(R.id.summaryTextView)
         TextView summaryTextView;
 
         QueryTopicRecyclerViewAdapter adapter;
 
         public ViewHolder(View itemView, TopicSelectionListener topicSelectionListener) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            titleView = itemView.findViewById(R.id.title_view);
+            authorView = itemView.findViewById(R.id.author_view);
+            dateView = itemView.findViewById(R.id.date_view);
+            tagRecyclerView = itemView.findViewById(R.id.tag_recycler_view);
+            summaryTextView = itemView.findViewById(R.id.summaryTextView);
 
             adapter = new QueryTopicRecyclerViewAdapter(topicSelectionListener);
             tagRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));

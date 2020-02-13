@@ -1,5 +1,6 @@
 package com.erpdevelopment.vbvm.fragments.media.videos;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by thomascarey on 23/09/17.
@@ -39,6 +37,7 @@ public class VideoSeriesRecylcerAdapter extends RecyclerView.Adapter<VideoSeries
         this.notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public VideoSeriesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_series, parent, false);
@@ -71,21 +70,17 @@ public class VideoSeriesRecylcerAdapter extends RecyclerView.Adapter<VideoSeries
 
     class VideoSeriesViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.background)
         View background;
-
-        @BindView(R.id.title_view)
         TextView titleView;
-
-        @BindView(R.id.count_text_view)
         TextView countTextView;
-
-        @BindView(R.id.date_view)
         TextView dateView;
 
-        public VideoSeriesViewHolder(View itemView) {
+        VideoSeriesViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            background = itemView.findViewById(R.id.background);
+            titleView = itemView.findViewById(R.id.title_view);
+            countTextView = itemView.findViewById(R.id.count_text_view);
+            dateView = itemView.findViewById(R.id.date_view);
         }
     }
 }

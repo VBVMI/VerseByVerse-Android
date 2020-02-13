@@ -2,6 +2,8 @@ package com.erpdevelopment.vbvm.fragments.studies.lesson;
 
 import android.content.Context;
 import android.graphics.Typeface;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,9 +23,6 @@ import com.erpdevelopment.vbvm.model.Lesson;
 
 import java.io.File;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Lesson} and makes a call to the
@@ -49,6 +48,7 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
         iconFont = FontManager.getTypeface(context, FontManager.FONTAWESOME);
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -126,31 +126,27 @@ public class LessonRecyclerViewAdapter extends RecyclerView.Adapter<LessonRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+        final View mView;
 
-        @BindView(R.id.id)
-        public TextView mIdView;
-
-        @BindView(R.id.content)
-        public TextView mContentView;
-
-        @BindView(R.id.audioFileImage)
-        public TextView audioFileImage;
-
-        @BindView(R.id.moreButton)
+        TextView mIdView;
+        TextView mContentView;
+        TextView audioFileImage;
         ImageButton moreButton;
-
-        @BindView(R.id.timeTextView)
         TextView timeTextView;
 
-        public Lesson mItem;
+        Lesson mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            ButterKnife.bind(this, view);
+            mIdView = view.findViewById(R.id.id);
+            mContentView = view.findViewById(R.id.content);
+            audioFileImage = view.findViewById(R.id.audioFileImage);
+            moreButton = view.findViewById(R.id.moreButton);
+            timeTextView = view.findViewById(R.id.timeTextView);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";

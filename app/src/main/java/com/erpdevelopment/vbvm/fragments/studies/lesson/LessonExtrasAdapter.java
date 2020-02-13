@@ -1,6 +1,8 @@
 package com.erpdevelopment.vbvm.fragments.studies.lesson;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -17,9 +19,6 @@ import com.erpdevelopment.vbvm.model.Lesson;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * Created by thomascarey on 16/08/17.
  */
@@ -28,19 +27,19 @@ import butterknife.ButterKnife;
 
 public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-    public static abstract class Row<U extends ViewHolder> {
+    static abstract class Row<U extends ViewHolder> {
         abstract ViewType getViewType();
 
         abstract void bindViewHolder(U holder);
     }
 
-    public static class HeaderRow extends LessonExtrasAdapter.Row<HeaderViewHolder> {
+    static class HeaderRow extends LessonExtrasAdapter.Row<HeaderViewHolder> {
         private Lesson lesson;
 
         private Study study;
         private Context context;
 
-        public HeaderRow(Lesson lesson, Study study, Context context) {
+        HeaderRow(Lesson lesson, Study study, Context context) {
             this.lesson = lesson;
             this.study = study;
             this.context = context;
@@ -66,7 +65,7 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
     }
 
-    public static class ActionRow extends LessonExtrasAdapter.Row<ActionViewHolder> {
+    static class ActionRow extends LessonExtrasAdapter.Row<ActionViewHolder> {
 
         public interface Binder {
             void bindViewHolder(ActionViewHolder holder);
@@ -74,7 +73,7 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         private Binder binder;
 
-        public ActionRow(Binder binder) {
+        ActionRow(Binder binder) {
             this.binder = binder;
         }
 
@@ -111,7 +110,7 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private List<Row> extrasRows;
 
-    public LessonExtrasAdapter(List<Row> rows) {
+    LessonExtrasAdapter(List<Row> rows) {
         extrasRows = rows;
     }
 
@@ -123,10 +122,12 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         ViewType type = ViewType.fromId(viewType);
+        assert type != null;
         switch (type) {
             case HEADER: {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_extras_header, parent, false);
@@ -142,7 +143,7 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Row r = extrasRows.get(position);
         r.bindViewHolder(holder);
     }
@@ -157,31 +158,27 @@ public class LessonExtrasAdapter extends RecyclerView.Adapter<ViewHolder> {
         return extrasRows.size();
     }
 
-    public class HeaderViewHolder extends ViewHolder {
+    class HeaderViewHolder extends ViewHolder {
 
-        @BindView(R.id.image_view)
         ImageView imageView;
-
-        @BindView(R.id.title_view)
         TextView titleView;
 
-        public HeaderViewHolder(View itemView) {
+        HeaderViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            imageView = itemView.findViewById(R.id.image_view);
+            titleView = itemView.findViewById(R.id.title_view);
         }
     }
 
-    public class ActionViewHolder extends ViewHolder {
+    class ActionViewHolder extends ViewHolder {
 
-        @BindView(R.id.title_view)
         TextView titleView;
-
-        @BindView(R.id.icon_view)
         TextView iconView;
 
-        public ActionViewHolder(View itemView) {
+        ActionViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            iconView = itemView.findViewById(R.id.icon_view);
+            titleView = itemView.findViewById(R.id.title_view);
         }
     }
 
