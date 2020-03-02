@@ -44,7 +44,9 @@ android {
                 includeCompileClasspath true
             }
         }
+
     }
+    configurations { implementation.exclude group: 'org.jetbrains', module: 'annotations' }
     buildTypes {
         release {
             minifyEnabled true
@@ -59,7 +61,7 @@ android {
 
 def getKeys() {
     def Properties props = new Properties()
-    props.load(new FileInputStream(new File('app/secrets.properties')))
+    props.load(new FileInputStream(new File('/Users/thomascarey/Projects/VBVMI/VerseByVerse-Android/app/secrets.properties')))
     return [FabricApiKey: props['FABRIC_API_KEY']]
 }
 
@@ -99,9 +101,9 @@ dependencies {
 
     implementation 'com.github.alexgianq:sugarloader:0.2'
 
-    api 'com.google.auto.value:auto-value-annotations:1.6.5'
-    annotationProcessor 'com.google.auto.value:auto-value:1.6.5'
-    compileOnly 'com.google.auto.value:auto-value:1.6.5'
+//    api 'com.google.auto.value:auto-value-annotations:1.6.5'
+//    annotationProcessor 'com.google.auto.value:auto-value:1.6.5'
+//    compileOnly 'com.google.auto.value:auto-value:1.6.5'
 
 //    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.7'
 //    implementation 'org.parceler:parceler-api:1.1.12'

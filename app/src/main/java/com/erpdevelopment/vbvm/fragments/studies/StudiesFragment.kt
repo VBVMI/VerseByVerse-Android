@@ -29,8 +29,11 @@ import com.erpdevelopment.vbvm.fragments.studies.study.StudyKey
 import com.erpdevelopment.vbvm.util.ServiceLocator
 import com.erpdevelopment.vbvm.views.LoadingView
 import com.google.android.material.tabs.TabLayout
-import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.zhuinden.simplestack.BackstackDelegate
+import org.versebyverseministry.models.Category
+import org.versebyverseministry.models.Study
+import org.versebyverseministry.models.Study_Table
+import org.versebyverseministry.models.`Category$$Parcelable`
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -60,8 +63,8 @@ class StudiesFragment : AbstractFragment() {
     }
 
     private fun configureCategoryPager() {
-        val categories = SQLite.select().from(org.versebyverseministry.models.Category::class.java).orderBy(Category_Table.order, true).queryList()
-        if (SQLite.selectCountOf().from(org.versebyverseministry.models.Study::class.java).count() > 0) {
+        val categories = Category.allCategories()
+        if (Study.countOf() > 0) {
             mSectionsPagerAdapter!!.setCategories(categories)
             mViewPager.visibility = View.VISIBLE
             loadingView.visibility = View.GONE
@@ -70,7 +73,7 @@ class StudiesFragment : AbstractFragment() {
     }
 
     private fun hasContent(): Boolean {
-        return if (SQLite.selectCountOf().from(org.versebyverseministry.models.Study::class.java).count() > 0 && SQLite.selectCountOf().from(org.versebyverseministry.models.Category::class.java).count() > 0) true else false
+        return Study.countOf() > 0 && Category.countOf() > 0
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

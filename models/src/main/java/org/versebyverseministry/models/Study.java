@@ -8,6 +8,7 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ManyToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.List;
@@ -147,5 +148,9 @@ public class Study extends BaseModel implements Mergable<Study> {
 
     public static String updated() {
         return "UPDATED-Study";
+    }
+
+    public static long countOf() {
+        return SQLite.selectCountOf().from(Study.class).count();
     }
 }

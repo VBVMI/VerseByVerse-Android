@@ -5,9 +5,12 @@ import com.google.gson.annotations.SerializedName;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.parceler.Parcel;
+
+import java.util.List;
 
 /**
  * Created by thomascarey on 2/07/17.
@@ -49,5 +52,13 @@ public class Category extends BaseModel implements Mergable<Category> {
 
     public static String updated() {
         return "UPDATED-Category";
+    }
+
+    public static List<Category> allCategories() {
+        return SQLite.select().from(Category.class).orderBy(Category_Table.order, true).queryList();
+    }
+
+    public static long countOf() {
+        return SQLite.selectCountOf().from(Category.class).count();
     }
 }
