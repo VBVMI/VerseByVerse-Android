@@ -42,9 +42,6 @@ public class DownloadService extends IntentService {
         if(output.exists()) {
             output.delete();
         }
-//
-//        InputStream stream = null;
-//        FileOutputStream fos = null;
 
         try {
             ;
