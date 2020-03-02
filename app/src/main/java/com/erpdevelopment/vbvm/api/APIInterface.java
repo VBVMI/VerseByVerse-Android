@@ -3,12 +3,12 @@ package com.erpdevelopment.vbvm.api;
 import androidx.annotation.NonNull;
 
 import com.erpdevelopment.vbvm.model.Category;
-import com.erpdevelopment.vbvm.model.pojo.Answers;
-import com.erpdevelopment.vbvm.model.pojo.Articles;
-import com.erpdevelopment.vbvm.model.pojo.Channels;
-import com.erpdevelopment.vbvm.model.pojo.GroupStudies;
-import com.erpdevelopment.vbvm.model.pojo.Lessons;
-import com.erpdevelopment.vbvm.model.pojo.Studies;
+import org.versebyverseministry.models.pojo.Answers;
+import org.versebyverseministry.models.pojo.Articles;
+import org.versebyverseministry.models.pojo.Channels;
+import org.versebyverseministry.models.pojo.GroupStudies;
+import org.versebyverseministry.models.pojo.Lessons;
+import org.versebyverseministry.models.pojo.Studies;
 
 import java.util.List;
 

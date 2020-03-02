@@ -3,7 +3,7 @@ package com.erpdevelopment.vbvm.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import com.erpdevelopment.vbvm.database.DBFlowExclusionStrategy;
+import org.versebyverseministry.models.database.DBFlowExclusionStrategy;
 
 import java.util.concurrent.TimeUnit;
 

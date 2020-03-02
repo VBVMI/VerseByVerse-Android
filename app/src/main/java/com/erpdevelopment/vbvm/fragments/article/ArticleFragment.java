@@ -2,7 +2,6 @@ package com.erpdevelopment.vbvm.fragments.article;
 
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.LayoutInflater;

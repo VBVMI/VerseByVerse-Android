@@ -6,8 +6,6 @@ import android.net.Uri;
 import com.erpdevelopment.vbvm.model.Lesson;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by thomascarey on 12/08/17.
