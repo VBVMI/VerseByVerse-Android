@@ -16,9 +16,9 @@ public abstract class StudyKey extends Key {
 
     abstract String studyId();
 
-//    public static StudyKey create(String studyId) {
-//        return new AutoValue_StudyKey(studyId);
-//    }
+    public static StudyKey create(String studyId) {
+        return new AutoValue_StudyKey(studyId);
+    }
 
     @Override
     public String stackIdentifier() {

@@ -14,9 +14,9 @@ public abstract class GroupStudyKey extends Key {
 
     abstract String groupStudyId();
 
-//    public static GroupStudyKey create(String groupStudyId) {
-//        return new AutoValue_GroupStudyKey(groupStudyId);
-//    }
+    public static GroupStudyKey create(String groupStudyId) {
+        return new AutoValue_GroupStudyKey(groupStudyId);
+    }
 
     @Override
     public String stackIdentifier() {

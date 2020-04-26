@@ -14,9 +14,9 @@ import com.google.auto.value.AutoValue;
 public abstract class AnswerKey extends Key {
     abstract String answerId();
 
-//    public static AnswerKey create(String answerId) {
-//        return new AutoValue_AnswerKey(answerId);
-//    }
+    public static AnswerKey create(String answerId) {
+        return new AutoValue_AnswerKey(answerId);
+    }
 
     @Override
     public String stackIdentifier() {

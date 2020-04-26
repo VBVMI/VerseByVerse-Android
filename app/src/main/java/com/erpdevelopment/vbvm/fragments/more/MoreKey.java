@@ -12,9 +12,9 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 abstract public class MoreKey  extends Key {
 
-//    public static MoreKey create() {
-//        return new AutoValue_MoreKey();
-//    }
+    public static MoreKey create() {
+        return new AutoValue_MoreKey();
+    }
 
     @Override
     public String stackIdentifier() {

@@ -225,9 +225,8 @@ class StudiesFragment : AbstractFragment() {
         private var categories: List<org.versebyverseministry.models.Category> = ArrayList()
 
         fun setCategories(categories: List<org.versebyverseministry.models.Category>?) {
-            var myCategories = categories
+            val myCategories = categories
             if (myCategories == null) {
-                myCategories = ArrayList()
                 notifyDataSetChanged()
                 return
             }
