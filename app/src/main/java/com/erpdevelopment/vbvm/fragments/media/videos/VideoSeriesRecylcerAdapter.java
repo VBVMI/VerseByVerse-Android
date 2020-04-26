@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
-import com.erpdevelopment.vbvm.model.Channel;
+import org.versebyverseministry.models.Channel;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

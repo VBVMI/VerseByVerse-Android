@@ -8,14 +8,14 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import android.util.Log;
 
-import com.erpdevelopment.vbvm.model.Study;
+import org.versebyverseministry.models.Study;
 import org.versebyverseministry.models.pojo.Answers;
 import org.versebyverseministry.models.pojo.Channels;
 import org.versebyverseministry.models.pojo.GroupStudies;
 import org.versebyverseministry.models.pojo.Lessons;
 import org.versebyverseministry.models.pojo.Studies;
-import com.erpdevelopment.vbvm.model.Category;
-import com.erpdevelopment.vbvm.model.Lesson;
+import org.versebyverseministry.models.Category;
+import org.versebyverseministry.models.Lesson;
 import org.versebyverseministry.models.pojo.Articles;
 
 import java.util.List;

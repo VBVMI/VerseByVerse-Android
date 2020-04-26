@@ -16,9 +16,9 @@ public abstract class ArticleKey extends Key {
 
     abstract String articleId();
 
-    public static ArticleKey create(String articleId) {
-        return new AutoValue_ArticleKey(articleId);
-    }
+//    public static ArticleKey create(String articleId) {
+//        return new AutoValue_ArticleKey(articleId);
+//    }
 
     @Override
     public String stackIdentifier() {

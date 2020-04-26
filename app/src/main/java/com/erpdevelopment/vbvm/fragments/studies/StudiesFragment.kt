@@ -29,6 +29,7 @@ import com.erpdevelopment.vbvm.fragments.studies.study.StudyKey
 import com.erpdevelopment.vbvm.util.ServiceLocator
 import com.erpdevelopment.vbvm.views.LoadingView
 import com.google.android.material.tabs.TabLayout
+import com.raizlabs.android.dbflow.sql.language.SQLite
 import com.zhuinden.simplestack.BackstackDelegate
 import org.versebyverseministry.models.Category
 import org.versebyverseministry.models.Study
@@ -144,8 +145,9 @@ class StudiesFragment : AbstractFragment() {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                                   savedInstanceState: Bundle?): View? {
             val rootView = inflater.inflate(R.layout.fragment_studies, container, false)
-            category = (arguments!!.getParcelable<Parcelable>(ARG_CATEGORY) as `Category$$Parcelable`).getParcel()
-            val studies = SQLite.select().from(org.versebyverseministry.models.Study::class.java).where(Study_Table.category.eq(category!!.id)).orderBy(Study_Table.bibleIndex, true).queryList()
+            val category = (arguments!!.getParcelable<Parcelable>(ARG_CATEGORY) as `Category$$Parcelable`).parcel
+            this.category = category
+            val studies = Study.fetchStudiesWithCategory(category)
             val displayMetrics = DisplayMetrics()
             (context!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
             Log.d("Placeholder", "onCreateView: found " + studies.size + " studies")

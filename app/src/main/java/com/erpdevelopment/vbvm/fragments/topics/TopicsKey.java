@@ -20,13 +20,13 @@ public abstract class TopicsKey extends Key {
     @Nullable
     abstract String topicId();
 
-    public static TopicsKey create() {
-        return createWithTopic(null);
-    }
+//    public static TopicsKey create() {
+//        return createWithTopic(null);
+//    }
 
-    public static TopicsKey createWithTopic(String topicId) {
-        return new AutoValue_TopicsKey(topicId);
-    }
+//    public static TopicsKey createWithTopic(String topicId) {
+//        return new AutoValue_TopicsKey(topicId);
+//    }
 
     @Override
     public String stackIdentifier() {

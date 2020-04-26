@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
-import com.erpdevelopment.vbvm.model.GroupStudy;
+import org.versebyverseministry.models.GroupStudy;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

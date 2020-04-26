@@ -16,12 +16,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.erpdevelopment.vbvm.model.Study;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
-import com.erpdevelopment.vbvm.model.Study_Table;
+
+import org.versebyverseministry.models.Study;
+import org.versebyverseministry.models.Study_Table;
 
 /**
  * A simple {@link Fragment} subclass.

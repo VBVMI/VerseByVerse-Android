@@ -23,8 +23,8 @@ import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
 import com.erpdevelopment.vbvm.fragments.topics.answers.AnswersListFragment;
 import com.erpdevelopment.vbvm.fragments.topics.articles.ArticlesListFragment;
-import com.erpdevelopment.vbvm.model.Topic;
-import com.erpdevelopment.vbvm.model.Topic_Table;
+import org.versebyverseministry.models.Topic;
+import org.versebyverseministry.models.Topic_Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.algi.sugarloader.SugarLoader;

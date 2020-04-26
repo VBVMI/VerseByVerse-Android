@@ -27,12 +27,13 @@ import com.erpdevelopment.vbvm.views.LoadingView;
 import com.raizlabs.android.dbflow.runtime.OnTableChangedListener;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import org.algi.sugarloader.SugarLoader;
 import com.erpdevelopment.vbvm.FileHelpers;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity;
-import com.erpdevelopment.vbvm.model.Lesson;
-import com.erpdevelopment.vbvm.model.Lesson_Table;
+
+import org.algi.sugarloader.SugarLoader;
+import org.versebyverseministry.models.Lesson;
+import org.versebyverseministry.models.Lesson_Table;
 
 import java.io.File;
 import java.util.ArrayList;

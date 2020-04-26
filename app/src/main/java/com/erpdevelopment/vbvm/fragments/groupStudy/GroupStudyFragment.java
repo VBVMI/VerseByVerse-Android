@@ -19,9 +19,6 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.topics.AbstractListFragment;
-import com.erpdevelopment.vbvm.model.GroupStudy;
-import com.erpdevelopment.vbvm.model.GroupStudy_Table;
-import com.erpdevelopment.vbvm.model.Video;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.vimeo.networking.VimeoClient;
 import com.vimeo.networking.callbacks.ModelCallback;
@@ -29,6 +26,9 @@ import com.vimeo.networking.model.VideoFile;
 import com.vimeo.networking.model.error.VimeoError;
 
 import org.algi.sugarloader.SugarLoader;
+import org.versebyverseministry.models.GroupStudy;
+import org.versebyverseministry.models.GroupStudy_Table;
+import org.versebyverseministry.models.Video;
 
 /**
  * Created by thomascarey on 11/09/17.

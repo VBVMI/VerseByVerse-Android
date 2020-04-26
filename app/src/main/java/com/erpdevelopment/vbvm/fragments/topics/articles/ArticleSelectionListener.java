@@ -1,6 +1,6 @@
 package com.erpdevelopment.vbvm.fragments.topics.articles;
 
-import com.erpdevelopment.vbvm.model.Article;
+import org.versebyverseministry.models.Article;
 
 /**
  * Created by thomascarey on 29/08/17

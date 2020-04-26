@@ -24,14 +24,15 @@ import android.view.ViewGroup;
 
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
-import com.erpdevelopment.vbvm.model.Lesson_Table;
-import com.erpdevelopment.vbvm.model.Study;
-import com.erpdevelopment.vbvm.model.Study_Table;
 import com.raizlabs.android.dbflow.runtime.FlowContentObserver;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import com.erpdevelopment.vbvm.R;
-import com.erpdevelopment.vbvm.model.Lesson;
+
+import org.versebyverseministry.models.Lesson;
+import org.versebyverseministry.models.Lesson_Table;
+import org.versebyverseministry.models.Study;
+import org.versebyverseministry.models.Study_Table;
 
 /**
  * A simple {@link Fragment} subclass.

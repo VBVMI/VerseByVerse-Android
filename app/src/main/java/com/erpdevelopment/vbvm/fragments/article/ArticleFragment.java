@@ -13,8 +13,8 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
-import com.erpdevelopment.vbvm.model.Article;
-import com.erpdevelopment.vbvm.model.Article_Table;
+import org.versebyverseministry.models.Article;
+import org.versebyverseministry.models.Article_Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.algi.sugarloader.SugarLoader;

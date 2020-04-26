@@ -3,7 +3,7 @@ package com.erpdevelopment.vbvm;
 import android.content.Context;
 import android.net.Uri;
 
-import com.erpdevelopment.vbvm.model.Lesson;
+import org.versebyverseministry.models.Lesson;
 
 import java.io.File;
 

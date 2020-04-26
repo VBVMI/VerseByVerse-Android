@@ -11,8 +11,8 @@ import com.erpdevelopment.vbvm.fragments.topics.AbstractListFragment;
 import com.erpdevelopment.vbvm.fragments.topics.QueryTopic;
 import com.erpdevelopment.vbvm.fragments.topics.TopicSelectionListener;
 import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
-import com.erpdevelopment.vbvm.model.Article_Topic;
-import com.erpdevelopment.vbvm.model.Topic_Table;
+import org.versebyverseministry.models.Article_Topic;
+import org.versebyverseministry.models.Topic_Table;
 import com.erpdevelopment.vbvm.util.ServiceLocator;
 import com.raizlabs.android.dbflow.sql.language.Join;
 import com.raizlabs.android.dbflow.sql.language.NameAlias;
@@ -21,10 +21,10 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
 import com.raizlabs.android.dbflow.structure.database.FlowCursor;
 
-import com.erpdevelopment.vbvm.model.Article;
-import com.erpdevelopment.vbvm.model.Article_Table;
-import com.erpdevelopment.vbvm.model.Article_Topic_Table;
-import com.erpdevelopment.vbvm.model.Topic;
+import org.versebyverseministry.models.Article;
+import org.versebyverseministry.models.Article_Table;
+import org.versebyverseministry.models.Article_Topic_Table;
+import org.versebyverseministry.models.Topic;
 import com.zhuinden.simplestack.BackstackDelegate;
 
 import org.algi.sugarloader.SugarLoader;

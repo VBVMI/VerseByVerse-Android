@@ -13,11 +13,11 @@ import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment;
-import com.erpdevelopment.vbvm.model.Answer;
-import com.erpdevelopment.vbvm.model.Answer_Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.algi.sugarloader.SugarLoader;
+import org.versebyverseministry.models.Answer;
+import org.versebyverseministry.models.Answer_Table;
 
 import java.io.UnsupportedEncodingException;
 

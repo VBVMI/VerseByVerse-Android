@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import com.erpdevelopment.vbvm.model.Lesson;
+import org.versebyverseministry.models.Lesson;
 
 import java.util.HashMap;
 import java.util.Map;

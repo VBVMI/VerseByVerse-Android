@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
-import com.erpdevelopment.vbvm.model.Study;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import com.erpdevelopment.vbvm.FileHelpers;
@@ -31,9 +30,11 @@ import com.erpdevelopment.vbvm.FontManager;
 import com.erpdevelopment.vbvm.GenericFileProvider;
 import com.erpdevelopment.vbvm.LessonResourceManager;
 import com.erpdevelopment.vbvm.R;
-import com.erpdevelopment.vbvm.model.Lesson;
-import com.erpdevelopment.vbvm.model.Lesson_Table;
-import com.erpdevelopment.vbvm.model.Study_Table;
+
+import org.versebyverseministry.models.Lesson;
+import org.versebyverseministry.models.Lesson_Table;
+import org.versebyverseministry.models.Study;
+import org.versebyverseministry.models.Study_Table;
 
 import java.io.File;
 import java.util.ArrayList;

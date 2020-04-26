@@ -19,7 +19,8 @@ import com.erpdevelopment.vbvm.FontManager;
 import com.erpdevelopment.vbvm.LessonResourceManager;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.fragments.studies.study.LessonsFragment.OnLessonFragmentInteractionListener;
-import com.erpdevelopment.vbvm.model.Lesson;
+
+import org.versebyverseministry.models.Lesson;
 
 import java.io.File;
 import java.util.List;

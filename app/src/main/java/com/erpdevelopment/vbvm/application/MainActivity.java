@@ -34,8 +34,8 @@ import com.erpdevelopment.vbvm.fragments.media.MediaKey;
 import com.erpdevelopment.vbvm.fragments.more.MoreKey;
 import com.erpdevelopment.vbvm.fragments.topics.TopicsKey;
 import com.erpdevelopment.vbvm.fragments.studies.StudiesKey;
-import com.erpdevelopment.vbvm.model.Lesson_Table;
-import com.erpdevelopment.vbvm.model.MetaData;
+import org.versebyverseministry.models.Lesson_Table;
+import org.versebyverseministry.models.MetaData;
 import com.erpdevelopment.vbvm.util.Multistack;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.zhuinden.simplestack.BackstackDelegate;
@@ -45,7 +45,7 @@ import com.zhuinden.simplestack.StateChanger;
 import com.erpdevelopment.vbvm.AudioService;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity;
-import com.erpdevelopment.vbvm.model.Lesson;
+import org.versebyverseministry.models.Lesson;
 
 import java.io.File;
 

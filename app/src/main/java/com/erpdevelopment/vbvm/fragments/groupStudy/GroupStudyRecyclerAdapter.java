@@ -17,8 +17,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
-import com.erpdevelopment.vbvm.model.GroupStudy;
-import com.erpdevelopment.vbvm.model.Video;
+
+import org.versebyverseministry.models.GroupStudy;
+import org.versebyverseministry.models.Video;
 
 /**
  * Created by thomascarey on 11/09/17.

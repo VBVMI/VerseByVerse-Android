@@ -1,6 +1,6 @@
 package com.erpdevelopment.vbvm.fragments.topics.answers;
 
-import com.erpdevelopment.vbvm.model.Answer;
+import org.versebyverseministry.models.Answer;
 
 /**
  * Created by thomascarey on 2/09/17.

@@ -1,6 +1,6 @@
 package com.erpdevelopment.vbvm.fragments.media.groupStudies;
 
-import com.erpdevelopment.vbvm.model.GroupStudy;
+import org.versebyverseministry.models.GroupStudy;
 
 /**
  * Created by thomascarey on 10/09/17.

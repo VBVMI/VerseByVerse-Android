@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.erpdevelopment.vbvm.application.MainActivity;
 import com.erpdevelopment.vbvm.fragments.groupStudy.GroupStudyKey;
 import com.erpdevelopment.vbvm.fragments.topics.AbstractListFragment;
-import com.erpdevelopment.vbvm.model.GroupStudy;
+import org.versebyverseministry.models.GroupStudy;
 import com.erpdevelopment.vbvm.util.ServiceLocator;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.zhuinden.simplestack.BackstackDelegate;

@@ -71,7 +71,24 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    api 'com.google.auto.value:auto-value-annotations:1.6.5'
+//    annotationProcessor 'com.google.auto.value:auto-value:1.6.5'
+//    compileOnly 'com.google.auto.value:auto-value:1.6.5'
+
+    compileOnly 'com.google.auto.value:auto-value:1.6.5'
+    annotationProcessor 'com.google.auto.value:auto-value:1.6.5'
+
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:4.2.4"
+
+    implementation "com.github.Raizlabs.DBFlow:dbflow-core:4.2.4"
+    implementation "com.github.Raizlabs.DBFlow:dbflow:4.2.4"
+
+    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.7'
+    implementation 'org.parceler:parceler-api:1.1.12'
+    annotationProcessor 'org.parceler:parceler:1.1.12'
+
     implementation project(":models")
+
 //    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:4.2.4"
 //
 //    implementation "com.github.Raizlabs.DBFlow:dbflow-core:4.2.4"
@@ -101,9 +118,9 @@ dependencies {
 
     implementation 'com.github.alexgianq:sugarloader:0.2'
 
-//    api 'com.google.auto.value:auto-value-annotations:1.6.5'
-//    annotationProcessor 'com.google.auto.value:auto-value:1.6.5'
-//    compileOnly 'com.google.auto.value:auto-value:1.6.5'
+
+
+
 
 //    annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.7'
 //    implementation 'org.parceler:parceler-api:1.1.12'

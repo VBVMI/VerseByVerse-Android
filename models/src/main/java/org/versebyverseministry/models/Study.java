@@ -1,5 +1,6 @@
 package org.versebyverseministry.models;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
@@ -153,4 +154,10 @@ public class Study extends BaseModel implements Mergable<Study> {
     public static long countOf() {
         return SQLite.selectCountOf().from(Study.class).count();
     }
+
+    @NonNull
+    public static List<Study> fetchStudiesWithCategory(@NonNull Category category) {
+        return SQLite.select().from(Study.class).where(Study_Table.category.eq(category.id)).orderBy(Study_Table.bibleIndex, true).queryList();
+    }
+
 }

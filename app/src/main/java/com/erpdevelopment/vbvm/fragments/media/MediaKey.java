@@ -13,9 +13,9 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class MediaKey extends Key {
 
-    public static MediaKey create() {
-        return new AutoValue_MediaKey();
-    }
+//    public static MediaKey create() {
+//        return new AutoValue_MediaKey();
+//    }
 
     @Override
     public String stackIdentifier() {

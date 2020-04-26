@@ -13,7 +13,7 @@ import com.erpdevelopment.vbvm.StringHelpers;
 import com.erpdevelopment.vbvm.fragments.topics.QueryTopic;
 import com.erpdevelopment.vbvm.fragments.topics.QueryTopicRecyclerViewAdapter;
 import com.erpdevelopment.vbvm.fragments.topics.TopicSelectionListener;
-import com.erpdevelopment.vbvm.model.Answer;
+import org.versebyverseministry.models.Answer;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

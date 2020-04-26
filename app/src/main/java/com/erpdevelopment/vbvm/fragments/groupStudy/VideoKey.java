@@ -15,9 +15,9 @@ abstract public class VideoKey extends Key {
 
     abstract String channelId();
 
-    public static VideoKey create(String channelId) {
-        return new AutoValue_VideoKey(channelId);
-    }
+//    public static VideoKey create(String channelId) {
+//        return new AutoValue_VideoKey(channelId);
+//    }
 
     @Override
     public String stackIdentifier() {

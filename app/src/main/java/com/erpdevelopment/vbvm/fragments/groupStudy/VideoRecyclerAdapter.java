@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.erpdevelopment.vbvm.R;
 import com.erpdevelopment.vbvm.StringHelpers;
-import com.erpdevelopment.vbvm.model.Channel;
-import com.erpdevelopment.vbvm.model.Video;
+
+import org.versebyverseministry.models.Channel;
+import org.versebyverseministry.models.Video;
 
 /**
  * Created by thomascarey on 23/09/17.
@@ -41,7 +42,7 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoViewHolder> 
     @Override
     public void onBindViewHolder(VideoViewHolder holder, int position) {
         Video video = channel.videos.get(position);
-        VideoViewHolder vh = (VideoViewHolder)holder;
+        VideoViewHolder vh = holder;
 
         vh.titleView.setText(StringHelpers.fromHtmlString(video.title));
         Glide.with(context).load(video.thumbnailSource).into(vh.imageView);

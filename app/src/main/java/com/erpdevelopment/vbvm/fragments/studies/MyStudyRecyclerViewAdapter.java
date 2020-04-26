@@ -15,8 +15,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import com.erpdevelopment.vbvm.R;
-import com.erpdevelopment.vbvm.model.Study;
 import com.erpdevelopment.vbvm.views.SquareImageView;
+
+import org.versebyverseministry.models.Study;
 
 import java.util.List;
 

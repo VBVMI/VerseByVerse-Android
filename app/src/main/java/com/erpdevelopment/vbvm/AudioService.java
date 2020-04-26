@@ -36,11 +36,12 @@ import android.util.Log;
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity;
-import com.erpdevelopment.vbvm.model.Lesson;
-import com.erpdevelopment.vbvm.model.MetaData;
-import com.erpdevelopment.vbvm.model.Study;
-import com.erpdevelopment.vbvm.model.Study_Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
+
+import org.versebyverseministry.models.Lesson;
+import org.versebyverseministry.models.MetaData;
+import org.versebyverseministry.models.Study;
+import org.versebyverseministry.models.Study_Table;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

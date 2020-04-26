@@ -14,9 +14,9 @@ import com.erpdevelopment.vbvm.application.MainActivity;
 @AutoValue
 public abstract class StudiesKey extends Key {
 
-    public static StudiesKey create() {
-        return new AutoValue_StudiesKey();
-    }
+//    public static StudiesKey create() {
+//        return new AutoValue_StudiesKey();
+//    }
 
     @Override
     public String stackIdentifier() {

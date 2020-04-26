@@ -2,7 +2,7 @@ package com.erpdevelopment.vbvm.api;
 
 import androidx.annotation.NonNull;
 
-import com.erpdevelopment.vbvm.model.Category;
+import org.versebyverseministry.models.Category;
 import org.versebyverseministry.models.pojo.Answers;
 import org.versebyverseministry.models.pojo.Articles;
 import org.versebyverseministry.models.pojo.Channels;
