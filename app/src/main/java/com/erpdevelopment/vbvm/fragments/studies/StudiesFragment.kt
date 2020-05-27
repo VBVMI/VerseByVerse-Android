@@ -17,6 +17,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,13 +32,16 @@ import com.erpdevelopment.vbvm.util.ServiceLocator
 import com.erpdevelopment.vbvm.views.LoadingView
 import com.google.android.material.tabs.TabLayout
 import com.raizlabs.android.dbflow.sql.language.SQLite
+import com.uber.autodispose.android.lifecycle.autoDispose
 import com.zhuinden.simplestack.BackstackDelegate
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import org.versebyverseministry.models.Category
 import org.versebyverseministry.models.Study
 import org.versebyverseministry.models.Study_Table
 import org.versebyverseministry.models.`Category$$Parcelable`
-import java.util.*
-import java.util.concurrent.TimeUnit
+import com.uber.autodispose.android.lifecycle.autoDispose
+
 
 /**
  * A simple [Fragment] subclass.
@@ -59,14 +64,14 @@ class StudiesFragment : AbstractFragment() {
      */
     private lateinit var mViewPager: ViewPager
     private lateinit var loadingView: LoadingView
+
+    private lateinit var viewModel: StudiesViewModel
     override fun shouldBitmapUI(): Boolean {
         return true
     }
 
     private fun configureCategoryPager() {
-        val categories = Category.allCategories()
         if (Study.countOf() > 0) {
-            mSectionsPagerAdapter!!.setCategories(categories)
             mViewPager.visibility = View.VISIBLE
             loadingView.visibility = View.GONE
             Log.d(TAG, "configureCategoryPager: $this")
@@ -75,6 +80,12 @@ class StudiesFragment : AbstractFragment() {
 
     private fun hasContent(): Boolean {
         return Study.countOf() > 0 && Category.countOf() > 0
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d(TAG, "onAttach: $this")
+        viewModel = ViewModelProviders.of(this)[StudiesViewModel::class.java]
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -86,7 +97,7 @@ class StudiesFragment : AbstractFragment() {
         mViewPager = view.findViewById(R.id.studiesContainer)
 
         toolbar.setTitle(R.string.title_studies)
-        mSectionsPagerAdapter = SectionsPagerAdapter(this.childFragmentManager)
+        mSectionsPagerAdapter = SectionsPagerAdapter(viewModel.categories, this.childFragmentManager)
         mViewPager.setAdapter(mSectionsPagerAdapter)
         configureCategoryPager()
         tabLayout.setupWithViewPager(mViewPager)
@@ -94,44 +105,38 @@ class StudiesFragment : AbstractFragment() {
             loadingView.setVisibility(View.VISIBLE)
             mViewPager.setVisibility(View.GONE)
         }
-        if (lastRequestDate == null || TimeUnit.MILLISECONDS.toSeconds(Date().time - lastRequestDate!!.time) > 300) {
-            categoriesCompleted = false
-            studiesCompleted = false
-            lastRequestDate = Date()
-            Log.d(TAG, "onCreateView: ")
-            APIManager.getInstance().downloadCategories { success: Boolean ->
-                // Categories downloaded... refresh that screen!
-                if (success) { //configureCategoryPager();
-                    categoriesCompleted = true
-                    if (studiesCompleted && categoriesCompleted && (activeRunner != null)) {
-                        activeRunner!!.run()
-                    }
-                }
-            }
-            APIManager.getInstance().downloadStudies { success: Boolean ->
-                // Studies downloaded... refresh!
-                if (success) {
-                    studiesCompleted = true
-                    if (studiesCompleted && categoriesCompleted && (activeRunner != null)) {
-                        activeRunner!!.run()
-                    }
-                }
-            }
-        }
+
         return view
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        Log.d(TAG, "onAttach: $this")
-        activeRunner = Runnable { if (!isDetached) configureCategoryPager() }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.isAllDataLoaded.observe(this, androidx.lifecycle.Observer { loaded ->
+            if (loaded) {
+                configureCategoryPager()
+            }
+        })
+
+        viewModel.viewEvents.observeOn(AndroidSchedulers.mainThread())
+                .autoDispose(this, Lifecycle.Event.ON_DESTROY)
+                .subscribe {
+                    when (it) {
+                        is CategoriesUpdated -> {
+                            mSectionsPagerAdapter?.categoriesUpdated()
+                        }
+                        else -> {
+                            Log.d(TAG, "An event happened: ${it}")
+                        }
+                    }
+                }
     }
 
     override fun onDetach() {
         super.onDetach()
         mSectionsPagerAdapter = null
         Log.d(TAG, "onDetach: $this")
-        activeRunner = null
     }
 
     /**
@@ -221,16 +226,9 @@ class StudiesFragment : AbstractFragment() {
      * A [FragmentPagerAdapter] that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    private inner class SectionsPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!) {
-        private var categories: List<org.versebyverseministry.models.Category> = ArrayList()
+    private inner class SectionsPagerAdapter(val categories: List<Category>, fm: FragmentManager?) : FragmentPagerAdapter(fm!!) {
 
-        fun setCategories(categories: List<org.versebyverseministry.models.Category>?) {
-            val myCategories = categories
-            if (myCategories == null) {
-                notifyDataSetChanged()
-                return
-            }
-            this.categories = myCategories
+        fun categoriesUpdated() {
             notifyDataSetChanged()
         }
 
@@ -252,10 +250,6 @@ class StudiesFragment : AbstractFragment() {
 
     companion object {
         private const val TAG = "StudiesFragment"
-        private var categoriesCompleted = false
-        private var studiesCompleted = false
-        private var lastRequestDate: Date? = null
-        private var activeRunner: Runnable? = null
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
