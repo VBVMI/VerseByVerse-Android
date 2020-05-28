@@ -27,7 +27,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-import com.crashlytics.android.Crashlytics;
 import com.erpdevelopment.vbvm.FileHelpers;
 import com.erpdevelopment.vbvm.api.DatabaseManager;
 import com.erpdevelopment.vbvm.fragments.media.MediaKey;
@@ -37,6 +36,7 @@ import com.erpdevelopment.vbvm.fragments.studies.StudiesKey;
 import org.versebyverseministry.models.Lesson_Table;
 import org.versebyverseministry.models.MetaData;
 import com.erpdevelopment.vbvm.util.Multistack;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.zhuinden.simplestack.BackstackDelegate;
 import com.zhuinden.simplestack.StateChange;
@@ -48,8 +48,6 @@ import com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity;
 import org.versebyverseministry.models.Lesson;
 
 import java.io.File;
-
-import io.fabric.sdk.android.Fabric;
 
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.MEDIA;
 import static com.erpdevelopment.vbvm.application.MainActivity.StackType.MORE;
@@ -104,8 +102,6 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
 
         super.onCreate(savedInstanceState);
 
-        Fabric.with(this, new Crashlytics());
-
         setContentView(R.layout.activity_main);
 
         audioProgressBar = findViewById(R.id.audio_progress_bar);
@@ -154,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
             Lesson lesson = audioService.getCurrentLesson();
             if (lesson == null) {
                 // Then the audio bar should not even have been showing.
-                Crashlytics.logException(new Exception("Tapped audio bar but the lesson is null. audioBound == " + audioBound));
+                FirebaseCrashlytics.getInstance().recordException(new Exception("Tapped audio bar but the lesson is null. audioBound == " + audioBound));
                 return;
             }
             Intent intent = new Intent(this, LessonAudioActivity.class);

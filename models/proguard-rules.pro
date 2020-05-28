@@ -39,3 +39,7 @@
 -keep interface org.parceler.Parcel
 -keep @org.parceler.Parcel class * { *; }
 -keep class **$$Parcelable { *; }
+
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}

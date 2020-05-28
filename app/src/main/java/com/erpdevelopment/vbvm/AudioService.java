@@ -34,8 +34,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
-import com.crashlytics.android.Crashlytics;
 import com.erpdevelopment.vbvm.fragments.studies.lesson.LessonAudioActivity;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.versebyverseministry.models.Lesson;
@@ -45,8 +45,6 @@ import org.versebyverseministry.models.Study_Table;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import io.fabric.sdk.android.Fabric;
 
 public class AudioService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
     private static final String TAG = "PlayAudio";
@@ -276,8 +274,7 @@ public class AudioService extends Service implements MediaPlayer.OnPreparedListe
             mMediaPlayer.setDataSource(getApplicationContext(), audioUri);
             mMediaPlayer.prepareAsync();
         } catch (Exception e) {
-            Fabric.getLogger().e(TAG, "Error setting data source", e);
-            Crashlytics.logException(e);
+            FirebaseCrashlytics.getInstance().recordException(e);
         }
 
         configureState();

@@ -1,24 +1,14 @@
 package com.erpdevelopment.vbvm.fragments.studies
 
-import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.erpdevelopment.vbvm.api.APIManager
 import com.jakewharton.rxrelay2.PublishRelay
-import com.raizlabs.android.dbflow.rx2.language.RXSQLite
-import com.raizlabs.android.dbflow.sql.language.SQLite
-import com.raizlabs.android.dbflow.sql.queriable.ModelQueriable
-import com.uber.autodispose.autoDispose
-import com.uber.autodispose.android.lifecycle.autoDispose
 import io.reactivex.Flowable
-import io.reactivex.FlowableSubscriber
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
-import org.reactivestreams.Subscription
 import org.versebyverseministry.models.Category
-import org.versebyverseministry.models.Category_Table
 
 sealed class StudiesViewEvent {}
 class StudiesCategoriesDownloadFailed() : StudiesViewEvent()
@@ -109,16 +99,16 @@ class StudiesViewModel: ViewModel() {
 
     private fun observeCategories() {
 
-//        categoriesDisposable?.dispose()
-        categoriesDisposable = RXSQLite.rx(SQLite.select().from(Category::class.java).orderBy(Category_Table.order, true))
-                .observeOnTableChanges().map {
-                    it?.let {
-                        Log.d(TAG, "😀 got a map")
-                        _categories.clear()
-                        _categories.addAll(it.queryList())
-                        _viewEvents.accept(CategoriesUpdated())
-                    }
-                }
+////        categoriesDisposable?.dispose()
+//        categoriesDisposable = RXSQLite.rx(SQLite.select().from(Category::class.java).orderBy(Category_Table.order, true))
+//                .observeOnTableChanges().map {
+//                    it?.let {
+//                        Log.d(TAG, "😀 got a map")
+//                        _categories.clear()
+//                        _categories.addAll(it.queryList())
+//                        _viewEvents.accept(CategoriesUpdated())
+//                    }
+//                }
     }
 
     override fun onCleared() {
