@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 @Database(entities = arrayOf(RStudy::class), version = 1, exportSchema = false)
 public abstract class RAppDatabase : RoomDatabase() {
 
-    abstract fun rStudyDao(): RStudyDao
+    abstract fun studyDao(): RStudyDao
 
     companion object {
         // Singleton prevents multiple instances of database opening at the
