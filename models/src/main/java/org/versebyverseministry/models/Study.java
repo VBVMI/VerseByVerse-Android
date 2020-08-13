@@ -160,4 +160,9 @@ public class Study extends BaseModel implements Mergable<Study> {
         return SQLite.select().from(Study.class).where(Study_Table.category.eq(category.id)).orderBy(Study_Table.bibleIndex, true).queryList();
     }
 
+    @NonNull
+    public static List<Study> fetchAll() {
+        return SQLite.select().from(Study.class).queryList();
+    }
+
 }

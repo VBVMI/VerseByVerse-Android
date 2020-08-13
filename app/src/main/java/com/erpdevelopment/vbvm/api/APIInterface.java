@@ -2,6 +2,8 @@ package com.erpdevelopment.vbvm.api;
 
 import androidx.annotation.NonNull;
 
+import com.erpdevelopment.vbvm.api.pojo.APIStudies;
+
 import org.versebyverseministry.models.Category;
 import org.versebyverseministry.models.pojo.Answers;
 import org.versebyverseministry.models.pojo.Articles;
@@ -23,7 +25,7 @@ import retrofit2.http.Path;
 public interface APIInterface {
 
     @GET("/corev2/json")
-    Call<Studies> doGetStudies();
+    Call<APIStudies> doGetStudies();
 
     @GET("/corev2/categories")
     Call<List<Category>> doGetCategories();

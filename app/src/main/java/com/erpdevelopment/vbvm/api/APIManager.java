@@ -8,6 +8,10 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import android.util.Log;
 
+import com.erpdevelopment.vbvm.api.pojo.APIStudies;
+import com.erpdevelopment.vbvm.room.RAppDatabase;
+import com.erpdevelopment.vbvm.room.RStudy;
+
 import org.versebyverseministry.models.Study;
 import org.versebyverseministry.models.pojo.Answers;
 import org.versebyverseministry.models.pojo.Channels;
@@ -62,25 +66,28 @@ public class APIManager {
         void didComplete(boolean success);
     }
 
-    public void downloadStudies(RequestComplete callback) {
+    public void downloadStudies(RAppDatabase database, RequestComplete callback) {
 
-        Call<Studies> call = apiInterface.doGetStudies();
+        Call<APIStudies> call = apiInterface.doGetStudies();
 
-        call.enqueue(new Callback<Studies>() {
+        call.enqueue(new Callback<APIStudies>() {
             @Override
-            public void onResponse(Call<Studies> call, final Response<Studies> response) {
+            public void onResponse(Call<APIStudies> call, final Response<APIStudies> response) {
                 Log.d("VBVMI", "get all studies: " + response.code());
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
-                        Studies studies = response.body();
+                        APIStudies studies = response.body();
                         if(studies == null || studies.getStudies() == null) {
                             mainHandler.post(() -> {
                                 callback.didComplete(false);
                             });
                             return;
                         }
-                        List<Study> studyList = studies.getStudies();
+                        List<RStudy> studyList = studies.getStudies();
+
+
+
                         DatabaseManager.getInstance().saveStudies(studyList);
                         mainHandler.post(() -> {
                            callback.didComplete(true);

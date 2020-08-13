@@ -1,10 +1,8 @@
 package com.erpdevelopment.vbvm.fragments.studies
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.erpdevelopment.vbvm.api.APIManager
+import com.erpdevelopment.vbvm.room.RAppDatabase
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -86,7 +84,7 @@ class StudiesViewModel: ViewModel() {
     }
 
     private fun downloadStudies() {
-        APIManager.getInstance().downloadStudies { success: Boolean ->
+        APIManager.getInstance().downloadStudies(RAppDatabase.getDatabase(, viewModelScope)) { success: Boolean ->
             if (success) {
                 _hasDownloadedStudies.value = true
             } else {

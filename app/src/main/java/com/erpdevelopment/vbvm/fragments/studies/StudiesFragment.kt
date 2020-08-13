@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,6 +30,7 @@ import com.erpdevelopment.vbvm.api.APIManager
 import com.erpdevelopment.vbvm.application.MainActivity
 import com.erpdevelopment.vbvm.fragments.shared.AbstractFragment
 import com.erpdevelopment.vbvm.fragments.studies.study.StudyKey
+import com.erpdevelopment.vbvm.model.StudyViewModel
 import com.erpdevelopment.vbvm.util.ServiceLocator
 import com.erpdevelopment.vbvm.views.LoadingView
 import com.google.android.material.tabs.TabLayout
@@ -66,6 +69,8 @@ class StudiesFragment : AbstractFragment() {
     private lateinit var loadingView: LoadingView
 
     private lateinit var viewModel: StudiesViewModel
+    private lateinit var studiesViewModel: StudyViewModel
+
     override fun shouldBitmapUI(): Boolean {
         return true
     }
@@ -85,7 +90,8 @@ class StudiesFragment : AbstractFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Log.d(TAG, "onAttach: $this")
-        viewModel = ViewModelProviders.of(this)[StudiesViewModel::class.java]
+        viewModel = ViewModelProvider(this).get(StudiesViewModel::class.java)
+        studiesViewModel = ViewModelProvider(this).get(StudyViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -113,7 +119,11 @@ class StudiesFragment : AbstractFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.isAllDataLoaded.observe(this, androidx.lifecycle.Observer { loaded ->
+        studiesViewModel.bibleOrderedStudies.observe(viewLifecycleOwner, Observer { studies ->
+            Log.d(TAG, "🙌 There are ${studies.size} studies in the room database and we observed them!!")
+        })
+
+        viewModel.isAllDataLoaded.observe(viewLifecycleOwner, androidx.lifecycle.Observer { loaded ->
             if (loaded) {
                 configureCategoryPager()
             }

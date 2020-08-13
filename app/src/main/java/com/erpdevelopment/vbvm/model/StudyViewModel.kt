@@ -17,7 +17,7 @@ class StudyViewModel(application: Application): AndroidViewModel(application) {
     val bibleOrderedStudies: LiveData<List<RStudy>>
 
     init {
-        val studyDao = RAppDatabase.getDatabase(application).studyDao()
+        val studyDao = RAppDatabase.getDatabase(application, viewModelScope).studyDao()
         repository = RStudyRepository(studyDao)
         bibleOrderedStudies = repository.bibleOrderedStudies
     }

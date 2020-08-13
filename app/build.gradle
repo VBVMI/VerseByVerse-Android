@@ -7,7 +7,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.0'
+    buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId 'com.erpdevelopment.vbvm'
         minSdkVersion 19
@@ -42,6 +42,19 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+
+
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == "androidx") {
+            if (!requested.name.startsWith("multidex")) {
+                details.useVersion "${targetSdk}.+"
+            }
+        }
+    }
 }
 
 dependencies {
@@ -57,6 +70,7 @@ dependencies {
 //        exclude group: 'com.android.support', module: 'support-annotations'
 //    })
 
+    implementation "org.conscrypt:conscrypt-android:$rootProject.conscrypt_version"
     implementation "com.google.firebase:firebase-analytics:$rootProject.firebase_version"
     // Recommended: Add the Firebase SDK for Google Analytics.
     implementation "com.google.firebase:firebase-analytics-ktx:$rootProject.firebase_version"

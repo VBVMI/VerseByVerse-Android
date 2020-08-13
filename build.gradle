@@ -13,18 +13,19 @@ buildscript {
         auto_value_parcel_version = '0.2.8'
         gson_version = '2.8.6'
         auto_dispose_version = '1.4.0'
-        firebase_version = '17.4.2'
-        crashlytics_version = '17.0.0'
+        firebase_version = '17.4.3'
+        crashlytics_version = '17.0.1'
         coroutinesVersion = '1.3.7'
-        ktxVersion = '1.2.0'
+        ktxVersion = '1.3.0'
         glideVersion = '4.11.0'
+        conscrypt_version = '2.2.1'
     }
     repositories {
         mavenCentral()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:4.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong

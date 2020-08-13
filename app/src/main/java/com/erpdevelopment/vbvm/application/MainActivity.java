@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements StateChanger {
                         break;
                 }
 
-                if (multistack.getSelectedStackIdentifier() != newStack) {
+                if (!multistack.getSelectedStackIdentifier().equals(newStack)) {
                     removePreviousFragment();
                     multistack.setSelectedStack(newStack);
                 }
